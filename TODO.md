@@ -1,5 +1,11 @@
 # TODO
 
+* render simple object using VBO and VAO
+* test shaders
+* free floating object
+* thrusters
+* load Blender model
+* model with multiple moving parts (e.g. gear)
 * collision detection
 * spring damper for ground forces
 * proper lift/drag ratio for high Reynolds numbers
@@ -9,6 +15,6 @@
 * threads for rendering, simulation, and loading of data
 * event-based radio
 * missions and high scores
-* inspiration from other games (e.g. Orbiter)
+* inspiration from Orbiter 2016, Rigs of Rods
 * good tessellation for planet spheres
 * atmospheric rendering, clouds, water, elevation maps, fractal micro textures and maps
