@@ -4,16 +4,15 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
-const char *vertexShader = "#version 320 es\n\
+const char *vertexSource = "#version 320 es\n\
 precision highp float;\n\
-layout(location = 0) in vec3 vertexPosition_modelspace;\n\
+in vec3 vertexPosition_modelspace;\n\
 out gl_PerVertex { vec4 gl_Position; };\n\
 void main(){\n\
-    gl_Position.xyz = vertexPosition_modelspace;\n\
-    gl_Position.w = 1.0;\n\
+  gl_Position = vec4(vertexPosition_modelspace, 1.0);\n\
 }";
 
-const char *fragmentShader = "#version 320 es\n\
+const char *fragmentSource = "#version 320 es\n\
 precision highp float;\n\
 out vec3 color;\n\
 void main()\n\
@@ -32,14 +31,35 @@ void onDisplay(void)
   glClear(GL_COLOR_BUFFER_BIT);
 
   glUseProgram(program);
-
   glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
   glDrawArrays(GL_TRIANGLES, 0, 3);
   glDisableVertexAttribArray(0);
 
   glutSwapBuffers();
+}
+
+void onResize(int width, int height)
+{
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glOrtho(-1, 1, -1, 1, -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void showErrors(GLuint context)
+{
+  GLint result = GL_FALSE;
+  int infoLength;
+  glGetShaderiv(context, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(context, GL_INFO_LOG_LENGTH, &infoLength);
+  if (infoLength > 0) {
+    char *buffer = malloc(infoLength);
+    glGetShaderInfoLog(context, infoLength, NULL, buffer);
+    fprintf(stderr, "%s\n", buffer);
+    free(buffer);
+  };
 }
 
 GLfloat vertices[] = {
@@ -51,7 +71,7 @@ GLfloat vertices[] = {
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_SINGLE);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowSize(320, 240);
   glutCreateWindow("Triangle");
 
@@ -61,57 +81,36 @@ int main(int argc, char** argv)
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  GLint result = GL_FALSE;
-  int info;
+  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertexShader, 1, &vertexSource, NULL);
+  glCompileShader(vertexShader);
+  showErrors(vertexShader);
 
-  GLuint vid = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vid, 1, &vertexShader, NULL);
-  glCompileShader(vid);
-  glGetShaderiv(vid, GL_COMPILE_STATUS, &result);
-  glGetShaderiv(vid, GL_INFO_LOG_LENGTH, &info);
-  if (info > 0) {
-    char buffer[65535];
-    glGetShaderInfoLog(vid, info, NULL, &buffer[0]);
-    printf("%s\n", buffer);
-  };
-
-  GLuint fid = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fid, 1, &fragmentShader, NULL);
-  glCompileShader(fid);
-  glGetShaderiv(fid, GL_COMPILE_STATUS, &result);
-  glGetShaderiv(fid, GL_INFO_LOG_LENGTH, &info);
-  if (info > 0) {
-    char buffer[65535];
-    glGetShaderInfoLog(fid, info, NULL, &buffer[0]);
-    printf("%s\n", buffer);
-  };
+  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+  glCompileShader(fragmentShader);
+  showErrors(fragmentShader);
 
   program = glCreateProgram();
-  glAttachShader(program, vid);
-  glAttachShader(program, fid);
+  glAttachShader(program, vertexShader);
+  glAttachShader(program, fragmentShader);
   glLinkProgram(program);
-  glGetShaderiv(program, GL_LINK_STATUS, &result);
-  glGetShaderiv(program, GL_INFO_LOG_LENGTH, &info);
-  if (info > 0) {
-    char buffer[65535];
-    glGetShaderInfoLog(program, info, NULL, &buffer[0]);
-    printf("%s\n", buffer);
-  };
+  showErrors(program);
 
-  glDetachShader(program, vid);
-  glDetachShader(program, fid);
+  glDetachShader(program, vertexShader);
+  glDetachShader(program, fragmentShader);
 
-  glDeleteShader(vid);
-  glDeleteShader(fid);
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
 
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   glutDisplayFunc(onDisplay);
+  glutReshapeFunc(onResize);
   glutMainLoop();
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &vbo);
   glDeleteVertexArrays(1, &vao);
   glDeleteProgram(program);
