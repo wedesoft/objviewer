@@ -1,17 +1,43 @@
 #define GLEW_STATIC
 
+#include <stdio.h>
 #include <GL/glew.h>
 #include <GL/glut.h>
+
+const char *vertexShader = "#version 320 es\n\
+precision highp float;\n\
+layout(location = 0) in vec3 vertexPosition_modelspace;\n\
+out gl_PerVertex { vec4 gl_Position; };\n\
+void main(){\n\
+    gl_Position.xyz = vertexPosition_modelspace;\n\
+    gl_Position.w = 1.0;\n\
+}";
+
+const char *fragmentShader = "#version 320 es\n\
+precision highp float;\n\
+out vec3 color;\n\
+void main()\n\
+{\n\
+	color = vec3(1,0,0);\n\
+}";
+
+GLuint vao;
+GLuint vbo;
+GLuint program;
 
 
 void onDisplay(void)
 {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
 
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, 0, 0);
+  glUseProgram(program);
+
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
   glDrawArrays(GL_TRIANGLES, 0, 3);
-  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableVertexAttribArray(0);
 
   glutSwapBuffers();
 }
@@ -29,20 +55,65 @@ int main(int argc, char** argv)
   glutInitWindowSize(320, 240);
   glutCreateWindow("Triangle");
 
+  glewExperimental = 1;
   glewInit();
 
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
 
-  GLuint vbo;
-  glGenBuffersARB(1, &vbo);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(vertices), 0, GL_STATIC_DRAW_ARB);
-  glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(vertices), vertices);
+  GLint result = GL_FALSE;
+  int info;
+
+  GLuint vid = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vid, 1, &vertexShader, NULL);
+  glCompileShader(vid);
+  glGetShaderiv(vid, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(vid, GL_INFO_LOG_LENGTH, &info);
+  if (info > 0) {
+    char buffer[65535];
+    glGetShaderInfoLog(vid, info, NULL, &buffer[0]);
+    printf("%s\n", buffer);
+  };
+
+  GLuint fid = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fid, 1, &fragmentShader, NULL);
+  glCompileShader(fid);
+  glGetShaderiv(fid, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(fid, GL_INFO_LOG_LENGTH, &info);
+  if (info > 0) {
+    char buffer[65535];
+    glGetShaderInfoLog(fid, info, NULL, &buffer[0]);
+    printf("%s\n", buffer);
+  };
+
+  program = glCreateProgram();
+  glAttachShader(program, vid);
+  glAttachShader(program, fid);
+  glLinkProgram(program);
+  glGetShaderiv(program, GL_LINK_STATUS, &result);
+  glGetShaderiv(program, GL_INFO_LOG_LENGTH, &info);
+  if (info > 0) {
+    char buffer[65535];
+    glGetShaderInfoLog(program, info, NULL, &buffer[0]);
+    printf("%s\n", buffer);
+  };
+
+  glDetachShader(program, vid);
+  glDetachShader(program, fid);
+
+  glDeleteShader(vid);
+  glDeleteShader(fid);
+
+  glGenBuffers(1, &vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   glutDisplayFunc(onDisplay);
   glutMainLoop();
 
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-  glDeleteBuffersARB(1, &vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &vbo);
+  glDeleteVertexArrays(1, &vao);
+  glDeleteProgram(program);
   return 0;
 }
