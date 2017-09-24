@@ -1,6 +1,6 @@
-#define GL_GLEXT_PROTOTYPES
+#define GLEW_STATIC
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <GL/glut.h>
 
 
@@ -32,6 +32,8 @@ int main(int argc, char** argv)
   glutInitDisplayMode(GLUT_SINGLE);
   glutInitWindowSize(320, 240);
   glutCreateWindow("Triangle");
+
+  glewInit();
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 

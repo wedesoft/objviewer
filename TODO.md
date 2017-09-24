@@ -1,7 +1,6 @@
 # TODO
 
-* render simple object using VBO and VAO
-* test shaders
+* test shaders (colors, normals, displacement)
 * free floating object
 * thrusters
 * load Blender model
