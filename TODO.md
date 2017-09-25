@@ -1,9 +1,11 @@
 # TODO
 
-* test shaders (colors, normals, displacement)
+* textures, project on sphere
+* shadows, windows, reflections, cameras, MFDs
+* test shaders (colors, normals, displacement, elevation map)
+* load Blender model
 * free floating object
 * thrusters
-* load Blender model
 * model with multiple moving parts (e.g. gear)
 * collision detection
 * spring damper for ground forces

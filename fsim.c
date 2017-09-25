@@ -61,9 +61,9 @@ void showErrors(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.0f,  0.5f, 1.0f,
-   0.5f, -0.5f, 1.0f,
-  -0.5f, -0.5f, 1.0f
+   0.0f,  0.5f, 0.0f,
+   0.5f, -0.5f, 0.0f,
+  -0.5f, -0.5f, 0.0f
 };
 
 int main(int argc, char** argv)
