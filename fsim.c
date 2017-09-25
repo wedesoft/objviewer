@@ -4,15 +4,15 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
-const char *vertexSource = "#version 130\n\
-in vec3 model;\n\
+const char *vertexSource = "#version 320 es\n\
+in mediump vec3 model;\n\
 void main()\n\
 {\n\
   gl_Position = vec4(model, 1);\n\
 }";
 
-const char *fragmentSource = "#version 130\n\
-out vec3 color;\n\
+const char *fragmentSource = "#version 320 es\n\
+out mediump vec3 color;\n\
 void main()\n\
 {\n\
 	color = vec3(1,0,0);\n\
