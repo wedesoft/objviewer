@@ -6,8 +6,9 @@
 
 const char *vertexSource = "#version 130\n\
 in vec3 model;\n\
-void main(){\n\
-  gl_Position = vec4(model, 1.0);\n\
+void main()\n\
+{\n\
+  gl_Position = vec4(model, 1);\n\
 }";
 
 const char *fragmentSource = "#version 130\n\
