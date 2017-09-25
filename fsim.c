@@ -48,10 +48,10 @@ void onResize(int width, int height)
 void showErrors(const char *step, GLuint context)
 {
   GLint result = GL_FALSE;
-  int infoLength;
+  int infoLength = 0;
   glGetShaderiv(context, GL_COMPILE_STATUS, &result);
   glGetShaderiv(context, GL_INFO_LOG_LENGTH, &infoLength);
-  if (!result) {
+  if (result == GL_FALSE && infoLength > 0) {
     char *buffer = malloc(infoLength);
     glGetShaderInfoLog(context, infoLength, NULL, buffer);
     fprintf(stderr, "%s: %s\n", step, buffer);
