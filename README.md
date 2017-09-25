@@ -4,3 +4,6 @@
 [4]: https://open.gl/content/code/c2_triangle.txt
 [5]: https://threejs.org/examples/
 [6]: https://github.com/mattdesl/lwjgl-basics/wiki/GLSL-Versions
+[7]: http://www.glfw.org/
+[8]: https://godotengine.org/
+[9]: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping/
