@@ -1,5 +1,5 @@
 fsim: fsim.o
-	gcc -o $@ $< -lglut -lGLEW -lGL
+	gcc -o $@ $< -lglut -lGLEW -lGL -lm
 
 .c.o:
 	gcc -c $< -o $@

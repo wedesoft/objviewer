@@ -1,14 +1,16 @@
 #define GLEW_STATIC
 
+#include <math.h>
 #include <stdio.h>
 #include <GL/glew.h>
 #include <GL/glut.h>
 
 const char *vertexSource = "#version 300 es\n\
-in mediump vec3 model;\n\
+in mediump vec3 point;\n\
+uniform mat4 model;\n\
 void main()\n\
 {\n\
-  gl_Position = vec4(model, 1);\n\
+  gl_Position = model * vec4(point, 1);\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
@@ -22,13 +24,21 @@ GLuint vao;
 GLuint vbo;
 GLuint program;
 
+float angle = 0;
+
 
 void onDisplay(void)
 {
+  float matrix[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
   glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
   glUseProgram(program);
+  float sin_angle = sin(angle * M_PI / 180);
+  float cos_angle = cos(angle * M_PI / 180);
+  matrix[0] = cos_angle; matrix[5] = cos_angle;
+  matrix[1] = -sin_angle; matrix[4] = sin_angle;
+  glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, matrix);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
   glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -46,6 +56,21 @@ void onResize(int width, int height)
   glMatrixMode(GL_MODELVIEW);
 }
 
+void onKey(int key, int x, int y)
+{
+  switch (key) {
+  case GLUT_KEY_LEFT:
+    angle -= 1;
+    break;
+  case GLUT_KEY_RIGHT:
+    angle += 1;
+    break;
+  default:
+    return;
+  };
+  glutPostRedisplay();
+}
+
 void showErrors(const char *step, GLuint context)
 {
   GLint result = GL_FALSE;
@@ -61,7 +86,7 @@ void showErrors(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.0f,  0.5f, 0.0f,
+   0.5f,  0.5f, 0.0f,
    0.5f, -0.5f, 0.0f,
   -0.5f, -0.5f, 0.0f
 };
@@ -70,7 +95,7 @@ int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-  glutInitWindowSize(320, 240);
+  glutInitWindowSize(320, 320);
   glutCreateWindow("Triangle");
 
   glewExperimental = 1;
@@ -107,6 +132,7 @@ int main(int argc, char** argv)
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);
+  glutSpecialFunc(onKey);
   glutMainLoop();
 
   glDeleteBuffers(1, &vbo);
