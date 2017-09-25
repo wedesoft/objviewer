@@ -4,16 +4,13 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
-const char *vertexSource = "#version 320 es\n\
-precision highp float;\n\
-in vec3 vertexPosition_modelspace;\n\
-out gl_PerVertex { vec4 gl_Position; };\n\
+const char *vertexSource = "#version 130\n\
+in vec3 model;\n\
 void main(){\n\
-  gl_Position = vec4(vertexPosition_modelspace, 1.0);\n\
+  gl_Position = vec4(model, 1.0);\n\
 }";
 
-const char *fragmentSource = "#version 320 es\n\
-precision highp float;\n\
+const char *fragmentSource = "#version 130\n\
 out vec3 color;\n\
 void main()\n\
 {\n\
@@ -48,16 +45,16 @@ void onResize(int width, int height)
   glMatrixMode(GL_MODELVIEW);
 }
 
-void showErrors(GLuint context)
+void showErrors(const char *step, GLuint context)
 {
   GLint result = GL_FALSE;
   int infoLength;
   glGetShaderiv(context, GL_COMPILE_STATUS, &result);
   glGetShaderiv(context, GL_INFO_LOG_LENGTH, &infoLength);
-  if (infoLength > 0) {
+  if (!result) {
     char *buffer = malloc(infoLength);
     glGetShaderInfoLog(context, infoLength, NULL, buffer);
-    fprintf(stderr, "%s\n", buffer);
+    fprintf(stderr, "%s: %s\n", step, buffer);
     free(buffer);
   };
 }
@@ -84,18 +81,18 @@ int main(int argc, char** argv)
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vertexSource, NULL);
   glCompileShader(vertexShader);
-  showErrors(vertexShader);
+  showErrors("Vertex shader", vertexShader);
 
   GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
   glCompileShader(fragmentShader);
-  showErrors(fragmentShader);
+  showErrors("Fragment shader", fragmentShader);
 
   program = glCreateProgram();
   glAttachShader(program, vertexShader);
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
-  showErrors(program);
+  showErrors("Link stage", program);
 
   glDetachShader(program, vertexShader);
   glDetachShader(program, fragmentShader);
