@@ -29,12 +29,12 @@ float angle = 0;
 
 void rotation(const char *target, float angle)
 {
-  float matrix[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+  float matrix[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
   float sin_angle = sin(angle * M_PI / 180);
   float cos_angle = cos(angle * M_PI / 180);
-  matrix[0] = cos_angle; matrix[5] = cos_angle;
-  matrix[1] = -sin_angle; matrix[4] = sin_angle;
-  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, matrix);
+  matrix[0][0] =  cos_angle; matrix[0][2] = -sin_angle;
+  matrix[2][0] =  sin_angle; matrix[2][2] =  cos_angle;
+  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &matrix[0][0]);
 }
 
 
