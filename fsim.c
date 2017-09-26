@@ -55,11 +55,7 @@ void onDisplay(void)
 
 void onResize(int width, int height)
 {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-  glOrtho(-1, 1, -1, 1, -1, 1);
-  glMatrixMode(GL_MODELVIEW);
 }
 
 void onKey(int key, int x, int y)
