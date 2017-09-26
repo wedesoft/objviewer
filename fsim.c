@@ -8,9 +8,10 @@
 const char *vertexSource = "#version 300 es\n\
 in mediump vec3 point;\n\
 uniform mat4 model;\n\
+uniform mat4 projection;\n\
 void main()\n\
 {\n\
-  gl_Position = model * vec4(point, 1);\n\
+  gl_Position = projection * model * vec4(point, 1);\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
@@ -27,9 +28,20 @@ GLuint program;
 float angle = 0;
 
 
+void projection(const char *target)
+{
+  float d = 1 / tan(90 / 2 * M_PI / 180);
+  float n = 1.5;
+  float f = 2.5;
+  float a = (n + f) / (n - f);
+  float b = 2 * n * f / (n - f);
+  float matrix[4][4] = {{d, 0, 0, 0}, {0, d, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
+  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &matrix[0][0]);
+}
+
 void rotation(const char *target, float angle)
 {
-  float matrix[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+  float matrix[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -2, 1}};
   float sin_angle = sin(angle * M_PI / 180);
   float cos_angle = cos(angle * M_PI / 180);
   matrix[0][0] =  cos_angle; matrix[0][2] = -sin_angle;
@@ -37,13 +49,13 @@ void rotation(const char *target, float angle)
   glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &matrix[0][0]);
 }
 
-
 void onDisplay(void)
 {
   glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
   glUseProgram(program);
+  projection("projection");
   rotation("model", angle);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);

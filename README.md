@@ -8,6 +8,7 @@
 * [Godot Engine][6]
 * [OpenGL shadow mapping][7]
 * [The Book of Shaders][8]
+* [Vertex transformations][9]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -17,3 +18,4 @@
 [6]: https://godotengine.org/
 [7]: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping/
 [8]: https://thebookofshaders.com/
+[9]: https://en.wikibooks.org/wiki/GLSL_Programming/Vertex_Transformations
