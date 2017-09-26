@@ -14,10 +14,10 @@ void main()\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
-out mediump vec3 color;\n\
+out mediump vec3 fragColor;\n\
 void main()\n\
 {\n\
-	color = vec3(1,0,0);\n\
+	fragColor = vec3(1,0,0);\n\
 }";
 
 GLuint vao;
@@ -47,7 +47,7 @@ void onDisplay(void)
   rotation("model", angle);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   glDisableVertexAttribArray(0);
 
   glutSwapBuffers();
@@ -92,9 +92,10 @@ void showErrors(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.5f,  0.5f, 0.0f,
+  -0.5f, -0.5f, 0.0f,
    0.5f, -0.5f, 0.0f,
-  -0.5f, -0.5f, 0.0f
+  -0.5f,  0.5f, 0.0f,
+   0.5f,  0.5f, 0.0f
 };
 
 int main(int argc, char** argv)
