@@ -27,18 +27,24 @@ GLuint program;
 float angle = 0;
 
 
-void onDisplay(void)
+void rotation(const char *target, float angle)
 {
   float matrix[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-  glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  glUseProgram(program);
   float sin_angle = sin(angle * M_PI / 180);
   float cos_angle = cos(angle * M_PI / 180);
   matrix[0] = cos_angle; matrix[5] = cos_angle;
   matrix[1] = -sin_angle; matrix[4] = sin_angle;
-  glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, matrix);
+  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, matrix);
+}
+
+
+void onDisplay(void)
+{
+  glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  glUseProgram(program);
+  rotation("model", angle);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
   glDrawArrays(GL_TRIANGLES, 0, 3);
