@@ -26,13 +26,13 @@ GLuint vbo;
 GLuint program;
 
 float angle = 0;
-
+float distance = 2;
 
 void projection(const char *target)
 {
   float d = 1 / tan(90 / 2 * M_PI / 180);
-  float n = 1.5;
-  float f = 2.5;
+  float n = 0.1;
+  float f = 100;
   float a = (n + f) / (n - f);
   float b = 2 * n * f / (n - f);
   float columns[4][4] = {{d, 0, 0, 0}, {0, d, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
@@ -43,7 +43,7 @@ void rotation(const char *target, float angle)
 {
   float sin_angle = sin(angle * M_PI / 180);
   float cos_angle = cos(angle * M_PI / 180);
-  float columns[4][4] = {{cos_angle, 0, sin_angle, 0}, {0, 1, 0, 0}, {-sin_angle, 0, cos_angle, 0}, {0, 0, -2, 1}};
+  float columns[4][4] = {{cos_angle, 0, sin_angle, 0}, {0, 1, 0, 0}, {-sin_angle, 0, cos_angle, 0}, {0, 0, -distance, 1}};
   glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
 }
 
@@ -72,10 +72,16 @@ void onKey(int key, int x, int y)
 {
   switch (key) {
   case GLUT_KEY_LEFT:
-    angle -= 1;
+    angle -= 5;
     break;
   case GLUT_KEY_RIGHT:
-    angle += 1;
+    angle += 5;
+    break;
+  case GLUT_KEY_UP:
+    distance += 0.1;
+    break;
+  case GLUT_KEY_DOWN:
+    distance -= 0.1;
     break;
   default:
     return;
