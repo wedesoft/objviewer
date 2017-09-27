@@ -35,18 +35,16 @@ void projection(const char *target)
   float f = 2.5;
   float a = (n + f) / (n - f);
   float b = 2 * n * f / (n - f);
-  float matrix[4][4] = {{d, 0, 0, 0}, {0, d, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
-  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &matrix[0][0]);
+  float columns[4][4] = {{d, 0, 0, 0}, {0, d, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
+  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
 }
 
 void rotation(const char *target, float angle)
 {
-  float matrix[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -2, 1}};
   float sin_angle = sin(angle * M_PI / 180);
   float cos_angle = cos(angle * M_PI / 180);
-  matrix[0][0] =  cos_angle; matrix[0][2] = -sin_angle;
-  matrix[2][0] =  sin_angle; matrix[2][2] =  cos_angle;
-  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &matrix[0][0]);
+  float columns[4][4] = {{cos_angle, 0, sin_angle, 0}, {0, 1, 0, 0}, {-sin_angle, 0, cos_angle, 0}, {0, 0, -2, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
 }
 
 void onDisplay(void)
