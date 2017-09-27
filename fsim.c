@@ -133,12 +133,6 @@ int main(int argc, char** argv)
   glLinkProgram(program);
   showErrors("Link stage", program);
 
-  glDetachShader(program, vertexShader);
-  glDetachShader(program, fragmentShader);
-
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
-
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -148,8 +142,16 @@ int main(int argc, char** argv)
   glutSpecialFunc(onKey);
   glutMainLoop();
 
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &vbo);
+
+  glBindVertexArray(0);
   glDeleteVertexArrays(1, &vao);
+
+  glDetachShader(program, vertexShader);
+  glDetachShader(program, fragmentShader);
   glDeleteProgram(program);
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
   return 0;
 }
