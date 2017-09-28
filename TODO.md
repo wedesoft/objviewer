@@ -1,7 +1,7 @@
 # TODO
 
-* textures
 * index buffers
+* tests using frame buffer
 * project on sphere
 * good tessellation for planet spheres
 * shadows, windows, reflections, cameras, MFDs

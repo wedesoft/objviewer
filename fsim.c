@@ -14,7 +14,7 @@ out mediump vec2 UV;\n\
 void main()\n\
 {\n\
   gl_Position = projection * model * vec4(point, 0, 1);\n\
-  UV = point;\n\
+  UV = texcoord;\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
@@ -61,9 +61,7 @@ void onDisplay(void)
   glUseProgram(program);
   projection("projection");
   rotation("model", angle);
-  glEnableVertexAttribArray(0);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-  glDisableVertexAttribArray(0);
 
   glutSwapBuffers();
 }
@@ -117,10 +115,10 @@ void printCompileStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.0f, 1.0f, 0.0f, 1.0f,
-   1.0f, 1.0f, 1.0f, 1.0f,
-  -0.0f, 0.0f, 0.0f, 0.0f,
-   1.0f, 0.0f, 1.0f, 0.0f
+  -0.5f,  0.5f, 0.0f, 8.0f,
+   0.5f,  0.5f, 8.0f, 8.0f,
+  -0.5f, -0.5f, 0.0f, 0.0f,
+   0.5f, -0.5f, 8.0f, 0.0f
 };
 
 int main(int argc, char** argv)
@@ -155,6 +153,8 @@ int main(int argc, char** argv)
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
 
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
   glVertexAttribPointer(glGetAttribLocation(program, "point"), 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
   glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
 
@@ -168,13 +168,16 @@ int main(int argc, char** argv)
   };
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);
   glutSpecialFunc(onKey);
   glutMainLoop();
+
+  glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(0);
 
   glBindTexture(GL_TEXTURE_2D, 0);
   glDeleteTextures(1, &tex);
