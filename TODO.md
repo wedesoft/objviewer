@@ -1,6 +1,8 @@
 # TODO
 
-* textures, project on sphere
+* textures
+* index buffers
+* project on sphere
 * good tessellation for planet spheres
 * shadows, windows, reflections, cameras, MFDs
 * test shaders (colors, normals, displacement, elevation map)
