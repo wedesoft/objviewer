@@ -6,15 +6,15 @@
 #include <GL/glut.h>
 
 const char *vertexSource = "#version 300 es\n\
-layout(location = 0) in mediump vec3 point;\n\
+layout(location = 0) in mediump vec2 point;\n\
 layout(location = 1) in mediump vec2 texcoord;\n\
 uniform mat4 model;\n\
 uniform mat4 projection;\n\
 out mediump vec2 UV;\n\
 void main()\n\
 {\n\
-  gl_Position = projection * model * vec4(point, 1);\n\
-  UV = texcoord;\n\
+  gl_Position = projection * model * vec4(point, 0, 1);\n\
+  UV = point;\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
@@ -117,10 +117,10 @@ void printCompileStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-  -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-   0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-  -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,
-   0.5f,  0.5f, 0.0f, 1.0f, 0.0f
+   0.0f, 1.0f, 0.0f, 1.0f,
+   1.0f, 1.0f, 1.0f, 1.0f,
+  -0.0f, 0.0f, 0.0f, 0.0f,
+   1.0f, 0.0f, 1.0f, 0.0f
 };
 
 int main(int argc, char** argv)
@@ -155,21 +155,21 @@ int main(int argc, char** argv)
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
 
-  glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
-  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+  glVertexAttribPointer(glGetAttribLocation(program, "point"), 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
 
   glGenTextures(1, &tex);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex);
   glUniform1i(glGetUniformLocation(program, "tex"), 0);
   float pixels[] = {
-    0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
+    0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
   };
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);
