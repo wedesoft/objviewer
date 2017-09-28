@@ -9,6 +9,7 @@
 * [OpenGL shadow mapping][7]
 * [The Book of Shaders][8]
 * [Vertex transformations][9]
+* [Tiny obj loader][10] (also see [C version][11])
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -19,3 +20,5 @@
 [7]: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping/
 [8]: https://thebookofshaders.com/
 [9]: https://en.wikibooks.org/wiki/GLSL_Programming/Vertex_Transformations
+[10]: https://syoyo.github.io/tinyobjloader/
+[11]: https://github.com/syoyo/tinyobjloader-c
