@@ -1,9 +1,11 @@
 # TODO
 
 * index buffers
+* culling
 * tests using frame buffer
 * project on sphere
 * good tessellation for planet spheres
+* create windows using blending
 * shadows, windows, reflections, cameras, MFDs
 * test shaders (colors, normals, displacement, elevation map)
 * load Blender model

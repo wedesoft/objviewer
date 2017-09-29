@@ -124,7 +124,7 @@ GLfloat vertices[] = {
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
   glutInitWindowSize(320, 320);
   glutCreateWindow("Square");
 
@@ -132,6 +132,7 @@ int main(int argc, char** argv)
   glewInit();
 
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_MULTISAMPLE);
 
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
