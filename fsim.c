@@ -6,14 +6,14 @@
 #include <GL/glut.h>
 
 const char *vertexSource = "#version 300 es\n\
-layout(location = 0) in mediump vec2 point;\n\
+layout(location = 0) in mediump vec3 point;\n\
 layout(location = 1) in mediump vec2 texcoord;\n\
 uniform mat4 model;\n\
 uniform mat4 projection;\n\
 out mediump vec2 UV;\n\
 void main()\n\
 {\n\
-  gl_Position = projection * model * vec4(point, 0, 1);\n\
+  gl_Position = projection * model * vec4(point, 1);\n\
   UV = texcoord;\n\
 }";
 
@@ -56,7 +56,7 @@ void rotation(const char *target, float angle)
 void onDisplay(void)
 {
   glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glUseProgram(program);
   projection("projection");
@@ -115,21 +115,23 @@ void printCompileStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-  -0.5f,  0.5f,  0.0f, 16.0f,
-   0.5f,  0.5f, 16.0f, 16.0f,
-  -0.5f, -0.5f,  0.0f,  0.0f,
-   0.5f, -0.5f, 16.0f,  0.0f
+  -0.5f,  0.5f, 0.5f,  0.0f, 16.0f,
+   0.5f,  0.5f, 0.0f, 16.0f, 16.0f,
+  -0.5f, -0.5f, 0.0f,  0.0f,  0.0f,
+   0.5f, -0.5f, 0.5f, 16.0f,  0.0f
 };
 
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(320, 320);
   glutCreateWindow("Square");
 
   glewExperimental = 1;
   glewInit();
+
+  glEnable(GL_DEPTH_TEST);
 
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -155,8 +157,8 @@ int main(int argc, char** argv)
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(glGetAttribLocation(program, "point"), 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
-  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+  glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
 
   glGenTextures(1, &tex);
   glActiveTexture(GL_TEXTURE0);
