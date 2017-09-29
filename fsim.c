@@ -64,7 +64,7 @@ void onDisplay(void)
   glUseProgram(program);
   projection("projection");
   rotation("model", yaw);
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
   glutSwapBuffers();
 }
@@ -119,10 +119,12 @@ void printCompileStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-  -0.5f,  0.5f, 0.0f,  0.0f, 16.0f,
-   0.5f,  0.5f, 0.5f, 16.0f, 16.0f,
-  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,
-   0.5f, -0.5f, 0.0f, 16.0f,  0.0f
+  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,
+   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,
+  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,
+   0.5f, -0.5f, -0.5f, 16.0f,  0.0f,
+  -0.5f,  0.5f, -0.5f, 16.0f, 16.0f,
+   0.5f,  0.5f,  0.5f, 32.0f, 16.0f
 };
 
 int main(int argc, char** argv)
@@ -130,15 +132,16 @@ int main(int argc, char** argv)
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
   glutInitWindowSize(width, height);
-  glutCreateWindow("Square");
+  glutCreateWindow("tetraeder");
 
   glewExperimental = 1;
   glewInit();
 
-  //glEnable(GL_CULL_FACE);
-  //glCullFace(GL_FRONT);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_MULTISAMPLE);
+
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
 
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
