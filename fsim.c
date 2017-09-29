@@ -115,10 +115,10 @@ void printCompileStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-  -0.5f,  0.5f, 0.5f,  0.0f, 16.0f,
-   0.5f,  0.5f, 0.0f, 16.0f, 16.0f,
-  -0.5f, -0.5f, 0.0f,  0.0f,  0.0f,
-   0.5f, -0.5f, 0.5f, 16.0f,  0.0f
+  -0.5f,  0.5f, 0.0f,  0.0f, 16.0f,
+   0.5f,  0.5f, 0.5f, 16.0f, 16.0f,
+  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,
+   0.5f, -0.5f, 0.0f, 16.0f,  0.0f
 };
 
 int main(int argc, char** argv)
@@ -131,6 +131,8 @@ int main(int argc, char** argv)
   glewExperimental = 1;
   glewInit();
 
+  //glEnable(GL_CULL_FACE);
+  //glCullFace(GL_FRONT);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_MULTISAMPLE);
 
