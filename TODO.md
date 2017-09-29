@@ -1,9 +1,11 @@
 # TODO
 
 * index buffers
+* texture loading
 * culling
 * tests using frame buffer
 * project on sphere
+* view matrix, model matrix stack, light position
 * good tessellation for planet spheres
 * create windows using blending
 * shadows, windows, reflections, cameras, MFDs
