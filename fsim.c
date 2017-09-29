@@ -30,26 +30,29 @@ GLuint vao;
 GLuint vbo;
 GLuint program;
 GLuint tex;
+int width = 320;
+int height = 240;
 
-float angle = 0;
+float yaw = 0;
 float distance = 2;
 
 void projection(const char *target)
 {
   float d = 1 / tan(90 / 2 * M_PI / 180);
+  float d2 = d * width / height;
   float n = 0.1;
   float f = 100;
   float a = (n + f) / (n - f);
   float b = 2 * n * f / (n - f);
-  float columns[4][4] = {{d, 0, 0, 0}, {0, d, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
+  float columns[4][4] = {{d, 0, 0, 0}, {0, d2, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
   glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
 }
 
-void rotation(const char *target, float angle)
+void rotation(const char *target, float yaw)
 {
-  float sin_angle = sin(angle * M_PI / 180);
-  float cos_angle = cos(angle * M_PI / 180);
-  float columns[4][4] = {{cos_angle, 0, sin_angle, 0}, {0, 1, 0, 0}, {-sin_angle, 0, cos_angle, 0}, {0, 0, -distance, 1}};
+  float sin_yaw = sin(yaw * M_PI / 180);
+  float cos_yaw = cos(yaw * M_PI / 180);
+  float columns[4][4] = {{cos_yaw, 0, sin_yaw, 0}, {0, 1, 0, 0}, {-sin_yaw, 0, cos_yaw, 0}, {0, 0, -distance, 1}};
   glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
 }
 
@@ -60,25 +63,26 @@ void onDisplay(void)
 
   glUseProgram(program);
   projection("projection");
-  rotation("model", angle);
+  rotation("model", yaw);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glutSwapBuffers();
 }
 
-void onResize(int width, int height)
+void onResize(int w, int h)
 {
-  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  width = w; height = h;
+  glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 }
 
 void onKey(int key, int x, int y)
 {
   switch (key) {
   case GLUT_KEY_LEFT:
-    angle -= 5;
+    yaw -= 5;
     break;
   case GLUT_KEY_RIGHT:
-    angle += 5;
+    yaw += 5;
     break;
   case GLUT_KEY_UP:
     distance += 0.1;
@@ -125,7 +129,7 @@ int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
-  glutInitWindowSize(320, 320);
+  glutInitWindowSize(width, height);
   glutCreateWindow("Square");
 
   glewExperimental = 1;
