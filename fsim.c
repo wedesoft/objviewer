@@ -28,6 +28,7 @@ void main()\n\
 
 GLuint vao;
 GLuint vbo;
+GLuint idx;
 GLuint program;
 GLuint tex;
 int width = 320;
@@ -64,7 +65,7 @@ void onDisplay(void)
   glUseProgram(program);
   projection("projection");
   rotation("model", yaw);
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+  glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0);
 
   glutSwapBuffers();
 }
@@ -123,8 +124,13 @@ GLfloat vertices[] = {
   -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,
   -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,
    0.5f, -0.5f, -0.5f, 16.0f,  0.0f,
-   0.5f,  0.5f,  0.5f, 32.0f, 16.0f,
-  -0.5f,  0.5f, -0.5f, 16.0f, 16.0f,
+};
+
+unsigned int indices[] = {
+  0, 1, 2,
+  2, 1, 3,
+  2, 3, 0,
+  0, 3, 1
 };
 
 int main(int argc, char** argv)
@@ -149,6 +155,10 @@ int main(int argc, char** argv)
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  glGenBuffers(1, &idx);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -194,6 +204,9 @@ int main(int argc, char** argv)
 
   glBindTexture(GL_TEXTURE_2D, 0);
   glDeleteTextures(1, &tex);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &idx);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &vbo);

@@ -1,12 +1,12 @@
 # TODO
 
-* index buffers
 * texture loading
-* culling
 * tests using frame buffer
 * project on sphere
 * view matrix, model matrix stack, light position
 * good tessellation for planet spheres
+* collision detection
+* multiple rigid or flexible objects
 * create windows using blending
 * shadows, windows, reflections, cameras, MFDs
 * test shaders (colors, normals, displacement, elevation map)
@@ -14,7 +14,6 @@
 * free floating object
 * thrusters
 * model with multiple moving parts (e.g. gear)
-* collision detection
 * spring damper for ground forces
 * proper lift/drag ratio for high Reynolds numbers
 * 3d cockpit with good projections
