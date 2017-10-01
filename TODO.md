@@ -1,7 +1,8 @@
 # TODO
 
+* lighting
 * texture loading
-* tests using frame buffer
+* tests using glReadPixels or frame buffer
 * project on sphere
 * view matrix, model matrix stack, light position
 * good tessellation for planet spheres

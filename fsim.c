@@ -120,10 +120,10 @@ void printCompileStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,
-  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,
-  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,
-   0.5f, -0.5f, -0.5f, 16.0f,  0.0f,
+   0.5f,  0.5f,  0.5f, 8.0f, 8.0f,
+  -0.5f,  0.5f, -0.5f, 0.0f, 8.0f,
+  -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+   0.5f, -0.5f, -0.5f, 8.0f, 0.0f
 };
 
 unsigned int indices[] = {
@@ -191,7 +191,7 @@ int main(int argc, char** argv)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glGenerateMipmap(GL_TEXTURE_2D);
 
   glutDisplayFunc(onDisplay);
