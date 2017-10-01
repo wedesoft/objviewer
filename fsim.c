@@ -80,16 +80,16 @@ void onKey(int key, int x, int y)
 {
   switch (key) {
   case GLUT_KEY_LEFT:
-    yaw -= 5;
+    yaw -= 2;
     break;
   case GLUT_KEY_RIGHT:
-    yaw += 5;
+    yaw += 2;
     break;
   case GLUT_KEY_UP:
-    distance += 0.1;
+    distance += 0.05;
     break;
   case GLUT_KEY_DOWN:
-    distance -= 0.1;
+    distance -= 0.05;
     break;
   default:
     return;
@@ -120,10 +120,10 @@ void printCompileStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 8.0f, 8.0f,
-  -0.5f,  0.5f, -0.5f, 0.0f, 8.0f,
-  -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-   0.5f, -0.5f, -0.5f, 8.0f, 0.0f
+   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,
+  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,
+  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,
+   0.5f, -0.5f, -0.5f, 16.0f,  0.0f
 };
 
 unsigned int indices[] = {
@@ -191,7 +191,12 @@ int main(int argc, char** argv)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
+    GLfloat max_anisotropy;
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
+  };
   glGenerateMipmap(GL_TEXTURE_2D);
 
   glutDisplayFunc(onDisplay);
