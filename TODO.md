@@ -1,6 +1,6 @@
 # TODO
 
-* lighting
+* shader, lighting
 * texture loading
 * tests using glReadPixels or frame buffer
 * project on sphere
