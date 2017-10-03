@@ -1,6 +1,6 @@
 # TODO
 
-* shader, lighting
+* shader, lighting (flat input vector)
 * load Blender model
 * texture loading
 * tests using glReadPixels or frame buffer

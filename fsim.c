@@ -8,22 +8,28 @@
 const char *vertexSource = "#version 300 es\n\
 layout(location = 0) in mediump vec3 point;\n\
 layout(location = 1) in mediump vec2 texcoord;\n\
+layout(location = 2) in mediump vec3 normal;\n\
 uniform mat4 model;\n\
 uniform mat4 projection;\n\
 out mediump vec2 UV;\n\
+flat out mediump vec3 eyeNormal;\n\
 void main()\n\
 {\n\
   gl_Position = projection * model * vec4(point, 1);\n\
   UV = texcoord;\n\
+  eyeNormal = (model * vec4(normal, 0)).xyz;\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
 in mediump vec2 UV;\n\
+flat in mediump vec3 eyeNormal;\n\
 out mediump vec3 fragColor;\n\
 uniform sampler2D tex;\n\
 void main()\n\
 {\n\
-	fragColor = texture(tex, UV).rgb;\n\
+  mediump vec3 light = normalize(vec3(3.0, -1.0, -4));\n\
+  mediump float diffuse = max(0.0, dot(eyeNormal, light));\n\
+  fragColor = texture(tex, UV).rgb * (0.1 + 0.9 * diffuse);\n\
 }";
 
 GLuint vao;
@@ -59,7 +65,7 @@ void rotation(const char *target, float yaw)
 
 void onDisplay(void)
 {
-  glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+  glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glUseProgram(program);
@@ -130,18 +136,21 @@ void printLinkStatus(const char *step, GLuint context)
   printStatus(step, context, GL_LINK_STATUS);
 }
 
+GLfloat na = 1.0f / 3.0f;
+GLfloat nb = 2.0f / 3.0f;
+
 GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,
-  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,
-  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,
-   0.5f, -0.5f, -0.5f, 16.0f,  0.0f
+   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,  0.57735027f, -0.57735027f, -0.57735027f,
+  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,  0.57735027f,  0.57735027f,  0.57735027f,
+  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, -0.57735027f,  0.57735027f, -0.57735027f,
+   0.5f, -0.5f, -0.5f, 16.0f,  0.0f, -0.57735027f, -0.57735027f,  0.57735027f
 };
 
 unsigned int indices[] = {
-  0, 1, 2,
-  2, 1, 3,
-  2, 3, 0,
-  0, 3, 1
+  1, 2, 0,
+  3, 2, 1,
+  3, 0, 2,
+  1, 0, 3
 };
 
 int main(int argc, char** argv)
@@ -189,8 +198,10 @@ int main(int argc, char** argv)
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
-  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+  glVertexAttribPointer(glGetAttribLocation(program, "normal"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
 
   glGenTextures(1, &tex);
   glActiveTexture(GL_TEXTURE0);
@@ -216,6 +227,7 @@ int main(int argc, char** argv)
   glutSpecialFunc(onKey);
   glutMainLoop();
 
+  glDisableVertexAttribArray(2);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(0);
 
