@@ -105,18 +105,29 @@ void printError(const char *context)
   };
 }
 
-void printCompileStatus(const char *step, GLuint context)
+void printStatus(const char *step, GLuint context, GLuint status)
 {
   GLint result = GL_FALSE;
-  int infoLength = 0;
-  glGetShaderiv(context, GL_COMPILE_STATUS, &result);
-  glGetShaderiv(context, GL_INFO_LOG_LENGTH, &infoLength);
-  if (result == GL_FALSE && infoLength > 0) {
-    char *buffer = malloc(infoLength);
-    glGetShaderInfoLog(context, infoLength, NULL, buffer);
-    fprintf(stderr, "%s: %s\n", step, buffer);
-    free(buffer);
+  glGetShaderiv(context, status, &result);
+  if (result == GL_FALSE) {
+    char buffer[1024];
+    if (status == GL_COMPILE_STATUS)
+      glGetShaderInfoLog(context, 1024, NULL, buffer);
+    else
+      glGetProgramInfoLog(context, 1024, NULL, buffer);
+    if (buffer[0])
+      fprintf(stderr, "%s: %s\n", step, buffer);
   };
+}
+
+void printCompileStatus(const char *step, GLuint context)
+{
+  printStatus(step, context, GL_COMPILE_STATUS);
+}
+
+void printLinkStatus(const char *step, GLuint context)
+{
+  printStatus(step, context, GL_LINK_STATUS);
 }
 
 GLfloat vertices[] = {
@@ -174,6 +185,7 @@ int main(int argc, char** argv)
   glAttachShader(program, vertexShader);
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
+  printLinkStatus("Shader program", program);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);

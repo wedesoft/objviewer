@@ -1,6 +1,7 @@
 # TODO
 
 * shader, lighting
+* load Blender model
 * texture loading
 * tests using glReadPixels or frame buffer
 * project on sphere
@@ -11,7 +12,6 @@
 * create windows using blending
 * shadows, windows, reflections, cameras, MFDs
 * test shaders (colors, normals, displacement, elevation map)
-* load Blender model
 * free floating object
 * thrusters
 * model with multiple moving parts (e.g. gear)
