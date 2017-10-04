@@ -15,24 +15,28 @@ uniform mat4 translation;\n\
 uniform mat4 projection;\n\
 out mediump vec2 UV;\n\
 flat out mediump vec3 normal;\n\
+out mediump vec3 direction;\n\
 void main()\n\
 {\n\
   mat4 model = translation * yaw * pitch;\n\
   gl_Position = projection * model * vec4(point, 1);\n\
+  direction = (model * vec4(point, 1)).xyz;\n\
   UV = texcoord;\n\
-  normal = (model * vec4(normalize(vector), 0)).xyz;\n\
+  normal = (model * vec4(vector, 0)).xyz;\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
 in mediump vec2 UV;\n\
 flat in mediump vec3 normal;\n\
+in mediump vec3 direction;\n\
 out mediump vec3 fragColor;\n\
 uniform sampler2D tex;\n\
 void main()\n\
 {\n\
   mediump vec3 light = normalize(vec3(2.0, 4.0, 3.0));\n\
   mediump float diffuse = max(0.0, dot(normal, light));\n\
-  fragColor = texture(tex, UV).rgb * (0.1 + 0.9 * diffuse);\n\
+  mediump float specular = pow(max(0.0, dot(normalize(direction), normalize(reflect(light, normal)))), 32.0);\n\
+  fragColor = texture(tex, UV).rgb * (0.1 + 0.4 * diffuse + 0.5 * specular);\n\
 }";
 
 GLuint vao;
@@ -158,10 +162,10 @@ void printLinkStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 16.0f, 16.0f, -1.0f,  1.0f,  1.0f,
-  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f, -1.0f, -1.0f, -1.0f,
-  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, -1.0f,  1.0f,
-   0.5f, -0.5f, -0.5f, 16.0f,  0.0f,  1.0f,  1.0f, -1.0f
+   0.5f,  0.5f,  0.5f, 16.0f, 16.0f, -0.577350269f,  0.577350269f,  0.577350269f,
+  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f, -0.577350269f, -0.577350269f, -0.577350269f,
+  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  0.577350269f, -0.577350269f,  0.577350269f,
+   0.5f, -0.5f, -0.5f, 16.0f,  0.0f,  0.577350269f,  0.577350269f, -0.577350269f
 };
 
 unsigned int indices[] = {
