@@ -113,6 +113,11 @@ void onKey(int key, int x, int y)
   case GLUT_KEY_PAGE_DOWN:
     distance -= 0.05;
     break;
+  case GLUT_KEY_HOME:
+    yaw = 0;
+    pitch = 0;
+    distance = 2;
+    break;
   default:
     return;
   };
@@ -151,9 +156,6 @@ void printLinkStatus(const char *step, GLuint context)
 {
   printStatus(step, context, GL_LINK_STATUS);
 }
-
-GLfloat na = 1.0f / 3.0f;
-GLfloat nb = 2.0f / 3.0f;
 
 GLfloat vertices[] = {
    0.5f,  0.5f,  0.5f, 16.0f, 16.0f,  1.0f, -1.0f, -1.0f,
