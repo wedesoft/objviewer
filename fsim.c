@@ -40,8 +40,8 @@ GLuint vbo;
 GLuint idx;
 GLuint program;
 GLuint tex;
-int width = 320;
-int height = 240;
+int width = 640;
+int height = 480;
 
 float yaw = 0;
 float pitch = 0;
