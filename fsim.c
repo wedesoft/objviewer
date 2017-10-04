@@ -35,8 +35,8 @@ void main()\n\
 {\n\
   mediump vec3 light = normalize(vec3(2.0, 4.0, 3.0));\n\
   mediump float diffuse = max(0.0, dot(normal, light));\n\
-  mediump float specular = pow(max(0.0, dot(normalize(direction), reflect(light, normal))), 32.0);\n\
-  fragColor = texture(tex, UV).rgb * (0.1 + 0.2 * diffuse + 0.7 * specular);\n\
+  mediump float specular = pow(max(0.0, dot(normalize(direction), reflect(light, normal))), 128.0);\n\
+  fragColor = texture(tex, UV).rgb * (0.1 + 0.4 * diffuse + 0.6 * specular);\n\
 }";
 
 GLuint vao;
