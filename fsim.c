@@ -43,7 +43,7 @@ void main()\n\
   if (specular != 0.0) {\n\
     specular = pow(specular, 128.0);\n\
   }\n\
-  fragColor = texture(tex, UV).rgb * (0.1 + 0.4 * diffuse + 0.6 * specular);\n\
+  fragColor = texture(tex, UV).rgb * (0.1 + 0.4 * diffuse) + 0.6 * specular;\n\
 }";
 
 GLuint vao;
