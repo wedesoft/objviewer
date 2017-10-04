@@ -30,7 +30,7 @@ out mediump vec3 fragColor;\n\
 uniform sampler2D tex;\n\
 void main()\n\
 {\n\
-  mediump vec3 light = normalize(vec3(-2.0, -4.0, -3));\n\
+  mediump vec3 light = normalize(vec3(2.0, 4.0, 3.0));\n\
   mediump float diffuse = max(0.0, dot(normal, light));\n\
   fragColor = texture(tex, UV).rgb * (0.1 + 0.9 * diffuse);\n\
 }";
@@ -158,10 +158,10 @@ void printLinkStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,  1.0f, -1.0f, -1.0f,
-  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,  1.0f,  1.0f,  1.0f,
-  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, -1.0f,  1.0f, -1.0f,
-   0.5f, -0.5f, -0.5f, 16.0f,  0.0f, -1.0f, -1.0f,  1.0f
+   0.5f,  0.5f,  0.5f, 16.0f, 16.0f, -1.0f,  1.0f,  1.0f,
+  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f, -1.0f, -1.0f, -1.0f,
+  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, -1.0f,  1.0f,
+   0.5f, -0.5f, -0.5f, 16.0f,  0.0f,  1.0f,  1.0f, -1.0f
 };
 
 unsigned int indices[] = {
@@ -219,7 +219,7 @@ int main(int argc, char** argv)
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-  glVertexAttribPointer(glGetAttribLocation(program, "vector"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
+  glVertexAttribPointer(glGetAttribLocation(program, "vector"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
 
   glGenTextures(1, &tex);
   glActiveTexture(GL_TEXTURE0);
