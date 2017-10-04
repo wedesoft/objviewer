@@ -20,7 +20,7 @@ void main()\n\
   mat4 model = translation * yaw * pitch;\n\
   gl_Position = projection * model * vec4(point, 1);\n\
   UV = texcoord;\n\
-  eyeNormal = (model * vec4(normal, 0)).xyz;\n\
+  eyeNormal = (model * vec4(normalize(normal), 0)).xyz;\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
@@ -156,10 +156,10 @@ GLfloat na = 1.0f / 3.0f;
 GLfloat nb = 2.0f / 3.0f;
 
 GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,  0.57735027f, -0.57735027f, -0.57735027f,
-  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,  0.57735027f,  0.57735027f,  0.57735027f,
-  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, -0.57735027f,  0.57735027f, -0.57735027f,
-   0.5f, -0.5f, -0.5f, 16.0f,  0.0f, -0.57735027f, -0.57735027f,  0.57735027f
+   0.5f,  0.5f,  0.5f, 16.0f, 16.0f,  1.0f, -1.0f, -1.0f,
+  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f,  1.0f,  1.0f,  1.0f,
+  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, -1.0f,  1.0f, -1.0f,
+   0.5f, -0.5f, -0.5f, 16.0f,  0.0f, -1.0f, -1.0f,  1.0f
 };
 
 unsigned int indices[] = {
