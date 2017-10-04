@@ -9,12 +9,15 @@ const char *vertexSource = "#version 300 es\n\
 layout(location = 0) in mediump vec3 point;\n\
 layout(location = 1) in mediump vec2 texcoord;\n\
 layout(location = 2) in mediump vec3 normal;\n\
-uniform mat4 model;\n\
+uniform mat4 yaw;\n\
+uniform mat4 pitch;\n\
+uniform mat4 translation;\n\
 uniform mat4 projection;\n\
 out mediump vec2 UV;\n\
 flat out mediump vec3 eyeNormal;\n\
 void main()\n\
 {\n\
+  mat4 model = translation * yaw * pitch;\n\
   gl_Position = projection * model * vec4(point, 1);\n\
   UV = texcoord;\n\
   eyeNormal = (model * vec4(normal, 0)).xyz;\n\
@@ -41,6 +44,7 @@ int width = 320;
 int height = 240;
 
 float yaw = 0;
+float pitch = 0;
 float distance = 2;
 
 void projection(const char *target)
@@ -55,12 +59,18 @@ void projection(const char *target)
   glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
 }
 
-void rotation(const char *target, float yaw)
+void transform(float yaw, float pitch, float distance)
 {
   float sin_yaw = sin(yaw * M_PI / 180);
   float cos_yaw = cos(yaw * M_PI / 180);
-  float columns[4][4] = {{cos_yaw, 0, sin_yaw, 0}, {0, 1, 0, 0}, {-sin_yaw, 0, cos_yaw, 0}, {0, 0, -distance, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
+  float yawColumns[4][4] = {{cos_yaw, 0, sin_yaw, 0}, {0, 1, 0, 0}, {-sin_yaw, 0, cos_yaw, 0}, {0, 0, 0, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program, "yaw"), 1, GL_FALSE, &yawColumns[0][0]);
+  float sin_pitch = sin(pitch * M_PI / 180);
+  float cos_pitch = cos(pitch * M_PI / 180);
+  float pitchColumns[4][4] = {{1, 0, 0, 0}, {0, cos_pitch, -sin_pitch, 0}, {0, sin_pitch, cos_pitch, 0}, {0, 0, 0, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program, "pitch"), 1, GL_FALSE, &pitchColumns[0][0]);
+  float translationColumns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -distance, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program, "translation"), 1, GL_FALSE, &translationColumns[0][0]);
 }
 
 void onDisplay(void)
@@ -70,7 +80,7 @@ void onDisplay(void)
 
   glUseProgram(program);
   projection("projection");
-  rotation("model", yaw);
+  transform(yaw, pitch, distance);
   glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0);
 
   glutSwapBuffers();
@@ -92,9 +102,15 @@ void onKey(int key, int x, int y)
     yaw += 2;
     break;
   case GLUT_KEY_UP:
-    distance += 0.05;
+    pitch -= 2;
     break;
   case GLUT_KEY_DOWN:
+    pitch += 2;
+    break;
+  case GLUT_KEY_PAGE_UP:
+    distance += 0.05;
+    break;
+  case GLUT_KEY_PAGE_DOWN:
     distance -= 0.05;
     break;
   default:
