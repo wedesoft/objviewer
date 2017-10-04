@@ -8,30 +8,30 @@
 const char *vertexSource = "#version 300 es\n\
 layout(location = 0) in mediump vec3 point;\n\
 layout(location = 1) in mediump vec2 texcoord;\n\
-layout(location = 2) in mediump vec3 normal;\n\
+layout(location = 2) in mediump vec3 vector;\n\
 uniform mat4 yaw;\n\
 uniform mat4 pitch;\n\
 uniform mat4 translation;\n\
 uniform mat4 projection;\n\
 out mediump vec2 UV;\n\
-flat out mediump vec3 eyeNormal;\n\
+flat out mediump vec3 normal;\n\
 void main()\n\
 {\n\
   mat4 model = translation * yaw * pitch;\n\
   gl_Position = projection * model * vec4(point, 1);\n\
   UV = texcoord;\n\
-  eyeNormal = (model * vec4(normalize(normal), 0)).xyz;\n\
+  normal = (model * vec4(normalize(vector), 0)).xyz;\n\
 }";
 
 const char *fragmentSource = "#version 300 es\n\
 in mediump vec2 UV;\n\
-flat in mediump vec3 eyeNormal;\n\
+flat in mediump vec3 normal;\n\
 out mediump vec3 fragColor;\n\
 uniform sampler2D tex;\n\
 void main()\n\
 {\n\
-  mediump vec3 light = normalize(vec3(3.0, -1.0, -4));\n\
-  mediump float diffuse = max(0.0, dot(eyeNormal, light));\n\
+  mediump vec3 light = normalize(vec3(-2.0, -4.0, -3));\n\
+  mediump float diffuse = max(0.0, dot(normal, light));\n\
   fragColor = texture(tex, UV).rgb * (0.1 + 0.9 * diffuse);\n\
 }";
 
@@ -219,7 +219,7 @@ int main(int argc, char** argv)
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-  glVertexAttribPointer(glGetAttribLocation(program, "normal"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
+  glVertexAttribPointer(glGetAttribLocation(program, "vector"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
 
   glGenTextures(1, &tex);
   glActiveTexture(GL_TEXTURE0);

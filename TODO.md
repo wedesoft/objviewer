@@ -1,6 +1,7 @@
 # TODO
 
-* shader, lighting (flat input vector)
+* specular reflection
+* point light sources
 * load Blender model
 * texture loading
 * tests using glReadPixels or frame buffer
