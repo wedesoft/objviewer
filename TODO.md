@@ -1,10 +1,13 @@
 # TODO
 
 * tests using glReadPixels or frame buffer
+* skybox for nebulas
+* point sprites for stars, atmospheric flicker using sprite arrays
 * shadows, windows, reflections, cameras, MFDs
 * point light sources
 * load Blender model
 * cloud erosion
+* HDR, toon shading (1D element-wise lookup)
 * texture loading
 * project on sphere
 * view matrix, model matrix stack, light position
