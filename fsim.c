@@ -13,6 +13,7 @@ uniform mat4 yaw;\n\
 uniform mat4 pitch;\n\
 uniform mat4 translation;\n\
 uniform mat4 projection;\n\
+uniform vec3 ray;\n\
 out mediump vec2 UV;\n\
 flat out mediump vec3 normal;\n\
 flat out mediump vec3 light;\n\
@@ -25,7 +26,7 @@ void main()\n\
   direction = (model * vec4(point, 1)).xyz;\n\
   UV = texcoord;\n\
   normal = (model * vec4(vector, 0)).xyz;\n\
-  light = normalize(vec3(2.0, 4.0, 3.0));\n\
+  light = ray;\n\
   diffuse = max(0.0, dot(normal, light));\n\
 }";
 
@@ -84,6 +85,11 @@ void transform(float yaw, float pitch, float distance)
   glUniformMatrix4fv(glGetUniformLocation(program, "translation"), 1, GL_FALSE, &translationColumns[0][0]);
 }
 
+void light() {
+  float vector[] = {0.37139068f,  0.74278135f,  0.55708601f};
+  glUniform3fv(glGetUniformLocation(program, "ray"), 1, &vector[0]);
+}
+
 void onDisplay(void)
 {
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
@@ -92,6 +98,7 @@ void onDisplay(void)
   glUseProgram(program);
   projection("projection");
   transform(yaw, pitch, distance);
+  light();
   glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0);
 
   glutSwapBuffers();

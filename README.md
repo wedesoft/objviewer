@@ -12,6 +12,7 @@
 * [Tiny obj loader][10] (also see [C version][11])
 * [Vertex buffer indexing][12]
 * [Reaction Engines Scramjet][13]
+* [Star Citizen demo video][14]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -26,3 +27,4 @@
 [11]: https://github.com/syoyo/tinyobjloader-c
 [12]: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
 [13]: https://www.youtube.com/watch?v=qgtZCXYmkDU
+[14]: https://www.youtube.com/watch?v=3l-epO6oUHE
