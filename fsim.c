@@ -19,10 +19,12 @@ flat out mediump vec3 normal;\n\
 flat out mediump vec3 light;\n\
 out mediump vec3 direction;\n\
 flat out mediump float diffuse;\n\
+out mediump float fog;\n\
 void main()\n\
 {\n\
   mat4 model = translation * yaw * pitch;\n\
   gl_Position = projection * model * vec4(point, 1);\n\
+  fog = pow(0.6, length(gl_Position.xyz));\n\
   direction = (model * vec4(point, 1)).xyz;\n\
   UV = texcoord;\n\
   normal = (model * vec4(vector, 0)).xyz;\n\
@@ -36,6 +38,7 @@ flat in mediump vec3 normal;\n\
 flat in mediump vec3 light;\n\
 in mediump vec3 direction;\n\
 flat in mediump float diffuse;\n\
+in mediump float fog;\n\
 out mediump vec3 fragColor;\n\
 uniform sampler2D tex;\n\
 void main()\n\
@@ -43,7 +46,7 @@ void main()\n\
   mediump float specular = max(0.0, dot(normalize(direction), reflect(light, normal)));\n\
   if (specular != 0.0)\n\
     specular = pow(specular, 128.0);\n\
-  fragColor = texture(tex, UV).rgb * (0.1 + 0.5 * diffuse) + 0.4 * specular;\n\
+  fragColor = 0.1 * (1.0 - fog) + fog * (texture(tex, UV).rgb * (0.1 + 0.5 * diffuse) + 0.4 * specular);\n\
 }";
 
 GLuint vao;
