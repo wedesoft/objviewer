@@ -1,17 +1,17 @@
 # TODO
 
-* specular reflection
+* tests using glReadPixels or frame buffer
+* shadows, windows, reflections, cameras, MFDs
 * point light sources
 * load Blender model
+* cloud erosion
 * texture loading
-* tests using glReadPixels or frame buffer
 * project on sphere
 * view matrix, model matrix stack, light position
 * good tessellation for planet spheres
 * collision detection
 * multiple rigid or flexible objects
 * create windows using blending
-* shadows, windows, reflections, cameras, MFDs
 * test shaders (colors, normals, displacement, elevation map)
 * free floating object
 * thrusters
