@@ -43,7 +43,7 @@ void main()\n\
   if (specular != 0.0) {\n\
     specular = pow(specular, 128.0);\n\
   }\n\
-  fragColor = texture(tex, UV).rgb * (0.1 + 0.4 * diffuse) + 0.6 * specular;\n\
+  fragColor = texture(tex, UV).rgb * (0.1 + 0.5 * diffuse) + 0.4 * specular;\n\
 }";
 
 GLuint vao;
@@ -182,6 +182,11 @@ unsigned int indices[] = {
   1, 0, 3
 };
 
+float pixels[] = {
+  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
+};
+
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
@@ -236,10 +241,6 @@ int main(int argc, char** argv)
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex);
   glUniform1i(glGetUniformLocation(program, "tex"), 0);
-  float pixels[] = {
-    0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
-  };
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
