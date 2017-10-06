@@ -13,7 +13,7 @@
 * [Vertex buffer indexing][12]
 * [Reaction Engines Scramjet][13]
 * [Star Citizen demo video][14]
-* [High dynami range effects][15]
+* [High dynamic range effects][15]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl

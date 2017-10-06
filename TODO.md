@@ -1,13 +1,16 @@
 # TODO
 
 * tests using glReadPixels or frame buffer
+* replace glGenTexture with glBindBuffer? (page 335)
+* HDR bloom
+* multisampling
+* create and load Blender model
+* shadows, windows, reflections, greyscale cameras, MFDs
+* frame buffer objects for non-blocking data transfer
 * skybox for nebulas
 * point sprites for stars, atmospheric flicker using sprite arrays
-* shadows, windows, reflections, cameras, MFDs
 * point light sources
-* load Blender model
 * cloud erosion
-* HDR, toon shading (1D element-wise lookup)
 * texture loading
 * project on sphere
 * view matrix, model matrix stack, light position

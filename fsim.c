@@ -45,7 +45,7 @@ void main()\n\
 {\n\
   mediump float specular = max(0.0, dot(normalize(direction), reflect(light, normal)));\n\
   if (specular != 0.0)\n\
-    specular = pow(specular, 128.0);\n\
+    specular = 6.0 * pow(specular, 128.0);\n\
   fragColor = 0.1 * (1.0 - fog) + fog * (texture(tex, UV).rgb * (0.1 + 0.5 * diffuse) + 0.4 * specular);\n\
 }";
 
