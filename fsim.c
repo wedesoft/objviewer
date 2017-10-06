@@ -199,7 +199,7 @@ float pixels[] = {
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(width, height);
   glutCreateWindow("tetraeder");
 
@@ -207,7 +207,6 @@ int main(int argc, char** argv)
   glewInit();
 
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_MULTISAMPLE);
 
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);

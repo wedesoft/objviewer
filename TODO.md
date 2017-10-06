@@ -1,11 +1,12 @@
 # TODO
 
 * tests using glReadPixels or frame buffer
+* shadows (mask color pipeline output)
+* HDR bloom (separable convolution)
 * replace glGenTexture with glBindBuffer? (page 335)
-* HDR bloom
 * multisampling
 * create and load Blender model
-* shadows, windows, reflections, greyscale cameras, MFDs
+* windows (blending, reflections), greyscale cameras, MFDs
 * frame buffer objects for non-blocking data transfer
 * skybox for nebulas
 * point sprites for stars, atmospheric flicker using sprite arrays
