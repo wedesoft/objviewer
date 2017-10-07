@@ -7,7 +7,7 @@ language: c
 compiler:
   - gcc
 before_install:
-  - sudo apt-get install colorgcc
+  - sudo apt-get install -q -y colorgcc freeglut3-dev
 install:
   - make test
 script:
