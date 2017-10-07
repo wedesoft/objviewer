@@ -40,4 +40,5 @@ int main(int argc, char *argv[])
 	CuSuiteSummary(suite, output);
 	CuSuiteDetails(suite, output);
 	printf("%s\n", output->buffer);
+  return suite->failCount > 0 ? 1 : 0;
 }
