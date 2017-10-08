@@ -17,16 +17,40 @@ rgb_t rgb(GLfloat red, GLfloat green, GLfloat blue)
   return retval;
 }
 
+void test_rgb(CuTest *tc)
+{
+  rgb_t c = rgb(0.5f, 0.75f, 0.25f);
+  CuAssertDblEquals(tc, 0.50f, c.red  , 1e-6f);
+  CuAssertDblEquals(tc, 0.75f, c.green, 1e-6f);
+  CuAssertDblEquals(tc, 0.25f, c.blue , 1e-6f);
+}
+
+typedef struct {
+  GLfloat x;
+  GLfloat y;
+  GLfloat z;
+} vertex_t;
+
+vertex_t vertex(GLfloat x, GLfloat y, GLfloat z)
+{
+  vertex_t retval;
+  retval.x = x;
+  retval.y = y;
+  retval.z = z;
+  return retval;
+}
+
+void test_vertex(CuTest *tc)
+{
+  vertex_t v = vertex(2.0f, 3.0f, 5.0f);
+  CuAssertDblEquals(tc, 2.0f, v.x, 1e-6f);
+  CuAssertDblEquals(tc, 3.0f, v.y, 1e-6f);
+  CuAssertDblEquals(tc, 5.0f, v.z, 1e-6f);
+}
+
 typedef struct {
   rgb_t background_color;
 } scene_t;
-
-void test_rgb(CuTest *tc)
-{
-  CuAssertDblEquals(tc, 0.50f, rgb(0.5f, 0.75f, 0.25f).red  , 1e-6);
-  CuAssertDblEquals(tc, 0.75f, rgb(0.5f, 0.75f, 0.25f).green, 1e-6);
-  CuAssertDblEquals(tc, 0.25f, rgb(0.5f, 0.75f, 0.25f).blue , 1e-6);
-}
 
 void render(scene_t *scene)
 {
@@ -52,6 +76,7 @@ CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, test_rgb);
+  SUITE_ADD_TEST(suite, test_vertex);
   SUITE_ADD_TEST(suite, test_clear_buffer);
   return suite;
 }
