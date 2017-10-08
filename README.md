@@ -19,6 +19,7 @@
 * [Star Citizen demo video][14]
 * [High dynamic range effects][15]
 * [Bullet physics engine][16]
+* [Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -36,3 +37,4 @@
 [14]: https://www.youtube.com/watch?v=3l-epO6oUHE
 [15]: https://github.com/karimnaaji/hdreffects
 [16]: http://bulletphysics.org/
+[17]: https://github.com/rlk/obj
