@@ -3,27 +3,42 @@
 #include "CuTest.h"
 
 typedef struct {
-  GLfloat background_color[3];
+  GLfloat red;
+  GLfloat green;
+  GLfloat blue;
+} rgb_t;
+
+rgb_t rgb(GLfloat red, GLfloat green, GLfloat blue)
+{
+  rgb_t retval;
+  retval.red   = red;
+  retval.green = green;
+  retval.blue  = blue;
+  return retval;
+}
+
+typedef struct {
+  rgb_t background_color;
 } scene_t;
 
-void set_color(GLfloat color[], GLfloat red, GLfloat green, GLfloat blue)
+void test_rgb(CuTest *tc)
 {
-  color[0] = red;
-  color[1] = green;
-  color[2] = blue;
+  CuAssertDblEquals(tc, 0.50f, rgb(0.5f, 0.75f, 0.25f).red  , 1e-6);
+  CuAssertDblEquals(tc, 0.75f, rgb(0.5f, 0.75f, 0.25f).green, 1e-6);
+  CuAssertDblEquals(tc, 0.25f, rgb(0.5f, 0.75f, 0.25f).blue , 1e-6);
 }
 
 void render(scene_t *scene)
 {
-  GLfloat *bg = &scene->background_color[0];
-  glClearColor(bg[0], bg[1], bg[2], 1.0f);
+  rgb_t bg = scene->background_color;
+  glClearColor(bg.red, bg.green, bg.blue, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void test_clear_buffer(CuTest *tc)
 {
   scene_t scene;
-  set_color(scene.background_color, 0.5f, 0.25f, 0.125f);
+  scene.background_color = rgb(0.5f, 0.25f, 0.125f);
   render(&scene);
   // glFlush();
   GLubyte pixel[4];
@@ -36,6 +51,7 @@ void test_clear_buffer(CuTest *tc)
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
+  SUITE_ADD_TEST(suite, test_rgb);
   SUITE_ADD_TEST(suite, test_clear_buffer);
   return suite;
 }
