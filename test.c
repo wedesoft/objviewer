@@ -62,12 +62,12 @@ void render(scene_t *scene)
 void test_clear_buffer(CuTest *tc)
 {
   scene_t scene;
-  scene.background_color = rgb(0.5f, 0.25f, 0.125f);
+  scene.background_color = rgb(0.75f, 0.25f, 0.125f);
   render(&scene);
   // glFlush();
   GLubyte pixel[4];
   glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
-  CuAssertIntEquals(tc, 128, pixel[0]);
+  CuAssertIntEquals(tc, 191, pixel[0]);
   CuAssertIntEquals(tc,  64, pixel[1]);
   CuAssertIntEquals(tc,  32, pixel[2]);
 }
