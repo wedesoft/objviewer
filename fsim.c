@@ -52,13 +52,17 @@ void test_vertex(CuTest *tc)
 typedef struct {
   int n_vertices;
   vertex_t *vertex;
+  int n_indices;
+  int *index;
 } object_t;
 
-object_t *make_object(int max_vertices)
+object_t *make_object(int max_vertices, int max_triangles)
 {
   object_t *retval = GC_MALLOC(sizeof(object_t));
   retval->n_vertices = 0;
   retval->vertex = GC_MALLOC(max_vertices * sizeof(vertex_t));
+  retval->n_indices = 0;
+  retval->index = GC_MALLOC(max_triangles * 3 * sizeof(int));
   return retval;
 }
 
@@ -70,13 +74,55 @@ object_t *add_vertex(object_t *object, vertex_t vertex)
 
 void test_add_vertex(CuTest *tc)
 {
-  object_t *object = make_object(4);
+  object_t *object = make_object(3, 1);
   CuAssertIntEquals(tc, 0, object->n_vertices);
   add_vertex(object, make_vertex(2.5f, 3.5f, 5.5f));
+  CuAssertIntEquals(tc, 1, object->n_vertices);
   CuAssertDblEquals(tc, 2.5, object->vertex[0].x, 1e-6);
   object_t *retval = add_vertex(object, make_vertex(1.5f, 4.5f, 7.5f));
   CuAssertDblEquals(tc, 1.5, object->vertex[1].x, 1e-6);
   CuAssertPtrEquals(tc, object, retval);
+}
+
+typedef struct {
+  int a;
+  int b;
+  int c;
+} triangle_t;
+
+triangle_t make_triangle(int a, int b, int c)
+{
+  triangle_t retval;
+  retval.a = a; retval.b = b; retval.c = c;
+  return retval;
+}
+
+void add_triangle(object_t *object, triangle_t triangle)
+{
+  object->index[object->n_indices++] = triangle.a;
+  object->index[object->n_indices++] = triangle.b;
+  object->index[object->n_indices++] = triangle.c;
+}
+
+void test_triangle(CuTest *tc)
+{
+  triangle_t triangle = make_triangle(3, 7, 11);
+  CuAssertIntEquals(tc,  3, triangle.a);
+  CuAssertIntEquals(tc,  7, triangle.b);
+  CuAssertIntEquals(tc, 11, triangle.c);
+}
+
+void test_add_triangle(CuTest *tc)
+{
+  object_t *object = make_object(3, 1);
+  for (int i=0; i<3; i++)
+    add_vertex(object, make_vertex(i % 2, 0, i / 2));
+  CuAssertIntEquals(tc, 0, object->n_indices);
+  add_triangle(object, make_triangle(2, 0, 1));
+  CuAssertIntEquals(tc, 3, object->n_indices);
+  CuAssertIntEquals(tc, 2, object->index[0]);
+  CuAssertIntEquals(tc, 0, object->index[1]);
+  CuAssertIntEquals(tc, 1, object->index[2]);
 }
 
 typedef struct {
@@ -124,7 +170,7 @@ void test_add_object(CuTest *tc)
   rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
   scene_t *scene = make_scene(black, 1);
   CuAssertIntEquals(tc, 0, scene->n_objects);
-  scene_t *retval = add_object(scene, add_vertex(make_object(4), make_vertex(2, 3, 5)));
+  scene_t *retval = add_object(scene, add_vertex(make_object(4, 1), make_vertex(2, 3, 5)));
   CuAssertIntEquals(tc, 1, scene->n_objects);
   CuAssertDblEquals(tc, 5, scene->object[0]->vertex[0].z, 1e-6);
   CuAssertPtrEquals(tc, scene, retval);
@@ -138,6 +184,8 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_vertex);
   SUITE_ADD_TEST(suite, test_clear_buffer);
   SUITE_ADD_TEST(suite, test_add_object);
+  SUITE_ADD_TEST(suite, test_triangle);
+  SUITE_ADD_TEST(suite, test_add_triangle);
   return suite;
 }
 
