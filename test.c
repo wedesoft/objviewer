@@ -8,7 +8,7 @@ typedef struct {
   GLfloat blue;
 } rgb_t;
 
-rgb_t rgb(GLfloat red, GLfloat green, GLfloat blue)
+rgb_t make_rgb(GLfloat red, GLfloat green, GLfloat blue)
 {
   rgb_t retval;
   retval.red   = red;
@@ -19,7 +19,7 @@ rgb_t rgb(GLfloat red, GLfloat green, GLfloat blue)
 
 void test_rgb(CuTest *tc)
 {
-  rgb_t c = rgb(0.5f, 0.75f, 0.25f);
+  rgb_t c = make_rgb(0.5f, 0.75f, 0.25f);
   CuAssertDblEquals(tc, 0.50f, c.red  , 1e-6f);
   CuAssertDblEquals(tc, 0.75f, c.green, 1e-6f);
   CuAssertDblEquals(tc, 0.25f, c.blue , 1e-6f);
@@ -31,7 +31,7 @@ typedef struct {
   GLfloat z;
 } vertex_t;
 
-vertex_t vertex(GLfloat x, GLfloat y, GLfloat z)
+vertex_t make_vertex(GLfloat x, GLfloat y, GLfloat z)
 {
   vertex_t retval;
   retval.x = x;
@@ -42,10 +42,27 @@ vertex_t vertex(GLfloat x, GLfloat y, GLfloat z)
 
 void test_vertex(CuTest *tc)
 {
-  vertex_t v = vertex(2.0f, 3.0f, 5.0f);
+  vertex_t v = make_vertex(2.0f, 3.0f, 5.0f);
   CuAssertDblEquals(tc, 2.0f, v.x, 1e-6f);
   CuAssertDblEquals(tc, 3.0f, v.y, 1e-6f);
   CuAssertDblEquals(tc, 5.0f, v.z, 1e-6f);
+}
+
+typedef struct {
+  int n_vertices;
+} surface_t;
+
+surface_t make_surface(void)
+{
+  surface_t retval;
+  retval.n_vertices = 0;
+  return retval;
+}
+
+void test_add_vertex(CuTest *tc)
+{
+  surface_t surface = make_surface();
+  CuAssertIntEquals(tc, 0, surface.n_vertices);
 }
 
 typedef struct {
@@ -62,9 +79,9 @@ void render(scene_t *scene)
 void test_clear_buffer(CuTest *tc)
 {
   scene_t scene;
-  scene.background_color = rgb(0.5f, 0.25f, 0.125f);
+  scene.background_color = make_rgb(0.5f, 0.25f, 0.125f);
   render(&scene);
-  // glFlush();
+  glFlush();
   GLubyte pixel[4];
   glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
   CuAssertIntEquals(tc, 128, pixel[0]);
@@ -78,6 +95,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_rgb);
   SUITE_ADD_TEST(suite, test_vertex);
   SUITE_ADD_TEST(suite, test_clear_buffer);
+  SUITE_ADD_TEST(suite, test_add_vertex);
   return suite;
 }
 
