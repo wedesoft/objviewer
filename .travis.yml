@@ -13,6 +13,6 @@ before_script:
 before_install:
   - sudo apt-get install -q -y colorgcc freeglut3-dev
 install:
-  - make test
+  - make fsim
 script:
-  - ./test
+  - make check

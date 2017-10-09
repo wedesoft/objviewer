@@ -1,290 +1,129 @@
-#define GLEW_STATIC
-
-#include <math.h>
 #include <stdio.h>
-#include <GL/glew.h>
+#include <gc.h>
 #include <GL/glut.h>
+#include "CuTest.h"
 
-const char *vertexSource = "#version 300 es\n\
-layout(location = 0) in mediump vec3 point;\n\
-layout(location = 1) in mediump vec2 texcoord;\n\
-layout(location = 2) in mediump vec3 vector;\n\
-uniform mat4 yaw;\n\
-uniform mat4 pitch;\n\
-uniform mat4 translation;\n\
-uniform mat4 projection;\n\
-uniform vec3 ray;\n\
-out mediump vec2 UV;\n\
-flat out mediump vec3 normal;\n\
-flat out mediump vec3 light;\n\
-out mediump vec3 direction;\n\
-flat out mediump float diffuse;\n\
-out mediump float fog;\n\
-void main()\n\
-{\n\
-  mat4 model = translation * yaw * pitch;\n\
-  gl_Position = projection * model * vec4(point, 1);\n\
-  fog = pow(0.6, length(gl_Position.xyz));\n\
-  direction = (model * vec4(point, 1)).xyz;\n\
-  UV = texcoord;\n\
-  normal = (model * vec4(vector, 0)).xyz;\n\
-  light = ray;\n\
-  diffuse = max(0.0, dot(normal, light));\n\
-}";
+typedef struct {
+  GLfloat red;
+  GLfloat green;
+  GLfloat blue;
+} rgb_t;
 
-const char *fragmentSource = "#version 300 es\n\
-in mediump vec2 UV;\n\
-flat in mediump vec3 normal;\n\
-flat in mediump vec3 light;\n\
-in mediump vec3 direction;\n\
-flat in mediump float diffuse;\n\
-in mediump float fog;\n\
-out mediump vec3 fragColor;\n\
-uniform sampler2D tex;\n\
-void main()\n\
-{\n\
-  mediump float specular = max(0.0, dot(normalize(direction), reflect(light, normal)));\n\
-  if (specular != 0.0)\n\
-    specular = 6.0 * pow(specular, 128.0);\n\
-  fragColor = 0.1 * (1.0 - fog) + fog * (texture(tex, UV).rgb * (0.1 + 0.5 * diffuse) + 0.4 * specular);\n\
-}";
-
-GLuint vao;
-GLuint vbo;
-GLuint idx;
-GLuint program;
-GLuint tex;
-int width = 640;
-int height = 480;
-
-float yaw = 0;
-float pitch = 0;
-float distance = 2;
-
-void projection(const char *target)
+rgb_t make_rgb(GLfloat red, GLfloat green, GLfloat blue)
 {
-  float d = 1 / tan(90 / 2 * M_PI / 180);
-  float d2 = d * width / height;
-  float n = 0.1;
-  float f = 100;
-  float a = (n + f) / (n - f);
-  float b = 2 * n * f / (n - f);
-  float columns[4][4] = {{d, 0, 0, 0}, {0, d2, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
-  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
+  rgb_t retval;
+  retval.red   = red;
+  retval.green = green;
+  retval.blue  = blue;
+  return retval;
 }
 
-void transform(float yaw, float pitch, float distance)
+void test_rgb(CuTest *tc)
 {
-  float sin_yaw = sin(yaw * M_PI / 180);
-  float cos_yaw = cos(yaw * M_PI / 180);
-  float yawColumns[4][4] = {{cos_yaw, 0, sin_yaw, 0}, {0, 1, 0, 0}, {-sin_yaw, 0, cos_yaw, 0}, {0, 0, 0, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program, "yaw"), 1, GL_FALSE, &yawColumns[0][0]);
-  float sin_pitch = sin(pitch * M_PI / 180);
-  float cos_pitch = cos(pitch * M_PI / 180);
-  float pitchColumns[4][4] = {{1, 0, 0, 0}, {0, cos_pitch, -sin_pitch, 0}, {0, sin_pitch, cos_pitch, 0}, {0, 0, 0, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program, "pitch"), 1, GL_FALSE, &pitchColumns[0][0]);
-  float translationColumns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -distance, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program, "translation"), 1, GL_FALSE, &translationColumns[0][0]);
+  rgb_t c = make_rgb(0.5f, 0.75f, 0.25f);
+  CuAssertDblEquals(tc, 0.50, c.red  , 1e-6);
+  CuAssertDblEquals(tc, 0.75, c.green, 1e-6);
+  CuAssertDblEquals(tc, 0.25, c.blue , 1e-6);
 }
 
-void light() {
-  float vector[] = {0.37139068f,  0.74278135f,  0.55708601f};
-  glUniform3fv(glGetUniformLocation(program, "ray"), 1, &vector[0]);
+typedef struct {
+  GLfloat x;
+  GLfloat y;
+  GLfloat z;
+} vertex_t;
+
+vertex_t make_vertex(GLfloat x, GLfloat y, GLfloat z)
+{
+  vertex_t retval;
+  retval.x = x;
+  retval.y = y;
+  retval.z = z;
+  return retval;
 }
 
-void onDisplay(void)
+void test_vertex(CuTest *tc)
 {
-  glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glUseProgram(program);
-  projection("projection");
-  transform(yaw, pitch, distance);
-  light();
-  glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0);
-
-  glutSwapBuffers();
+  vertex_t v = make_vertex(2.0f, 3.0f, 5.0f);
+  CuAssertDblEquals(tc, 2.0f, v.x, 1e-6f);
+  CuAssertDblEquals(tc, 3.0f, v.y, 1e-6f);
+  CuAssertDblEquals(tc, 5.0f, v.z, 1e-6f);
 }
 
-void onResize(int w, int h)
+typedef struct {
+  int n_vertices;
+  vertex_t *vertex;
+} surface_t;
+
+surface_t make_surface(int max_vertices)
 {
-  width = w; height = h;
-  glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+  surface_t retval;
+  retval.n_vertices = 0;
+  retval.vertex = GC_MALLOC(max_vertices * sizeof(vertex_t));
+  return retval;
 }
 
-void onKey(int key, int x, int y)
+void add_vertex(surface_t *surface, vertex_t vertex)
 {
-  switch (key) {
-  case GLUT_KEY_LEFT:
-    yaw -= 2;
-    break;
-  case GLUT_KEY_RIGHT:
-    yaw += 2;
-    break;
-  case GLUT_KEY_UP:
-    pitch -= 2;
-    break;
-  case GLUT_KEY_DOWN:
-    pitch += 2;
-    break;
-  case GLUT_KEY_PAGE_UP:
-    distance += 0.05;
-    break;
-  case GLUT_KEY_PAGE_DOWN:
-    distance -= 0.05;
-    break;
-  case GLUT_KEY_HOME:
-    yaw = 0;
-    pitch = 0;
-    distance = 2;
-    break;
-  default:
-    return;
-  };
-  glutPostRedisplay();
+  surface->vertex[surface->n_vertices] = vertex;
+  surface->n_vertices++;
 }
 
-void printError(const char *context)
+void test_add_vertex(CuTest *tc)
 {
-  GLenum error = glGetError();
-  if (error != GL_NO_ERROR) {
-    fprintf(stderr, "%s: %s\n", context, gluErrorString(error));
-  };
+  surface_t surface = make_surface(4);
+  CuAssertIntEquals(tc, 0, surface.n_vertices);
+  add_vertex(&surface, make_vertex(2.5f, 3.5f, 5.5f));
+  CuAssertDblEquals(tc, 2.5, surface.vertex[0].x, 1e-6);
+  add_vertex(&surface, make_vertex(1.5f, 4.5f, 7.5f));
+  CuAssertDblEquals(tc, 1.5, surface.vertex[1].x, 1e-6);
 }
 
-void printStatus(const char *step, GLuint context, GLuint status)
+typedef struct {
+  rgb_t background_color;
+} scene_t;
+
+void render(scene_t *scene)
 {
-  GLint result = GL_FALSE;
-  glGetShaderiv(context, status, &result);
-  if (result == GL_FALSE) {
-    char buffer[1024];
-    if (status == GL_COMPILE_STATUS)
-      glGetShaderInfoLog(context, 1024, NULL, buffer);
-    else
-      glGetProgramInfoLog(context, 1024, NULL, buffer);
-    if (buffer[0])
-      fprintf(stderr, "%s: %s\n", step, buffer);
-  };
+  rgb_t bg = scene->background_color;
+  glClearColor(bg.red, bg.green, bg.blue, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void printCompileStatus(const char *step, GLuint context)
+void test_clear_buffer(CuTest *tc)
 {
-  printStatus(step, context, GL_COMPILE_STATUS);
+  scene_t scene;
+  scene.background_color = make_rgb(0.75f, 0.25f, 0.125f);
+  render(&scene);
+  glFlush();
+  GLubyte pixel[4];
+  glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+  CuAssertIntEquals(tc, 191, pixel[0]);
+  CuAssertIntEquals(tc,  64, pixel[1]);
+  CuAssertIntEquals(tc,  32, pixel[2]);
 }
 
-void printLinkStatus(const char *step, GLuint context)
+CuSuite *opengl_suite(void)
 {
-  printStatus(step, context, GL_LINK_STATUS);
+  CuSuite *suite = CuSuiteNew();
+  SUITE_ADD_TEST(suite, test_rgb);
+  SUITE_ADD_TEST(suite, test_vertex);
+  SUITE_ADD_TEST(suite, test_clear_buffer);
+  SUITE_ADD_TEST(suite, test_add_vertex);
+  return suite;
 }
 
-GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 16.0f, 16.0f, -0.577350269f,  0.577350269f,  0.577350269f,
-  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f, -0.577350269f, -0.577350269f, -0.577350269f,
-  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  0.577350269f, -0.577350269f,  0.577350269f,
-   0.5f, -0.5f, -0.5f, 16.0f,  0.0f,  0.577350269f,  0.577350269f, -0.577350269f
-};
-
-unsigned int indices[] = {
-  1, 2, 0,
-  3, 2, 1,
-  3, 0, 2,
-  1, 0, 3
-};
-
-float pixels[] = {
-  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
-};
-
-int main(int argc, char** argv)
+int main(int argc, char *argv[])
 {
+  GC_INIT();
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowSize(width, height);
-  glutCreateWindow("tetraeder");
-
-  glewExperimental = 1;
-  glewInit();
-
-  glEnable(GL_DEPTH_TEST);
-
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  glGenBuffers(1, &idx);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexSource, NULL);
-  glCompileShader(vertexShader);
-  printCompileStatus("Vertex shader", vertexShader);
-
-  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-  glCompileShader(fragmentShader);
-  printCompileStatus("Fragment shader", fragmentShader);
-
-  program = glCreateProgram();
-  glAttachShader(program, vertexShader);
-  glAttachShader(program, fragmentShader);
-  glLinkProgram(program);
-  printLinkStatus("Shader program", program);
-
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-  glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-  glVertexAttribPointer(glGetAttribLocation(program, "vector"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
-
-  glGenTextures(1, &tex);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex);
-  glUniform1i(glGetUniformLocation(program, "tex"), 0);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
-    GLfloat max_anisotropy;
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
-  };
-  glGenerateMipmap(GL_TEXTURE_2D);
-
-  glutDisplayFunc(onDisplay);
-  glutReshapeFunc(onResize);
-  glutSpecialFunc(onKey);
-  glutMainLoop();
-
-  glDisableVertexAttribArray(2);
-  glDisableVertexAttribArray(1);
-  glDisableVertexAttribArray(0);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-  glDeleteTextures(1, &tex);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &idx);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &vbo);
-
-  glBindVertexArray(0);
-  glDeleteVertexArrays(1, &vao);
-
-  glDetachShader(program, vertexShader);
-  glDetachShader(program, fragmentShader);
-  glDeleteProgram(program);
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
-  return 0;
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_ALPHA);
+  glutInitWindowSize(32, 20);
+  glutCreateWindow("test window");
+	CuString *output = CuStringNew();
+  CuSuite *suite = opengl_suite();
+  CuSuiteRun(suite);
+	CuSuiteSummary(suite, output);
+	CuSuiteDetails(suite, output);
+	printf("%s\n", output->buffer);
+  return suite->failCount > 0 ? 1 : 0;
 }

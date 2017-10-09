@@ -1,13 +1,16 @@
-all: test fsim
+all: fsim tetraeder
 
-test: test.o CuTest.o
-	gcc -o $@ test.o CuTest.o -lglut -lGLU -lGL -lm
+check: fsim
+	./fsim
 
-fsim: fsim.o
-	gcc -o $@ fsim.o -lglut -lGLEW -lGLU -lGL -lm
+fsim: fsim.o CuTest.o
+	gcc -o $@ fsim.o CuTest.o -lglut -lGLU -lGL -lgc -lm
+
+tetraeder: tetraeder.o
+	gcc -o $@ tetraeder.o -lglut -lGLEW -lGLU -lGL -lm
 
 .c.o:
 	gcc -c $< -o $@
 
 clean:
-	rm -f test fsim *.o
+	rm -f fsim tetraeder *.o

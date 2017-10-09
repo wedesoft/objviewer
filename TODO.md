@@ -1,5 +1,6 @@
 # TODO
 
+* use Boehm garbage collector
 * tests using glReadPixels or frame buffer
 * shadows (mask color pipeline output)
 * HDR bloom (separable convolution)
