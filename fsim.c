@@ -115,7 +115,8 @@ void test_triangle(CuTest *tc)
 void test_add_triangle(CuTest *tc)
 {
   object_t *object = make_object(3, 1);
-  for (int i=0; i<3; i++)
+  int i;
+  for (i=0; i<3; i++)
     add_vertex(object, make_vertex(i % 2, 0, i / 2));
   CuAssertIntEquals(tc, 0, object->n_indices);
   add_triangle(object, make_triangle(2, 0, 1));

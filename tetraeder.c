@@ -5,6 +5,10 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327
+#endif
+
 const char *vertexSource = "#version 300 es\n\
 layout(location = 0) in mediump vec3 point;\n\
 layout(location = 1) in mediump vec2 texcoord;\n\
@@ -70,7 +74,6 @@ void projection(const char *target)
   float a = (n + f) / (n - f);
   float b = 2 * n * f / (n - f);
   float columns[4][4] = {{d, 0, 0, 0}, {0, d2, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
-  //float columns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
   glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
 }
 
