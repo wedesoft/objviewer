@@ -1,12 +1,11 @@
 # TODO
 
-* use Boehm garbage collector
-* tests using glReadPixels or frame buffer
+* create and load Blender model
+* objects with kinematic chain
 * shadows (mask color pipeline output)
 * HDR bloom (separable convolution)
 * replace glGenTexture with glBindBuffer? (page 335)
 * multisampling
-* create and load Blender model
 * windows (blending, reflections), greyscale cameras, MFDs
 * frame buffer objects for non-blocking data transfer
 * skybox for nebulas
