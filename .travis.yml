@@ -11,7 +11,7 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3
 before_install:
-  - sudo apt-get install -q -y colorgcc freeglut3-dev
+  - sudo apt-get install -q -y colorgcc freeglut3-dev libgc-dev
 install:
   - make fsim
 script:
