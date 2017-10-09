@@ -54,11 +54,11 @@ typedef struct {
   vertex_t *vertex;
 } surface_t;
 
-surface_t make_surface(int max_vertices)
+surface_t *make_surface(int max_vertices)
 {
-  surface_t retval;
-  retval.n_vertices = 0;
-  retval.vertex = GC_MALLOC(max_vertices * sizeof(vertex_t));
+  surface_t *retval = GC_MALLOC(sizeof(surface_t));
+  retval->n_vertices = 0;
+  retval->vertex = GC_MALLOC(max_vertices * sizeof(vertex_t));
   return retval;
 }
 
@@ -70,31 +70,31 @@ surface_t *add_vertex(surface_t *surface, vertex_t vertex)
 
 void test_add_vertex(CuTest *tc)
 {
-  surface_t surface = make_surface(4);
-  CuAssertIntEquals(tc, 0, surface.n_vertices);
-  add_vertex(&surface, make_vertex(2.5f, 3.5f, 5.5f));
-  CuAssertDblEquals(tc, 2.5, surface.vertex[0].x, 1e-6);
-  surface_t *retval = add_vertex(&surface, make_vertex(1.5f, 4.5f, 7.5f));
-  CuAssertDblEquals(tc, 1.5, surface.vertex[1].x, 1e-6);
-  CuAssertPtrEquals(tc, &surface, retval);
+  surface_t *surface = make_surface(4);
+  CuAssertIntEquals(tc, 0, surface->n_vertices);
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  CuAssertDblEquals(tc, 2.5, surface->vertex[0].x, 1e-6);
+  surface_t *retval = add_vertex(surface, make_vertex(1.5f, 4.5f, 7.5f));
+  CuAssertDblEquals(tc, 1.5, surface->vertex[1].x, 1e-6);
+  CuAssertPtrEquals(tc, surface, retval);
 }
 
 typedef struct {
   rgb_t background_color;
   int n_surfaces;
-  surface_t *surface;
+  surface_t **surface;
 } scene_t;
 
-scene_t make_scene(rgb_t background_color, int max_surfaces)
+scene_t *make_scene(rgb_t background_color, int max_surfaces)
 {
-  scene_t retval;
-  retval.background_color = background_color;
-  retval.n_surfaces = 0;
-  retval.surface = GC_MALLOC(max_surfaces * sizeof(surface_t));
+  scene_t *retval = GC_MALLOC(sizeof(scene_t));
+  retval->background_color = background_color;
+  retval->n_surfaces = 0;
+  retval->surface = GC_MALLOC(max_surfaces * sizeof(surface_t *));
   return retval;
 }
 
-scene_t *add_surface(scene_t *scene, surface_t surface)
+scene_t *add_surface(scene_t *scene, surface_t *surface)
 {
   scene->surface[scene->n_surfaces++] = surface;
   return scene;
@@ -109,8 +109,8 @@ void render(scene_t *scene)
 
 void test_clear_buffer(CuTest *tc)
 {
-  scene_t scene = make_scene(make_rgb(0.75f, 0.25f, 0.125f), 1);
-  render(&scene);
+  scene_t *scene = make_scene(make_rgb(0.75f, 0.25f, 0.125f), 1);
+  render(scene);
   glFlush();
   GLubyte pixel[4];
   glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
@@ -122,14 +122,12 @@ void test_clear_buffer(CuTest *tc)
 void test_add_surface(CuTest *tc)
 {
   rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
-  scene_t scene = make_scene(black, 1);
-  CuAssertIntEquals(tc, 0, scene.n_surfaces);
-  surface_t surface = make_surface(4);
-  add_vertex(&surface, make_vertex(2, 3, 5));
-  scene_t *retval = add_surface(&scene, surface);
-  CuAssertIntEquals(tc, 1, scene.n_surfaces);
-  CuAssertDblEquals(tc, 5, scene.surface[0].vertex[0].z, 1e-6);
-  CuAssertPtrEquals(tc, &scene, retval);
+  scene_t *scene = make_scene(black, 1);
+  CuAssertIntEquals(tc, 0, scene->n_surfaces);
+  scene_t *retval = add_surface(scene, add_vertex(make_surface(4), make_vertex(2, 3, 5)));
+  CuAssertIntEquals(tc, 1, scene->n_surfaces);
+  CuAssertDblEquals(tc, 5, scene->surface[0]->vertex[0].z, 1e-6);
+  CuAssertPtrEquals(tc, scene, retval);
 }
 
 CuSuite *opengl_suite(void)
