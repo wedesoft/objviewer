@@ -53,16 +53,16 @@ typedef struct {
   int n_vertices;
   vertex_t *vertex;
   int n_indices;
-  int *index;
+  int *vertex_index;
 } object_t;
 
-object_t *make_object(int max_vertices, int max_triangles)
+object_t *make_object(int max_vertices, int max_indices)
 {
   object_t *retval = GC_MALLOC(sizeof(object_t));
   retval->n_vertices = 0;
   retval->vertex = GC_MALLOC(max_vertices * sizeof(vertex_t));
   retval->n_indices = 0;
-  retval->index = GC_MALLOC(max_triangles * 3 * sizeof(int));
+  retval->vertex_index = GC_MALLOC(max_indices * sizeof(int));
   return retval;
 }
 
@@ -74,7 +74,7 @@ object_t *add_vertex(object_t *object, vertex_t vertex)
 
 void test_add_vertex(CuTest *tc)
 {
-  object_t *object = make_object(3, 1);
+  object_t *object = make_object(3, 3);
   CuAssertIntEquals(tc, 0, object->n_vertices);
   add_vertex(object, make_vertex(2.5f, 3.5f, 5.5f));
   CuAssertIntEquals(tc, 1, object->n_vertices);
@@ -84,46 +84,67 @@ void test_add_vertex(CuTest *tc)
   CuAssertPtrEquals(tc, object, retval);
 }
 
-typedef struct {
-  int a;
-  int b;
-  int c;
-} triangle_t;
-
-triangle_t make_triangle(int a, int b, int c)
+void extend_facet(object_t *object, int number, int vertex_index)
 {
-  triangle_t retval;
-  retval.a = a; retval.b = b; retval.c = c;
-  return retval;
-}
-
-void add_triangle(object_t *object, triangle_t triangle)
-{
-  object->index[object->n_indices++] = triangle.a;
-  object->index[object->n_indices++] = triangle.b;
-  object->index[object->n_indices++] = triangle.c;
-}
-
-void test_triangle(CuTest *tc)
-{
-  triangle_t triangle = make_triangle(3, 7, 11);
-  CuAssertIntEquals(tc,  3, triangle.a);
-  CuAssertIntEquals(tc,  7, triangle.b);
-  CuAssertIntEquals(tc, 11, triangle.c);
+  int n = object->n_indices;
+  if (number < 3) {
+    object->vertex_index[n] = vertex_index;
+    object->n_indices = n + 1;
+  } else {
+    extend_facet(object, 0, object->vertex_index[n - 3]);
+    extend_facet(object, 1, object->vertex_index[n - 1]);
+    extend_facet(object, 2, vertex_index);
+  };
 }
 
 void test_add_triangle(CuTest *tc)
 {
-  object_t *object = make_object(3, 1);
+  object_t *object = make_object(3, 3);
   int i;
   for (i=0; i<3; i++)
     add_vertex(object, make_vertex(i % 2, 0, i / 2));
   CuAssertIntEquals(tc, 0, object->n_indices);
-  add_triangle(object, make_triangle(2, 0, 1));
+  extend_facet(object, 0, 2);
+  extend_facet(object, 1, 0);
+  extend_facet(object, 2, 1);
   CuAssertIntEquals(tc, 3, object->n_indices);
-  CuAssertIntEquals(tc, 2, object->index[0]);
-  CuAssertIntEquals(tc, 0, object->index[1]);
-  CuAssertIntEquals(tc, 1, object->index[2]);
+  CuAssertIntEquals(tc, 2, object->vertex_index[0]);
+  CuAssertIntEquals(tc, 0, object->vertex_index[1]);
+  CuAssertIntEquals(tc, 1, object->vertex_index[2]);
+}
+
+void test_add_square(CuTest *tc)
+{
+  object_t *object = make_object(4, 6);
+  int i;
+  for (i=0; i<4; i++)
+    add_vertex(object, make_vertex(i % 2, 0, i / 2));
+  extend_facet(object, 0, 2);
+  extend_facet(object, 1, 0);
+  extend_facet(object, 2, 1);
+  extend_facet(object, 3, 3);
+  CuAssertIntEquals(tc, 6, object->n_indices);
+  CuAssertIntEquals(tc, 2, object->vertex_index[3]);
+  CuAssertIntEquals(tc, 1, object->vertex_index[4]);
+  CuAssertIntEquals(tc, 3, object->vertex_index[5]);
+}
+
+void test_add_pentagon(CuTest *tc)
+{
+  object_t *object = make_object(5, 9);
+  int i;
+  for (i=0; i<4; i++)
+    add_vertex(object, make_vertex(i % 2, 0, i / 2));
+  add_vertex(object, make_vertex(0.5, 0, 1.5));
+  extend_facet(object, 0, 0);
+  extend_facet(object, 1, 1);
+  extend_facet(object, 2, 3);
+  extend_facet(object, 3, 4);
+  extend_facet(object, 4, 2);
+  CuAssertIntEquals(tc, 9, object->n_indices);
+  CuAssertIntEquals(tc, 0, object->vertex_index[6]);
+  CuAssertIntEquals(tc, 4, object->vertex_index[7]);
+  CuAssertIntEquals(tc, 2, object->vertex_index[8]);
 }
 
 typedef struct {
@@ -185,8 +206,9 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_vertex);
   SUITE_ADD_TEST(suite, test_clear_buffer);
   SUITE_ADD_TEST(suite, test_add_object);
-  SUITE_ADD_TEST(suite, test_triangle);
   SUITE_ADD_TEST(suite, test_add_triangle);
+  SUITE_ADD_TEST(suite, test_add_square);
+  SUITE_ADD_TEST(suite, test_add_pentagon);
   return suite;
 }
 
