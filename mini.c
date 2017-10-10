@@ -38,6 +38,7 @@ void onResize(int w, int h)
 {
   width = w; height = h;
   glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+  glLoadIdentity();
 }
 
 void printError(const char *context)

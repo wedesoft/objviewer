@@ -72,6 +72,11 @@ surface_t *add_vertex(surface_t *surface, vertex_t vertex)
   return surface;
 }
 
+int size_of_vertices(surface_t *surface)
+{
+  return surface->n_vertices * sizeof(vertex_t);
+}
+
 void test_add_vertex(CuTest *tc)
 {
   surface_t *surface = make_surface(3, 3);
@@ -82,6 +87,7 @@ void test_add_vertex(CuTest *tc)
   surface_t *retval = add_vertex(surface, make_vertex(1.5f, 4.5f, 7.5f));
   CuAssertDblEquals(tc, 1.5, surface->vertex[1].x, 1e-6);
   CuAssertPtrEquals(tc, surface, retval);
+  CuAssertIntEquals(tc, 2 * sizeof(vertex_t), size_of_vertices(surface));
 }
 
 void build_facet(surface_t *surface, int number, int vertex_index)
@@ -95,6 +101,11 @@ void build_facet(surface_t *surface, int number, int vertex_index)
     build_facet(surface, 1, surface->vertex_index[n - 1]);
     build_facet(surface, 2, vertex_index);
   };
+}
+
+int size_of_indices(surface_t *surface)
+{
+  return surface->n_indices * sizeof(int);
 }
 
 void test_add_triangle(CuTest *tc)
@@ -111,6 +122,7 @@ void test_add_triangle(CuTest *tc)
   CuAssertIntEquals(tc, 2, surface->vertex_index[0]);
   CuAssertIntEquals(tc, 0, surface->vertex_index[1]);
   CuAssertIntEquals(tc, 1, surface->vertex_index[2]);
+  CuAssertIntEquals(tc, 3 * sizeof(int), size_of_indices(surface));
 }
 
 void test_add_square(CuTest *tc)
@@ -198,6 +210,53 @@ void test_add_surface(CuTest *tc)
   CuAssertPtrEquals(tc, object, retval);
 }
 
+typedef struct {
+  GLuint vertex_array_object;
+  GLuint vertex_buffer_object;
+  GLuint element_buffer_object;
+} vertex_array_object_t;
+
+vertex_array_object_t *make_vertex_array_object(surface_t *surface)
+{
+  vertex_array_object_t *retval = GC_MALLOC(sizeof(vertex_array_object_t));
+  glGenVertexArrays(1, &retval->vertex_array_object);
+  glBindVertexArray(retval->vertex_array_object);
+  glGenBuffers(1, &retval->vertex_buffer_object);
+  glBindBuffer(GL_ARRAY_BUFFER, retval->vertex_buffer_object);
+  glBufferData(GL_ARRAY_BUFFER, size_of_vertices(surface), surface->vertex, GL_STATIC_DRAW);
+  glGenBuffers(1, &retval->element_buffer_object);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index, GL_STATIC_DRAW);
+  glBindVertexArray(0);
+  return retval;
+}
+
+void free_vertex_array_object(vertex_array_object_t *target)
+{
+  glBindVertexArray(target->vertex_array_object);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &target->element_buffer_object);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &target->vertex_buffer_object);
+  glDeleteBuffers(1, &target->vertex_array_object);
+  glBindVertexArray(0);
+}
+
+void test_draw_triangle(CuTest *tc)
+{
+  surface_t *surface = make_surface(3, 3);
+  CuAssertIntEquals(tc, 0, surface->n_vertices);
+  add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
+  add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
+  add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
+  build_facet(surface, 0, 0);
+  build_facet(surface, 1, 1);
+  build_facet(surface, 2, 2);
+  vertex_array_object_t *vao = make_vertex_array_object(surface);
+  /* TODO: setup shader and attribute pointer, draw triangle, test output */
+  free_vertex_array_object(vao);
+}
+
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
@@ -209,6 +268,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_triangle);
   SUITE_ADD_TEST(suite, test_add_square);
   SUITE_ADD_TEST(suite, test_add_pentagon);
+  SUITE_ADD_TEST(suite, test_draw_triangle);
   return suite;
 }
 
