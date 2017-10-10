@@ -1,5 +1,6 @@
 # TODO
 
+* copy list of vertices and indices to graphics card
 * add triangles to surface (collate vertices, normals, and texture coordinates)
 * create and load Blender model
 * objects with kinematic chain
