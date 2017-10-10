@@ -54,11 +54,11 @@ typedef struct {
   vertex_t *vertex;
   int n_indices;
   int *vertex_index;
-} object_t;
+} surface_t;
 
-object_t *make_object(int max_vertices, int max_indices)
+surface_t *make_surface(int max_vertices, int max_indices)
 {
-  object_t *retval = GC_MALLOC(sizeof(object_t));
+  surface_t *retval = GC_MALLOC(sizeof(surface_t));
   retval->n_vertices = 0;
   retval->vertex = GC_MALLOC(max_vertices * sizeof(vertex_t));
   retval->n_indices = 0;
@@ -66,105 +66,105 @@ object_t *make_object(int max_vertices, int max_indices)
   return retval;
 }
 
-object_t *add_vertex(object_t *object, vertex_t vertex)
+surface_t *add_vertex(surface_t *surface, vertex_t vertex)
 {
-  object->vertex[object->n_vertices++] = vertex;
-  return object;
+  surface->vertex[surface->n_vertices++] = vertex;
+  return surface;
 }
 
 void test_add_vertex(CuTest *tc)
 {
-  object_t *object = make_object(3, 3);
-  CuAssertIntEquals(tc, 0, object->n_vertices);
-  add_vertex(object, make_vertex(2.5f, 3.5f, 5.5f));
-  CuAssertIntEquals(tc, 1, object->n_vertices);
-  CuAssertDblEquals(tc, 2.5, object->vertex[0].x, 1e-6);
-  object_t *retval = add_vertex(object, make_vertex(1.5f, 4.5f, 7.5f));
-  CuAssertDblEquals(tc, 1.5, object->vertex[1].x, 1e-6);
-  CuAssertPtrEquals(tc, object, retval);
+  surface_t *surface = make_surface(3, 3);
+  CuAssertIntEquals(tc, 0, surface->n_vertices);
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  CuAssertIntEquals(tc, 1, surface->n_vertices);
+  CuAssertDblEquals(tc, 2.5, surface->vertex[0].x, 1e-6);
+  surface_t *retval = add_vertex(surface, make_vertex(1.5f, 4.5f, 7.5f));
+  CuAssertDblEquals(tc, 1.5, surface->vertex[1].x, 1e-6);
+  CuAssertPtrEquals(tc, surface, retval);
 }
 
-void extend_facet(object_t *object, int number, int vertex_index)
+void build_facet(surface_t *surface, int number, int vertex_index)
 {
-  int n = object->n_indices;
+  int n = surface->n_indices;
   if (number < 3) {
-    object->vertex_index[n] = vertex_index;
-    object->n_indices = n + 1;
+    surface->vertex_index[n] = vertex_index;
+    surface->n_indices = n + 1;
   } else {
-    extend_facet(object, 0, object->vertex_index[n - 3]);
-    extend_facet(object, 1, object->vertex_index[n - 1]);
-    extend_facet(object, 2, vertex_index);
+    build_facet(surface, 0, surface->vertex_index[n - 3]);
+    build_facet(surface, 1, surface->vertex_index[n - 1]);
+    build_facet(surface, 2, vertex_index);
   };
 }
 
 void test_add_triangle(CuTest *tc)
 {
-  object_t *object = make_object(3, 3);
+  surface_t *surface = make_surface(3, 3);
   int i;
   for (i=0; i<3; i++)
-    add_vertex(object, make_vertex(i % 2, 0, i / 2));
-  CuAssertIntEquals(tc, 0, object->n_indices);
-  extend_facet(object, 0, 2);
-  extend_facet(object, 1, 0);
-  extend_facet(object, 2, 1);
-  CuAssertIntEquals(tc, 3, object->n_indices);
-  CuAssertIntEquals(tc, 2, object->vertex_index[0]);
-  CuAssertIntEquals(tc, 0, object->vertex_index[1]);
-  CuAssertIntEquals(tc, 1, object->vertex_index[2]);
+    add_vertex(surface, make_vertex(i % 2, 0, i / 2));
+  CuAssertIntEquals(tc, 0, surface->n_indices);
+  build_facet(surface, 0, 2);
+  build_facet(surface, 1, 0);
+  build_facet(surface, 2, 1);
+  CuAssertIntEquals(tc, 3, surface->n_indices);
+  CuAssertIntEquals(tc, 2, surface->vertex_index[0]);
+  CuAssertIntEquals(tc, 0, surface->vertex_index[1]);
+  CuAssertIntEquals(tc, 1, surface->vertex_index[2]);
 }
 
 void test_add_square(CuTest *tc)
 {
-  object_t *object = make_object(4, 6);
+  surface_t *surface = make_surface(4, 6);
   int i;
   for (i=0; i<4; i++)
-    add_vertex(object, make_vertex(i % 2, 0, i / 2));
-  extend_facet(object, 0, 2);
-  extend_facet(object, 1, 0);
-  extend_facet(object, 2, 1);
-  extend_facet(object, 3, 3);
-  CuAssertIntEquals(tc, 6, object->n_indices);
-  CuAssertIntEquals(tc, 2, object->vertex_index[3]);
-  CuAssertIntEquals(tc, 1, object->vertex_index[4]);
-  CuAssertIntEquals(tc, 3, object->vertex_index[5]);
+    add_vertex(surface, make_vertex(i % 2, 0, i / 2));
+  build_facet(surface, 0, 2);
+  build_facet(surface, 1, 0);
+  build_facet(surface, 2, 1);
+  build_facet(surface, 3, 3);
+  CuAssertIntEquals(tc, 6, surface->n_indices);
+  CuAssertIntEquals(tc, 2, surface->vertex_index[3]);
+  CuAssertIntEquals(tc, 1, surface->vertex_index[4]);
+  CuAssertIntEquals(tc, 3, surface->vertex_index[5]);
 }
 
 void test_add_pentagon(CuTest *tc)
 {
-  object_t *object = make_object(5, 9);
+  surface_t *surface = make_surface(5, 9);
   int i;
   for (i=0; i<4; i++)
-    add_vertex(object, make_vertex(i % 2, 0, i / 2));
-  add_vertex(object, make_vertex(0.5, 0, 1.5));
-  extend_facet(object, 0, 0);
-  extend_facet(object, 1, 1);
-  extend_facet(object, 2, 3);
-  extend_facet(object, 3, 4);
-  extend_facet(object, 4, 2);
-  CuAssertIntEquals(tc, 9, object->n_indices);
-  CuAssertIntEquals(tc, 0, object->vertex_index[6]);
-  CuAssertIntEquals(tc, 4, object->vertex_index[7]);
-  CuAssertIntEquals(tc, 2, object->vertex_index[8]);
+    add_vertex(surface, make_vertex(i % 2, 0, i / 2));
+  add_vertex(surface, make_vertex(0.5, 0, 1.5));
+  build_facet(surface, 0, 0);
+  build_facet(surface, 1, 1);
+  build_facet(surface, 2, 3);
+  build_facet(surface, 3, 4);
+  build_facet(surface, 4, 2);
+  CuAssertIntEquals(tc, 9, surface->n_indices);
+  CuAssertIntEquals(tc, 0, surface->vertex_index[6]);
+  CuAssertIntEquals(tc, 4, surface->vertex_index[7]);
+  CuAssertIntEquals(tc, 2, surface->vertex_index[8]);
 }
 
 typedef struct {
   rgb_t background_color;
-  int n_objects;
-  object_t **object;
+  int n_surfaces;
+  surface_t **surface;
 } scene_t;
 
-scene_t *make_scene(rgb_t background_color, int max_objects)
+scene_t *make_scene(rgb_t background_color, int max_surfaces)
 {
   scene_t *retval = GC_MALLOC(sizeof(scene_t));
   retval->background_color = background_color;
-  retval->n_objects = 0;
-  retval->object = GC_MALLOC(max_objects * sizeof(object_t *));
+  retval->n_surfaces = 0;
+  retval->surface = GC_MALLOC(max_surfaces * sizeof(surface_t *));
   return retval;
 }
 
-scene_t *add_object(scene_t *scene, object_t *object)
+scene_t *add_surface(scene_t *scene, surface_t *surface)
 {
-  scene->object[scene->n_objects++] = object;
+  scene->surface[scene->n_surfaces++] = surface;
   return scene;
 }
 
@@ -187,14 +187,14 @@ void test_clear_buffer(CuTest *tc)
   CuAssertIntEquals(tc,  32, pixel[2]);
 }
 
-void test_add_object(CuTest *tc)
+void test_add_surface(CuTest *tc)
 {
   rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
   scene_t *scene = make_scene(black, 1);
-  CuAssertIntEquals(tc, 0, scene->n_objects);
-  scene_t *retval = add_object(scene, add_vertex(make_object(4, 1), make_vertex(2, 3, 5)));
-  CuAssertIntEquals(tc, 1, scene->n_objects);
-  CuAssertDblEquals(tc, 5, scene->object[0]->vertex[0].z, 1e-6);
+  CuAssertIntEquals(tc, 0, scene->n_surfaces);
+  scene_t *retval = add_surface(scene, add_vertex(make_surface(4, 1), make_vertex(2, 3, 5)));
+  CuAssertIntEquals(tc, 1, scene->n_surfaces);
+  CuAssertDblEquals(tc, 5, scene->surface[0]->vertex[0].z, 1e-6);
   CuAssertPtrEquals(tc, scene, retval);
 }
 
@@ -205,7 +205,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_vertex);
   SUITE_ADD_TEST(suite, test_add_vertex);
   SUITE_ADD_TEST(suite, test_clear_buffer);
-  SUITE_ADD_TEST(suite, test_add_object);
+  SUITE_ADD_TEST(suite, test_add_surface);
   SUITE_ADD_TEST(suite, test_add_triangle);
   SUITE_ADD_TEST(suite, test_add_square);
   SUITE_ADD_TEST(suite, test_add_pentagon);
