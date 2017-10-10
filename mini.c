@@ -1,17 +1,10 @@
-#define GLEW_STATIC
-
 #include <math.h>
 #include <stdio.h>
-#include <GL/glew.h>
 #include <GL/glut.h>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846264338327
-#endif
 
 const char *vertexSource = "#version 300 es\n\
-layout(location = 0) in mediump vec3 point;\n\
-uniform mat4 projection;\n\
+in mediump vec3 point;\n\
 void main()\n\
 {\n\
   gl_Position = vec4(point, 1);\n\
@@ -33,11 +26,11 @@ int height = 480;
 
 void onDisplay(void)
 {
-  glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
 
   glUseProgram(program);
-  glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0);
+  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
   glFlush();
 }
 
@@ -81,33 +74,19 @@ void printLinkStatus(const char *step, GLuint context)
 }
 
 GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f,
-  -0.5f,  0.5f, -0.5f,
-  -0.5f, -0.5f,  0.5f,
-   0.5f, -0.5f, -0.5f
+   0.5f,  0.5f,  0.0f,
+  -0.5f,  0.5f,  0.0f,
+  -0.5f, -0.5f,  0.0f,
 };
 
-unsigned int indices[] = {
-  1, 2, 0,
-  3, 2, 1,
-  3, 0, 2,
-  1, 0, 3
-};
+unsigned int indices[] = { 0, 1, 2 };
 
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowSize(width, height);
   glutCreateWindow("tetraeder");
-
-  glewExperimental = 1;
-  glewInit();
-
-  glEnable(GL_DEPTH_TEST);
-
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
 
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
