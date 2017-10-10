@@ -151,34 +151,34 @@ typedef struct {
   rgb_t background_color;
   int n_surfaces;
   surface_t **surface;
-} scene_t;
+} object_t;
 
-scene_t *make_scene(rgb_t background_color, int max_surfaces)
+object_t *make_object(rgb_t background_color, int max_surfaces)
 {
-  scene_t *retval = GC_MALLOC(sizeof(scene_t));
+  object_t *retval = GC_MALLOC(sizeof(object_t));
   retval->background_color = background_color;
   retval->n_surfaces = 0;
   retval->surface = GC_MALLOC(max_surfaces * sizeof(surface_t *));
   return retval;
 }
 
-scene_t *add_surface(scene_t *scene, surface_t *surface)
+object_t *add_surface(object_t *object, surface_t *surface)
 {
-  scene->surface[scene->n_surfaces++] = surface;
-  return scene;
+  object->surface[object->n_surfaces++] = surface;
+  return object;
 }
 
-void render(scene_t *scene)
+void render(object_t *object)
 {
-  rgb_t c = scene->background_color;
+  rgb_t c = object->background_color;
   glClearColor(c.red, c.green, c.blue, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void test_clear_buffer(CuTest *tc)
 {
-  scene_t *scene = make_scene(make_rgb(0.75f, 0.25f, 0.125f), 1);
-  render(scene);
+  object_t *object = make_object(make_rgb(0.75f, 0.25f, 0.125f), 1);
+  render(object);
   glFlush();
   GLubyte pixel[4];
   glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
@@ -190,12 +190,12 @@ void test_clear_buffer(CuTest *tc)
 void test_add_surface(CuTest *tc)
 {
   rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
-  scene_t *scene = make_scene(black, 1);
-  CuAssertIntEquals(tc, 0, scene->n_surfaces);
-  scene_t *retval = add_surface(scene, add_vertex(make_surface(4, 1), make_vertex(2, 3, 5)));
-  CuAssertIntEquals(tc, 1, scene->n_surfaces);
-  CuAssertDblEquals(tc, 5, scene->surface[0]->vertex[0].z, 1e-6);
-  CuAssertPtrEquals(tc, scene, retval);
+  object_t *object = make_object(black, 1);
+  CuAssertIntEquals(tc, 0, object->n_surfaces);
+  object_t *retval = add_surface(object, add_vertex(make_surface(4, 1), make_vertex(2, 3, 5)));
+  CuAssertIntEquals(tc, 1, object->n_surfaces);
+  CuAssertDblEquals(tc, 5, object->surface[0]->vertex[0].z, 1e-6);
+  CuAssertPtrEquals(tc, object, retval);
 }
 
 CuSuite *opengl_suite(void)
