@@ -21,6 +21,7 @@
 * [Bullet physics engine][16]
 * [Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]
 * [Spherical cube map rendering library][18]
+* [Boehm garbage collector interface][19]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -40,3 +41,4 @@
 [16]: http://bulletphysics.org/
 [17]: https://github.com/rlk/obj
 [18]: https://github.com/rlk/scm
+[19]: http://www.hboehm.info/gc/gcinterface.html

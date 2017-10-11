@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdio.h>
 #include <gc.h>
 #include <GL/glut.h>
@@ -60,9 +61,9 @@ surface_t *make_surface(int max_vertices, int max_indices)
 {
   surface_t *retval = GC_MALLOC(sizeof(surface_t));
   retval->n_vertices = 0;
-  retval->vertex = GC_MALLOC(max_vertices * sizeof(vertex_t));
+  retval->vertex = GC_MALLOC_ATOMIC(max_vertices * sizeof(vertex_t));
   retval->n_indices = 0;
-  retval->vertex_index = GC_MALLOC(max_indices * sizeof(int));
+  retval->vertex_index = GC_MALLOC_ATOMIC(max_indices * sizeof(int));
   return retval;
 }
 
@@ -218,7 +219,7 @@ typedef struct {
 
 vertex_array_object_t *make_vertex_array_object(surface_t *surface)
 {
-  vertex_array_object_t *retval = GC_MALLOC(sizeof(vertex_array_object_t));
+  vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
   glGenBuffers(1, &retval->vertex_buffer_object);
@@ -240,6 +241,91 @@ void free_vertex_array_object(vertex_array_object_t *target)
   glDeleteBuffers(1, &target->vertex_buffer_object);
   glDeleteBuffers(1, &target->vertex_array_object);
   glBindVertexArray(0);
+}
+
+typedef struct {
+  GLuint vertex_shader;
+  GLuint fragment_shader;
+  GLuint program;
+} shader_t;
+
+int report_status(const char *file_name, GLuint context, GLuint status)
+{
+  GLint result = GL_FALSE;
+  GLint length = 0;
+  glGetShaderiv(context, status, &result);
+  glGetShaderiv(context, GL_INFO_LOG_LENGTH, &length);
+  if (result == GL_FALSE) {
+    char *info = GC_MALLOC_ATOMIC(length + 1);
+    if (status == GL_COMPILE_STATUS)
+      glGetShaderInfoLog(context, length, NULL, info);
+    else
+      glGetProgramInfoLog(context, length, NULL, info);
+    fprintf(stderr, "%s: %s\n", file_name, info);
+  };
+  return result;
+}
+
+int report_compile_status(const char *file_name, GLuint context)
+{
+  return report_status(file_name, context, GL_COMPILE_STATUS);
+}
+
+GLuint compile_glsl(GLenum shader_type, const char *file_name)
+{
+  GLuint retval = 0;
+  FILE *f = fopen(file_name, "r");
+  if (f) {
+    /* pointerless? */
+    const int file_size;
+    char *source = GC_MALLOC_ATOMIC(file_size + 1);
+    memset(source, 0, file_size);
+    size_t s = fread(source, file_size, 1, f);
+    fclose(f);
+    retval = glCreateShader(shader_type);
+    glShaderSource(retval, 1, &source, NULL);
+    glCompileShader(retval);
+    if (!report_compile_status(file_name, retval)) {
+      glDeleteShader(retval);
+      retval = 0;
+    };
+  };
+  return retval;
+}
+
+shader_t *make_shader(const char *vertex_shader_file_name, const char *fragment_shader_file_name)
+{
+  shader_t *retval = GC_MALLOC(sizeof(shader_t));
+  retval->vertex_shader = compile_glsl(GL_VERTEX_SHADER, vertex_shader_file_name);
+  if (!retval->vertex_shader)
+    retval = NULL;
+  else {
+    retval->fragment_shader = compile_glsl(GL_FRAGMENT_SHADER, fragment_shader_file_name);
+    if (!retval->fragment_shader) {
+      glDeleteShader(retval->vertex_shader);
+      retval = NULL;
+    };
+  };
+  return retval;
+}
+
+void free_shader(shader_t *shader)
+{
+}
+
+void test_load_shader(CuTest *tc)
+{
+  CuAssertIntEquals(tc, 0, compile_glsl(GL_VERTEX_SHADER, "no-such-file.glsl"));
+  GLuint glsl = compile_glsl(GL_VERTEX_SHADER, "vertex-identity.glsl");
+  CuAssertTrue(tc, glsl > 0);
+  glDeleteShader(glsl);
+  CuAssertIntEquals(tc, 0, compile_glsl(GL_VERTEX_SHADER, "invalid.glsl"));
+  CuAssertPtrEquals(tc, NULL, make_shader("no-such-file.glsl", "fragment-white.glsl"));
+  shader_t *shader = make_shader("vertex-identity.glsl", "fragment-white.glsl");
+  CuAssertTrue(tc, shader != NULL);
+  free_shader(shader);
+  CuAssertPtrEquals(tc, NULL, make_shader("vertex-identity.glsl", "no-such-file.glsl"));
+  glFlush();
 }
 
 void test_draw_triangle(CuTest *tc)
@@ -268,6 +354,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_triangle);
   SUITE_ADD_TEST(suite, test_add_square);
   SUITE_ADD_TEST(suite, test_add_pentagon);
+  SUITE_ADD_TEST(suite, test_load_shader);
   SUITE_ADD_TEST(suite, test_draw_triangle);
   return suite;
 }
@@ -276,9 +363,9 @@ int main(int argc, char *argv[])
 {
   GC_INIT();
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_ALPHA);
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowSize(32, 20);
-  glutCreateWindow("test window");
+  glutCreateWindow("test");
 	CuString *output = CuStringNew();
   CuSuite *suite = opengl_suite();
   CuSuiteRun(suite);

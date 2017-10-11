@@ -1,6 +1,6 @@
 # TODO
 
-* copy list of vertices and indices to graphics card
+* setup shader and attribute pointer, draw triangle, test output
 * add triangles to surface (collate vertices, normals, and texture coordinates)
 * create and load Blender model
 * objects with kinematic chain

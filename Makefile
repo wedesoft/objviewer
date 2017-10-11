@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Werror -ansi
+CFLAGS = -g -Werror -ansi
 
 all: fsim tetraeder mini
 
@@ -13,7 +13,7 @@ tetraeder: tetraeder.o
 	$(CC) -o $@ tetraeder.o -lglut -lGLEW -lGLU -lGL -lm
 
 mini: mini.o CuTest.o
-	$(CC) -o $@ mini.o CuTest.o -lglut -lGLEW -lGLU -lGL -lm
+	$(CC) -o $@ mini.o CuTest.o -lglut -lGLU -lGL -lm
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
