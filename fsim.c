@@ -217,9 +217,22 @@ typedef struct {
   GLuint element_buffer_object;
 } vertex_array_object_t;
 
+void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
+{
+  vertex_array_object_t *target = (vertex_array_object_t *)obj;
+  glBindVertexArray(target->vertex_array_object);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &target->element_buffer_object);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &target->vertex_buffer_object);
+  glDeleteBuffers(1, &target->vertex_array_object);
+  glBindVertexArray(0);
+}
+
 vertex_array_object_t *make_vertex_array_object(surface_t *surface)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
+  GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
   glGenBuffers(1, &retval->vertex_buffer_object);
@@ -230,17 +243,6 @@ vertex_array_object_t *make_vertex_array_object(surface_t *surface)
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index, GL_STATIC_DRAW);
   glBindVertexArray(0);
   return retval;
-}
-
-void free_vertex_array_object(vertex_array_object_t *target)
-{
-  glBindVertexArray(target->vertex_array_object);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &target->element_buffer_object);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &target->vertex_buffer_object);
-  glDeleteBuffers(1, &target->vertex_array_object);
-  glBindVertexArray(0);
 }
 
 typedef struct {
@@ -340,7 +342,6 @@ void test_draw_triangle(CuTest *tc)
   build_facet(surface, 2, 2);
   vertex_array_object_t *vao = make_vertex_array_object(surface);
   /* TODO: setup shader and attribute pointer, draw triangle, test output */
-  free_vertex_array_object(vao);
 }
 
 CuSuite *opengl_suite(void)
@@ -372,5 +373,6 @@ int main(int argc, char *argv[])
 	CuSuiteSummary(suite, output);
 	CuSuiteDetails(suite, output);
 	printf("%s\n", output->buffer);
+  GC_gcollect();
   return suite->failCount > 0 ? 1 : 0;
 }
