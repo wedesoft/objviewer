@@ -246,19 +246,23 @@ vertex_array_object_t *make_vertex_array_object(surface_t *surface)
   return retval;
 }
 
-int report_status(const char *file_name, GLuint context, GLuint status)
+int report_status(const char *text, GLuint context, GLuint status)
 {
   GLint result = GL_FALSE;
   GLint length = 0;
   glGetShaderiv(context, status, &result);
-  glGetShaderiv(context, GL_INFO_LOG_LENGTH, &length);
   if (result == GL_FALSE) {
+    glGetShaderiv(context, GL_INFO_LOG_LENGTH, &length);
     char *info = GC_MALLOC_ATOMIC(length + 1);
+    info[0] = 0;
     if (status == GL_COMPILE_STATUS)
       glGetShaderInfoLog(context, length, NULL, info);
     else
       glGetProgramInfoLog(context, length, NULL, info);
-    fprintf(stderr, "%s: %s\n", file_name, info);
+    if (info[0])
+      fprintf(stderr, "%s: %s\n", text, info);
+    else
+      result = GL_TRUE;
   };
   return result;
 }
@@ -266,6 +270,11 @@ int report_status(const char *file_name, GLuint context, GLuint status)
 int report_compile_status(const char *file_name, GLuint context)
 {
   return report_status(file_name, context, GL_COMPILE_STATUS);
+}
+
+int report_link_status(GLuint context)
+{
+  return report_status("link shader program", context, GL_LINK_STATUS);
 }
 
 typedef struct
@@ -276,7 +285,8 @@ typedef struct
 void finalize_shader(GC_PTR obj, GC_PTR env)
 {
   shader_t *target = (shader_t *)obj;
-  glDeleteShader(target->shader);
+  if (target->shader)
+    glDeleteShader(target->shader);
 }
 
 shader_t *make_shader(GLenum shader_type, const char *file_name)
@@ -308,12 +318,30 @@ typedef struct {
   GLuint program;
 } program_t;
 
+void finalize_program(GC_PTR obj, GC_PTR env)
+{
+  program_t *target = (program_t *)obj;
+  if (target->program) {
+    glDetachShader(target->vertex_shader->shader);
+    glDetachShader(target->fragment_shader->shader);
+    glDeleteProgram(target->program);
+  };
+}
+
 program_t *make_program(const char *vertex_shader_file_name, const char *fragment_shader_file_name)
 {
   program_t *retval = GC_MALLOC(sizeof(program_t));
+  GC_register_finalizer(retval, finalize_shader, 0, 0, 0);
   retval->vertex_shader = make_shader(GL_VERTEX_SHADER, vertex_shader_file_name);
   retval->fragment_shader = make_shader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
-  if (!retval->vertex_shader || !retval->fragment_shader)
+  retval->program = glCreateProgram();
+  if (retval->vertex_shader && retval->fragment_shader) {
+    glAttachShader(retval->program, retval->vertex_shader);
+    glAttachShader(retval->program, retval->fragment_shader);
+    glLinkProgram(retval->program);
+    if (!report_link_status(retval->program))
+      retval = NULL;
+  } else
     retval = NULL;
   return retval;
 }
