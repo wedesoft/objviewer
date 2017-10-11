@@ -346,10 +346,6 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   return retval;
 }
 
-void free_shader(program_t *shader)
-{
-}
-
 void test_load_shader(CuTest *tc)
 {
   CuAssertPtrEquals(tc, NULL, make_shader(GL_VERTEX_SHADER, "no-such-file.glsl"));
@@ -372,7 +368,8 @@ void test_draw_triangle(CuTest *tc)
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
   vertex_array_object_t *vao = make_vertex_array_object(surface);
-  /* TODO: setup shader and attribute pointer, draw triangle, test output */
+  program_t *program = make_program("vertex-identity.glsl", "fragment-white.glsl");
+  /* TODO: setup attribute pointer, draw triangle, test output */
 }
 
 CuSuite *opengl_suite(void)
