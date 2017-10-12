@@ -375,7 +375,19 @@ void test_load_shader(CuTest *tc)
   setup_vertex_attribute_pointer(program, "texcoord", 2, 5);
   CuAssertIntEquals(tc, 2, program->n_attributes);
   CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
-  glFlush();
+}
+
+void test_connect_attributes(CuTest *tc)
+{
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-white.glsl");
+  CuAssertIntEquals(tc, 0, program->n_attributes);
+  CuAssertIntEquals(tc, 0, program->attribute_pointer);
+  setup_vertex_attribute_pointer(program, "point", 3, 5);
+  CuAssertIntEquals(tc, 1, program->n_attributes);
+  CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
+  setup_vertex_attribute_pointer(program, "texcoord", 2, 5);
+  CuAssertIntEquals(tc, 2, program->n_attributes);
+  CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
 }
 
 void test_draw_triangle(CuTest *tc)
@@ -390,21 +402,34 @@ void test_draw_triangle(CuTest *tc)
   build_facet(surface, 2, 2);
   vertex_array_object_t *vao = make_vertex_array_object(surface);
   program_t *program = make_program("vertex-identity.glsl", "fragment-white.glsl");
-  /* TODO: setup attribute pointer, draw triangle, test output */
+  setup_vertex_attribute_pointer(program, "point", 3, 3);
+  /* TODO: draw triangle, test output */
 }
 
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
+  printf("rgb\n");
   SUITE_ADD_TEST(suite, test_rgb);
+  printf("vertex\n");
   SUITE_ADD_TEST(suite, test_vertex);
+  printf("add_vertex\n");
   SUITE_ADD_TEST(suite, test_add_vertex);
+  printf("clear_buffer\n");
   SUITE_ADD_TEST(suite, test_clear_buffer);
+  printf("add_surface\n");
   SUITE_ADD_TEST(suite, test_add_surface);
+  printf("add_triangle\n");
   SUITE_ADD_TEST(suite, test_add_triangle);
+  printf("add_square\n");
   SUITE_ADD_TEST(suite, test_add_square);
+  printf("add_pentagon\n");
   SUITE_ADD_TEST(suite, test_add_pentagon);
+  printf("load_shader\n");
   SUITE_ADD_TEST(suite, test_load_shader);
+  printf("connect_attributes\n");
+  SUITE_ADD_TEST(suite, test_connect_attributes);
+  printf("draw_triangle\n");
   SUITE_ADD_TEST(suite, test_draw_triangle);
   return suite;
 }
@@ -422,6 +447,7 @@ int main(int argc, char *argv[])
 	CuSuiteSummary(suite, output);
 	CuSuiteDetails(suite, output);
 	printf("%s\n", output->buffer);
+  glFlush();
   GC_gcollect();
   return suite->failCount > 0 ? 1 : 0;
 }
