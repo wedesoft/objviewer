@@ -316,6 +316,8 @@ typedef struct {
   shader_t *vertex_shader;
   shader_t *fragment_shader;
   GLuint program;
+  int n_attributes;
+  long attribute_pointer;
 } program_t;
 
 void finalize_program(GC_PTR obj, GC_PTR env)
@@ -335,6 +337,8 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   retval->vertex_shader = make_shader(GL_VERTEX_SHADER, vertex_shader_file_name);
   retval->fragment_shader = make_shader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
   retval->program = glCreateProgram();
+  retval->n_attributes = 0;
+  retval->attribute_pointer = 0;
   if (retval->vertex_shader && retval->fragment_shader) {
     glAttachShader(retval->program, retval->vertex_shader);
     glAttachShader(retval->program, retval->fragment_shader);
@@ -346,6 +350,14 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   return retval;
 }
 
+void setup_vertex_attribute_pointer(program_t *program, const char *attribute, int size, int stride)
+{
+  GLuint index = glGetAttribLocation(program, attribute);
+  glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void *)program->attribute_pointer);
+  program->n_attributes += 1;
+  program->attribute_pointer += sizeof(float) * size;
+}
+
 void test_load_shader(CuTest *tc)
 {
   CuAssertPtrEquals(tc, NULL, make_shader(GL_VERTEX_SHADER, "no-such-file.glsl"));
@@ -354,6 +366,15 @@ void test_load_shader(CuTest *tc)
   CuAssertPtrEquals(tc, NULL, make_program("no-such-file.glsl", "fragment-white.glsl"));
   CuAssertTrue(tc, make_program("vertex-identity.glsl", "fragment-white.glsl") != NULL);
   CuAssertPtrEquals(tc, NULL, make_program("vertex-identity.glsl", "no-such-file.glsl"));
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-white.glsl");
+  CuAssertIntEquals(tc, 0, program->n_attributes);
+  CuAssertIntEquals(tc, 0, program->attribute_pointer);
+  setup_vertex_attribute_pointer(program, "point", 3, 5);
+  CuAssertIntEquals(tc, 1, program->n_attributes);
+  CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
+  setup_vertex_attribute_pointer(program, "texcoord", 2, 5);
+  CuAssertIntEquals(tc, 2, program->n_attributes);
+  CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
   glFlush();
 }
 
