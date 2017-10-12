@@ -5,6 +5,10 @@
 #include <GL/glut.h>
 #include "CuTest.h"
 
+
+int width = 32;
+int height = 20;
+
 typedef struct {
   GLfloat red;
   GLfloat green;
@@ -182,10 +186,22 @@ object_t *add_surface(object_t *object, surface_t *surface)
   return object;
 }
 
+void write_ppm(const char *file_name, int width, int height, unsigned char *data)
+{
+  FILE *f = fopen(file_name, "w");
+  fprintf(f, "P3\n%d %d\n255\n", width, height);
+  int i;
+  for (i=0; i<height * width; i++) {
+    fprintf(f, "%d %d %d\n", data[0], data[1], data[2]);
+    data += 4;
+  };
+  fclose(f);
+}
+
 void render(object_t *object)
 {
   rgb_t c = object->background_color;
-  glClearColor(c.red, c.green, c.blue, 1.0f);
+  glClearColor(c.red, c.green, c.blue, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -194,11 +210,12 @@ void test_clear_buffer(CuTest *tc)
   object_t *object = make_object(make_rgb(0.75f, 0.25f, 0.125f), 1);
   render(object);
   glFlush();
-  GLubyte pixel[4];
-  glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
-  CuAssertIntEquals(tc, 191, pixel[0]);
-  CuAssertIntEquals(tc,  64, pixel[1]);
-  CuAssertIntEquals(tc,  32, pixel[2]);
+  GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
+  glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  write_ppm("clear_buffer.ppm", width, height, data);
+  CuAssertIntEquals(tc, 191, data[0]);
+  CuAssertIntEquals(tc,  64, data[1]);
+  CuAssertIntEquals(tc,  32, data[2]);
 }
 
 void test_add_surface(CuTest *tc)
@@ -233,6 +250,7 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 vertex_array_object_t *make_vertex_array_object(surface_t *surface)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
+  memset(retval, sizeof(vertex_array_object_t), 0);
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
@@ -340,8 +358,8 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   retval->n_attributes = 0;
   retval->attribute_pointer = 0;
   if (retval->vertex_shader && retval->fragment_shader) {
-    glAttachShader(retval->program, retval->vertex_shader);
-    glAttachShader(retval->program, retval->fragment_shader);
+    glAttachShader(retval->program, retval->vertex_shader->shader);
+    glAttachShader(retval->program, retval->fragment_shader->shader);
     glLinkProgram(retval->program);
     if (!report_link_status(retval->program))
       retval = NULL;
@@ -352,7 +370,7 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
 
 void setup_vertex_attribute_pointer(program_t *program, const char *attribute, int size, int stride)
 {
-  GLuint index = glGetAttribLocation(program, attribute);
+  GLuint index = glGetAttribLocation(program->program, attribute);
   glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void *)program->attribute_pointer);
   program->n_attributes += 1;
   program->attribute_pointer += sizeof(float) * size;
@@ -393,43 +411,44 @@ void test_connect_attributes(CuTest *tc)
 void test_draw_triangle(CuTest *tc)
 {
   surface_t *surface = make_surface(3, 3);
-  CuAssertIntEquals(tc, 0, surface->n_vertices);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
   build_facet(surface, 0, 0);
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
-  vertex_array_object_t *vao = make_vertex_array_object(surface);
   program_t *program = make_program("vertex-identity.glsl", "fragment-white.glsl");
+
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
+  glBindVertexArray(vertex_array_object->vertex_array_object); /* TODO: move this into implementation */
   setup_vertex_attribute_pointer(program, "point", 3, 3);
-  /* TODO: draw triangle, test output */
+  glEnableVertexAttribArray(0);
+
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glUseProgram(program->program);
+  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
+  glFlush();
+  GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
+  glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  write_ppm("draw_triangle.ppm", width, height, data);
+  glDisableVertexAttribArray(0);
 }
 
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
-  printf("rgb\n");
   SUITE_ADD_TEST(suite, test_rgb);
-  printf("vertex\n");
   SUITE_ADD_TEST(suite, test_vertex);
-  printf("add_vertex\n");
   SUITE_ADD_TEST(suite, test_add_vertex);
-  printf("clear_buffer\n");
   SUITE_ADD_TEST(suite, test_clear_buffer);
-  printf("add_surface\n");
   SUITE_ADD_TEST(suite, test_add_surface);
-  printf("add_triangle\n");
   SUITE_ADD_TEST(suite, test_add_triangle);
-  printf("add_square\n");
   SUITE_ADD_TEST(suite, test_add_square);
-  printf("add_pentagon\n");
   SUITE_ADD_TEST(suite, test_add_pentagon);
-  printf("load_shader\n");
   SUITE_ADD_TEST(suite, test_load_shader);
-  printf("connect_attributes\n");
   SUITE_ADD_TEST(suite, test_connect_attributes);
-  printf("draw_triangle\n");
   SUITE_ADD_TEST(suite, test_draw_triangle);
   return suite;
 }
@@ -439,7 +458,7 @@ int main(int argc, char *argv[])
   GC_INIT();
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-  glutInitWindowSize(32, 20);
+  glutInitWindowSize(width, height);
   glutCreateWindow("test");
 	CuString *output = CuStringNew();
   CuSuite *suite = opengl_suite();

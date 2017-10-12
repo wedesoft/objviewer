@@ -21,8 +21,8 @@ GLuint vao;
 GLuint vbo;
 GLuint idx;
 GLuint program;
-int width = 640;
-int height = 480;
+int width = 32;
+int height = 20;
 
 void onDisplay(void)
 {
@@ -30,7 +30,7 @@ void onDisplay(void)
   glClear(GL_COLOR_BUFFER_BIT);
   glUseProgram(program);
   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
-  glFlush();
+  glutSwapBuffers();
 }
 
 void onResize(int w, int h)
@@ -83,7 +83,7 @@ unsigned int indices[] = { 0, 1, 2 };
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowSize(width, height);
   glutCreateWindow("tetraeder");
 
@@ -114,8 +114,9 @@ int main(int argc, char** argv)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-  glEnableVertexAttribArray(0);
   glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+  glEnableVertexAttribArray(0);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);

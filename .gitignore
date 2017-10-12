@@ -2,3 +2,4 @@ fsim
 tetraeder
 mini
 *.o
+*.ppm
