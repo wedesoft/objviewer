@@ -250,7 +250,6 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 vertex_array_object_t *make_vertex_array_object(surface_t *surface)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
-  memset(retval, sizeof(vertex_array_object_t), 0);
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
@@ -432,7 +431,7 @@ void test_draw_triangle(CuTest *tc)
   glFlush();
   GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
   glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
-  write_ppm("draw_triangle.ppm", width, height, data);
+  write_ppm("draw_triangle.ppm", width, height, data);/* TODO: unit test */
   glDisableVertexAttribArray(0);
 }
 
