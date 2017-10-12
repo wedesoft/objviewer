@@ -1,4 +1,4 @@
-#version 300 es
+#version 130
 in mediump vec3 point;
 void main()
 {

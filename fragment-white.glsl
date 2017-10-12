@@ -1,4 +1,4 @@
-#version 300 es
+#version 130
 out mediump vec3 fragColor;
 void main()
 {

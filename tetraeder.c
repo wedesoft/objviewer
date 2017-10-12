@@ -8,10 +8,10 @@
 #define M_PI 3.14159265358979323846264338327
 #endif
 
-const char *vertexSource = "#version 300 es\n\
-layout(location = 0) in mediump vec3 point;\n\
-layout(location = 1) in mediump vec2 texcoord;\n\
-layout(location = 2) in mediump vec3 vector;\n\
+const char *vertexSource = "#version 130\n\
+in mediump vec3 point;\n\
+in mediump vec2 texcoord;\n\
+in mediump vec3 vector;\n\
 uniform mat4 yaw;\n\
 uniform mat4 pitch;\n\
 uniform mat4 translation;\n\
@@ -35,7 +35,7 @@ void main()\n\
   diffuse = max(0.0, dot(normal, light));\n\
 }";
 
-const char *fragmentSource = "#version 300 es\n\
+const char *fragmentSource = "#version 130\n\
 in mediump vec2 UV;\n\
 flat in mediump vec3 normal;\n\
 flat in mediump vec3 light;\n\

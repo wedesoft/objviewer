@@ -3,14 +3,14 @@
 #include <GL/glut.h>
 
 
-const char *vertexSource = "#version 300 es\n\
+const char *vertexSource = "#version 130\n\
 in mediump vec3 point;\n\
 void main()\n\
 {\n\
   gl_Position = vec4(point, 1);\n\
 }";
 
-const char *fragmentSource = "#version 300 es\n\
+const char *fragmentSource = "#version 130\n\
 out mediump vec3 fragColor;\n\
 void main()\n\
 {\n\
