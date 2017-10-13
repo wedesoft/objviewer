@@ -152,13 +152,18 @@ int size_of_indices(surface_t *surface)
   return surface->n_indices * sizeof(int);
 }
 
+void test_no_indices(CuTest *tc)
+{
+  surface_t *surface = make_surface(3, 3);
+  CuAssertIntEquals(tc, 0, surface->n_indices);
+}
+
 void test_add_triangle(CuTest *tc)
 {
   surface_t *surface = make_surface(3, 3);
   int i;
   for (i=0; i<3; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
-  CuAssertIntEquals(tc, 0, surface->n_indices);
   build_facet(surface, 0, 2);
   build_facet(surface, 1, 0);
   build_facet(surface, 2, 1);
@@ -166,7 +171,6 @@ void test_add_triangle(CuTest *tc)
   CuAssertIntEquals(tc, 2, surface->vertex_index[0]);
   CuAssertIntEquals(tc, 0, surface->vertex_index[1]);
   CuAssertIntEquals(tc, 1, surface->vertex_index[2]);
-  CuAssertIntEquals(tc, 3 * sizeof(int), size_of_indices(surface));
 }
 
 void test_add_square(CuTest *tc)
@@ -201,6 +205,15 @@ void test_add_pentagon(CuTest *tc)
   CuAssertIntEquals(tc, 0, surface->vertex_index[6]);
   CuAssertIntEquals(tc, 4, surface->vertex_index[7]);
   CuAssertIntEquals(tc, 2, surface->vertex_index[8]);
+}
+
+void test_size_of_indices(CuTest *tc)
+{
+  surface_t *surface = make_surface(3, 3);
+  CuAssertIntEquals(tc, 0, size_of_indices(surface));
+  add_vertex(surface, make_vertex(0, 0, 0));
+  build_facet(surface, 0, 0);
+  CuAssertIntEquals(tc, sizeof(int), size_of_indices(surface));
 }
 
 typedef struct {
@@ -486,6 +499,8 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_size_of_vertices);
   SUITE_ADD_TEST(suite, test_clear_buffer);
   SUITE_ADD_TEST(suite, test_add_vertex_array_object);
+  SUITE_ADD_TEST(suite, test_no_indices);
+  SUITE_ADD_TEST(suite, test_size_of_indices);
   SUITE_ADD_TEST(suite, test_add_triangle);
   SUITE_ADD_TEST(suite, test_add_square);
   SUITE_ADD_TEST(suite, test_add_pentagon);
