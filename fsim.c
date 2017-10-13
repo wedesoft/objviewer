@@ -267,13 +267,19 @@ void render(object_t *object)
     draw_elements(object->vertex_array_object[i]);
 }
 
+unsigned char *read_pixels(void)
+{
+  unsigned char *retval = GC_MALLOC_ATOMIC(width * height * 4);
+  glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, retval);
+  return retval;
+}
+
 void test_clear_buffer(CuTest *tc)
 {
   object_t *object = make_object(make_rgb(0.75f, 0.25f, 0.125f), 1);
   render(object);
   glFlush();
-  GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
-  glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  unsigned char *data = read_pixels();
   write_ppm("clear_buffer.ppm", width, height, data);
   CuAssertIntEquals(tc, 191, data[0]);
   CuAssertIntEquals(tc,  64, data[1]);
@@ -312,47 +318,10 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   return retval;
 }
 
-void test_add_vertex_array_object(CuTest *tc)
+void test_empty_object(CuTest *tc)
 {
-  rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
-  object_t *object = make_object(black, 1);
+  object_t *object = make_object(make_rgb(0, 0, 0), 1);
   CuAssertIntEquals(tc, 0, object->n_vertex_array_objects);
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(NULL, make_surface(4, 1));
-  object_t *retval = add_vertex_array_object(object, vertex_array_object);
-  CuAssertIntEquals(tc, 1, object->n_vertex_array_objects);
-  CuAssertPtrEquals(tc, vertex_array_object, object->vertex_array_object[0]);
-  CuAssertPtrEquals(tc, object, retval);
-}
-
-int report_status(const char *text, GLuint context, GLuint status)
-{
-  GLint result = GL_FALSE;
-  GLint length = 0;
-  glGetShaderiv(context, status, &result);
-  if (result == GL_FALSE) {
-    glGetShaderiv(context, GL_INFO_LOG_LENGTH, &length);
-    char *info = GC_MALLOC_ATOMIC(length + 1);
-    info[0] = 0;
-    if (status == GL_COMPILE_STATUS)
-      glGetShaderInfoLog(context, length, NULL, info);
-    else
-      glGetProgramInfoLog(context, length, NULL, info);
-    if (info[0])
-      fprintf(stderr, "%s: %s\n", text, info);
-    else
-      result = GL_TRUE;
-  };
-  return result;
-}
-
-int report_compile_status(const char *file_name, GLuint context)
-{
-  return report_status(file_name, context, GL_COMPILE_STATUS);
-}
-
-int report_link_status(GLuint context)
-{
-  return report_status("link shader program", context, GL_LINK_STATUS);
 }
 
 void finalize_shader(GC_PTR obj, GC_PTR env)
@@ -389,8 +358,10 @@ void finalize_program(GC_PTR obj, GC_PTR env)
 {
   program_t *target = (program_t *)obj;
   if (target->program) {
-    glDetachShader(target->vertex_shader->shader);
-    glDetachShader(target->fragment_shader->shader);
+    if (target->vertex_shader)
+      glDetachShader(target->vertex_shader->shader);
+    if (target->fragment_shader)
+      glDetachShader(target->fragment_shader->shader);
     glDeleteProgram(target->program);
   };
 }
@@ -398,7 +369,7 @@ void finalize_program(GC_PTR obj, GC_PTR env)
 program_t *make_program(const char *vertex_shader_file_name, const char *fragment_shader_file_name)
 {
   program_t *retval = GC_MALLOC(sizeof(program_t));
-  GC_register_finalizer(retval, finalize_shader, 0, 0, 0);
+  GC_register_finalizer(retval, finalize_program, 0, 0, 0);
   retval->vertex_shader = make_shader(GL_VERTEX_SHADER, vertex_shader_file_name);
   retval->fragment_shader = make_shader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
   retval->program = glCreateProgram();
@@ -413,6 +384,48 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   } else
     retval = NULL;
   return retval;
+}
+
+void test_add_vertex_array_object(CuTest *tc)
+{
+  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(4, 1));
+  object_t *retval = add_vertex_array_object(object, vertex_array_object);
+  CuAssertIntEquals(tc, 1, object->n_vertex_array_objects);
+  CuAssertPtrEquals(tc, vertex_array_object, object->vertex_array_object[0]);
+  CuAssertPtrEquals(tc, object, retval);
+}
+
+int report_status(const char *text, GLuint context, GLuint status)
+{
+  GLint result = GL_FALSE;
+  GLint length = 0;
+  glGetShaderiv(context, status, &result);
+  if (result == GL_FALSE) {
+    glGetShaderiv(context, GL_INFO_LOG_LENGTH, &length);
+    char *info = GC_MALLOC_ATOMIC(length + 1);
+    info[0] = 0;
+    if (status == GL_COMPILE_STATUS)
+      glGetShaderInfoLog(context, length, NULL, info);
+    else
+      glGetProgramInfoLog(context, length, NULL, info);
+    if (info[0])
+      fprintf(stderr, "%s: %s\n", text, info);
+    else
+      result = GL_TRUE;
+  };
+  return result;
+}
+
+int report_compile_status(const char *file_name, GLuint context)
+{
+  return report_status(file_name, context, GL_COMPILE_STATUS);
+}
+
+int report_link_status(GLuint context)
+{
+  return report_status("link shader program", context, GL_LINK_STATUS);
 }
 
 void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride)
@@ -452,32 +465,34 @@ void test_no_fragment_shader(CuTest *tc)
   CuAssertPtrEquals(tc, NULL, make_program("vertex-identity.glsl", "no-such-file.glsl"));
 }
 
-void test_load_shader(CuTest *tc)
+void test_compile_program(CuTest *tc)
 {
   CuAssertTrue(tc, make_program("vertex-identity.glsl", "fragment-blue.glsl") != NULL);
-  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  CuAssertIntEquals(tc, 0, program->n_attributes);
-  CuAssertIntEquals(tc, 0, program->attribute_pointer);
-  surface_t *surface = make_surface(3, 3);
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
-  CuAssertIntEquals(tc, 1, program->n_attributes);
-  CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
-  setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 5);
-  CuAssertIntEquals(tc, 2, program->n_attributes);
-  CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
 }
 
-void test_connect_attributes(CuTest *tc)
+void test_no_attribute_pointers(CuTest *tc)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
+}
+
+void test_add_attribute_pointer(CuTest *tc)
+{
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface(3, 3);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
+}
+
+void test_add_two_attribute_pointers(CuTest *tc)
+{
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
+  surface_t *surface = make_surface(3, 3);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 5);
   CuAssertIntEquals(tc, 2, program->n_attributes);
   CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
@@ -500,8 +515,7 @@ void test_draw_triangle(CuTest *tc)
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
   glFlush();
-  GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
-  glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  unsigned char *data = read_pixels();
   CuAssertIntEquals(tc, 255, data[0]);
   CuAssertIntEquals(tc,   0, data[1]);
   CuAssertIntEquals(tc,   0, data[2]);
@@ -521,6 +535,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_two_vertices);
   SUITE_ADD_TEST(suite, test_size_of_vertices);
   SUITE_ADD_TEST(suite, test_clear_buffer);
+  SUITE_ADD_TEST(suite, test_empty_object);
   SUITE_ADD_TEST(suite, test_add_vertex_array_object);
   SUITE_ADD_TEST(suite, test_no_indices);
   SUITE_ADD_TEST(suite, test_size_of_indices);
@@ -532,8 +547,10 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_shader_syntax_error);
   SUITE_ADD_TEST(suite, test_no_vertex_shader);
   SUITE_ADD_TEST(suite, test_no_fragment_shader);
-  SUITE_ADD_TEST(suite, test_load_shader);
-  SUITE_ADD_TEST(suite, test_connect_attributes);
+  SUITE_ADD_TEST(suite, test_compile_program);
+  SUITE_ADD_TEST(suite, test_no_attribute_pointers);
+  SUITE_ADD_TEST(suite, test_add_attribute_pointer);
+  SUITE_ADD_TEST(suite, test_add_two_attribute_pointers);
   SUITE_ADD_TEST(suite, test_draw_triangle);
   return suite;
 }
