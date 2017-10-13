@@ -510,19 +510,19 @@ void test_draw_triangle(CuTest *tc)
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
-  object_t *object = make_object(make_rgb(1, 0, 0), 1);
+  object_t *object = make_object(make_rgb(0, 1, 0), 1);
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
   glFlush();
   unsigned char *data = read_pixels();
-  CuAssertIntEquals(tc, 255, data[0]);
-  CuAssertIntEquals(tc,   0, data[1]);
+  write_ppm("draw_triangle.ppm", width, height, data);
+  CuAssertIntEquals(tc,   0, data[0]);
+  CuAssertIntEquals(tc, 255, data[1]);
   CuAssertIntEquals(tc,   0, data[2]);
   CuAssertIntEquals(tc,   0, data[(12 * 32 + 14 ) * 4 + 0]);
   CuAssertIntEquals(tc,   0, data[(12 * 32 + 14 ) * 4 + 1]);
   CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 2]);
-  write_ppm("draw_triangle.ppm", width, height, data);
 }
 
 CuSuite *opengl_suite(void)
@@ -555,7 +555,6 @@ CuSuite *opengl_suite(void)
   return suite;
 }
 
-/* TODO: split up tests some more */
 int main(int argc, char *argv[])
 {
   GC_INIT();
