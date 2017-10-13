@@ -388,10 +388,10 @@ void test_load_shader(CuTest *tc)
   CuAssertPtrEquals(tc, NULL, make_shader(GL_VERTEX_SHADER, "no-such-file.glsl"));
   CuAssertTrue(tc, make_shader(GL_VERTEX_SHADER, "vertex-identity.glsl") != NULL);
   CuAssertPtrEquals(tc, NULL, make_shader(GL_VERTEX_SHADER, "invalid.glsl"));
-  CuAssertPtrEquals(tc, NULL, make_program("no-such-file.glsl", "fragment-white.glsl"));
-  CuAssertTrue(tc, make_program("vertex-identity.glsl", "fragment-white.glsl") != NULL);
+  CuAssertPtrEquals(tc, NULL, make_program("no-such-file.glsl", "fragment-blue.glsl"));
+  CuAssertTrue(tc, make_program("vertex-identity.glsl", "fragment-blue.glsl") != NULL);
   CuAssertPtrEquals(tc, NULL, make_program("vertex-identity.glsl", "no-such-file.glsl"));
-  program_t *program = make_program("vertex-texcoord.glsl", "fragment-white.glsl");
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
   surface_t *surface = make_surface(3, 3);
@@ -406,7 +406,7 @@ void test_load_shader(CuTest *tc)
 
 void test_connect_attributes(CuTest *tc)
 {
-  program_t *program = make_program("vertex-texcoord.glsl", "fragment-white.glsl");
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
   surface_t *surface = make_surface(3, 3);
@@ -423,6 +423,11 @@ void test_connect_attributes(CuTest *tc)
 void draw_elements(program_t *program, vertex_array_object_t *vertex_array_object)
 {
   glUseProgram(program->program);
+  glBindVertexArray(vertex_array_object->vertex_array_object);
+  glEnableVertexAttribArray(0);
+  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
+  glDisableVertexAttribArray(0);
+  glBindVertexArray(0);
 }
 
 void test_draw_triangle(CuTest *tc)
@@ -434,30 +439,23 @@ void test_draw_triangle(CuTest *tc)
   build_facet(surface, 0, 0);
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
-  program_t *program = make_program("vertex-identity.glsl", "fragment-white.glsl");
-
+  program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
-
-  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);/* TODO: use renderer */
+  glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   draw_elements(program, vertex_array_object);
-  glBindVertexArray(vertex_array_object->vertex_array_object);
-  glEnableVertexAttribArray(0);
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);/* TODO: draw method */
-  glDisableVertexAttribArray(0);
-  glBindVertexArray(0);
   glFlush();
   GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
   glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
-  CuAssertIntEquals(tc, 0, data[0]);
-  CuAssertIntEquals(tc, 0, data[1]);
-  CuAssertIntEquals(tc, 0, data[2]);
-  CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 0]);
-  CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 1]);
+  CuAssertIntEquals(tc, 255, data[0]);
+  CuAssertIntEquals(tc,   0, data[1]);
+  CuAssertIntEquals(tc,   0, data[2]);
+  CuAssertIntEquals(tc,   0, data[(12 * 32 + 14 ) * 4 + 0]);
+  CuAssertIntEquals(tc,   0, data[(12 * 32 + 14 ) * 4 + 1]);
   CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 2]);
-  write_ppm("draw_triangle.ppm", width, height, data);/* TODO: unit test */
+  write_ppm("draw_triangle.ppm", width, height, data);
 }
 
 CuSuite *opengl_suite(void)
@@ -492,6 +490,7 @@ int main(int argc, char *argv[])
 	printf("%s\n", output->buffer);
   glFlush();
   printf("collecting\n");
+  int retval = suite->failCount > 0 ? 1 : 0;
   GC_gcollect();
-  return suite->failCount > 0 ? 1 : 0;
+  return retval;
 }
