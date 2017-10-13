@@ -22,6 +22,7 @@
 * [Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]
 * [Spherical cube map rendering library][18]
 * [Boehm garbage collector interface][19]
+* [Getting Core Dumps of Failed TravisCI Builds][20]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -42,3 +43,4 @@
 [17]: https://github.com/rlk/obj
 [18]: https://github.com/rlk/scm
 [19]: http://www.hboehm.info/gc/gcinterface.html
+[20]: http://jsteemann.github.io/blog/2014/10/30/getting-core-dumps-of-failed-travisci-builds/
