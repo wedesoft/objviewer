@@ -367,12 +367,14 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   return retval;
 }
 
-void setup_vertex_attribute_pointer(program_t *program, const char *attribute, int size, int stride)
+void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, program_t *program, const char *attribute, int size, int stride)
 {
+  glBindVertexArray(vertex_array_object->vertex_array_object);
   GLuint index = glGetAttribLocation(program->program, attribute);
   glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void *)program->attribute_pointer);
   program->n_attributes += 1;
   program->attribute_pointer += sizeof(float) * size;
+  glBindVertexArray(0);
 }
 
 void test_load_shader(CuTest *tc)
@@ -386,10 +388,12 @@ void test_load_shader(CuTest *tc)
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-white.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
-  setup_vertex_attribute_pointer(program, "point", 3, 5);
+  surface_t *surface = make_surface(3, 3);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
+  setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
-  setup_vertex_attribute_pointer(program, "texcoord", 2, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, program, "texcoord", 2, 5);
   CuAssertIntEquals(tc, 2, program->n_attributes);
   CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
 }
@@ -399,10 +403,12 @@ void test_connect_attributes(CuTest *tc)
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-white.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
-  setup_vertex_attribute_pointer(program, "point", 3, 5);
+  surface_t *surface = make_surface(3, 3);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
+  setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
-  setup_vertex_attribute_pointer(program, "texcoord", 2, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, program, "texcoord", 2, 5);
   CuAssertIntEquals(tc, 2, program->n_attributes);
   CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
 }
@@ -419,20 +425,20 @@ void test_draw_triangle(CuTest *tc)
   program_t *program = make_program("vertex-identity.glsl", "fragment-white.glsl");
 
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
-  glBindVertexArray(vertex_array_object->vertex_array_object); /* TODO: move this into implementation */
-  setup_vertex_attribute_pointer(program, "point", 3, 3);
-  glEnableVertexAttribArray(0);
+  setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
 
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glUseProgram(program->program);
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
+  glBindVertexArray(vertex_array_object->vertex_array_object);
+  glEnableVertexAttribArray(0);
+  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);/* TODO: draw method */
+  glDisableVertexAttribArray(0);
   glFlush();
   GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
   glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
   write_ppm("draw_triangle.ppm", width, height, data);/* TODO: unit test */
-  glDisableVertexAttribArray(0);
 }
 
 CuSuite *opengl_suite(void)
