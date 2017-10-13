@@ -237,6 +237,7 @@ typedef struct {
 
 void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 {
+  printf("finalise vao\n");
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
   glBindVertexArray(target->vertex_array_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -301,6 +302,7 @@ typedef struct
 
 void finalize_shader(GC_PTR obj, GC_PTR env)
 {
+  printf("finalise shader\n");
   shader_t *target = (shader_t *)obj;
   if (target->shader)
     glDeleteShader(target->shader);
@@ -339,6 +341,7 @@ typedef struct {
 
 void finalize_program(GC_PTR obj, GC_PTR env)
 {
+  printf("finalise program\n");
   program_t *target = (program_t *)obj;
   if (target->program) {
     glDetachShader(target->vertex_shader->shader);
@@ -413,6 +416,8 @@ void test_connect_attributes(CuTest *tc)
   CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
 }
 
+/* TODO: split up tests some more */
+
 void test_draw_triangle(CuTest *tc)
 {
   surface_t *surface = make_surface(3, 3);
@@ -435,6 +440,7 @@ void test_draw_triangle(CuTest *tc)
   glEnableVertexAttribArray(0);
   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);/* TODO: draw method */
   glDisableVertexAttribArray(0);
+  glBindVertexArray(0);
   glFlush();
   GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
   glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -472,6 +478,7 @@ int main(int argc, char *argv[])
 	CuSuiteDetails(suite, output);
 	printf("%s\n", output->buffer);
   glFlush();
+  printf("collecting\n");
   GC_gcollect();
   return suite->failCount > 0 ? 1 : 0;
 }
