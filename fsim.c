@@ -76,17 +76,15 @@ typedef struct {
 } vertex_array_object_t;
 
 typedef struct {
-  program_t *program;
   int n_vertices;
   vertex_t *vertex;
   int n_indices;
   int *vertex_index;
 } surface_t;
 
-surface_t *make_surface(program_t *program, int max_vertices, int max_indices)
+surface_t *make_surface(int max_vertices, int max_indices)
 {
   surface_t *retval = GC_MALLOC(sizeof(surface_t));
-  retval->program = program;
   retval->n_vertices = 0;
   retval->vertex = GC_MALLOC_ATOMIC(max_vertices * sizeof(vertex_t));
   retval->n_indices = 0;
@@ -107,7 +105,7 @@ int size_of_vertices(surface_t *surface)
 
 void test_add_vertex(CuTest *tc)
 {
-  surface_t *surface = make_surface(NULL, 3, 3);
+  surface_t *surface = make_surface(3, 3);
   CuAssertIntEquals(tc, 0, surface->n_vertices);
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   CuAssertIntEquals(tc, 1, surface->n_vertices);
@@ -138,7 +136,7 @@ int size_of_indices(surface_t *surface)
 
 void test_add_triangle(CuTest *tc)
 {
-  surface_t *surface = make_surface(NULL, 3, 3);
+  surface_t *surface = make_surface(3, 3);
   int i;
   for (i=0; i<3; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
@@ -155,7 +153,7 @@ void test_add_triangle(CuTest *tc)
 
 void test_add_square(CuTest *tc)
 {
-  surface_t *surface = make_surface(NULL, 4, 6);
+  surface_t *surface = make_surface(4, 6);
   int i;
   for (i=0; i<4; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
@@ -171,7 +169,7 @@ void test_add_square(CuTest *tc)
 
 void test_add_pentagon(CuTest *tc)
 {
-  surface_t *surface = make_surface(NULL, 5, 9);
+  surface_t *surface = make_surface(5, 9);
   int i;
   for (i=0; i<4; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
@@ -235,6 +233,9 @@ void render(object_t *object)
   rgb_t c = object->background_color;
   glClearColor(c.red, c.green, c.blue, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
+  int i;
+  for (i=0; i<object->n_vertex_array_objects; i++)
+    draw_elements(object->vertex_array_object[i]);
 }
 
 void test_clear_buffer(CuTest *tc)
@@ -262,11 +263,11 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glBindVertexArray(0);
 }
 
-vertex_array_object_t *make_vertex_array_object(surface_t *surface)
+vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
-  retval->program = surface->program;
+  retval->program = program;
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
   glGenBuffers(1, &retval->vertex_buffer_object);
@@ -284,7 +285,7 @@ void test_add_vertex_array_object(CuTest *tc)
   rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
   object_t *object = make_object(black, 1);
   CuAssertIntEquals(tc, 0, object->n_vertex_array_objects);
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(make_surface(NULL, 4, 1));
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(NULL, make_surface(4, 1));
   object_t *retval = add_vertex_array_object(object, vertex_array_object);
   CuAssertIntEquals(tc, 1, object->n_vertex_array_objects);
   CuAssertPtrEquals(tc, vertex_array_object, object->vertex_array_object[0]);
@@ -403,8 +404,8 @@ void test_load_shader(CuTest *tc)
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
-  surface_t *surface = make_surface(NULL, 3, 3);
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
+  surface_t *surface = make_surface(3, 3);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
@@ -418,8 +419,8 @@ void test_connect_attributes(CuTest *tc)
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
-  surface_t *surface = make_surface(NULL, 3, 3);
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
+  surface_t *surface = make_surface(3, 3);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
@@ -430,21 +431,20 @@ void test_connect_attributes(CuTest *tc)
 
 void test_draw_triangle(CuTest *tc)
 {
-  program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  surface_t *surface = make_surface(program, 3, 3);
+  surface_t *surface = make_surface(3, 3);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
   build_facet(surface, 0, 0);
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
+  program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
   object_t *object = make_object(make_rgb(1, 0, 0), 1);
   add_vertex_array_object(object, vertex_array_object);/* TODO: remove program from surface? */
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
-  draw_elements(vertex_array_object);
   glFlush();
   GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
   glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -490,8 +490,6 @@ int main(int argc, char *argv[])
 	printf("%s\n", output->buffer);
   glFlush();
   int retval = suite->failCount > 0 ? 1 : 0;
-  printf("collecting\n");
   GC_gcollect();
-  printf("done\n");
   return retval;
 }
