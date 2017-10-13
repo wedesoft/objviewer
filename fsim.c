@@ -440,7 +440,7 @@ void test_draw_triangle(CuTest *tc)
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
   object_t *object = make_object(make_rgb(1, 0, 0), 1);
-  add_surface(object, surface);/* TODO: replace with add vertex array object */
+  add_surface(object, surface);/* TODO: replace with add vertex array object, remove program from surface? */
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
   draw_elements(vertex_array_object);

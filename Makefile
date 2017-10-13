@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Werror -ansi
+CFLAGS = -g -O0 -Werror -ansi
 
 all: fsim tetraeder mini
 
