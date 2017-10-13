@@ -189,22 +189,22 @@ void test_add_pentagon(CuTest *tc)
 
 typedef struct {
   rgb_t background_color;
-  int n_surfaces;
-  surface_t **surface;
+  int n_vertex_array_objects;
+  vertex_array_object_t **vertex_array_object;
 } object_t;
 
-object_t *make_object(rgb_t background_color, int max_surfaces)
+object_t *make_object(rgb_t background_color, int max_vertex_array_objects)
 {
   object_t *retval = GC_MALLOC(sizeof(object_t));
   retval->background_color = background_color;
-  retval->n_surfaces = 0;
-  retval->surface = GC_MALLOC(max_surfaces * sizeof(surface_t *));
+  retval->n_vertex_array_objects = 0;
+  retval->vertex_array_object = GC_MALLOC(max_vertex_array_objects * sizeof(vertex_array_object_t *));
   return retval;
 }
 
-object_t *add_surface(object_t *object, surface_t *surface)
+object_t *add_vertex_array_object(object_t *object, vertex_array_object_t *vertex_array_object)
 {
-  object->surface[object->n_surfaces++] = surface;
+  object->vertex_array_object[object->n_vertex_array_objects++] = vertex_array_object;
   return object;
 }
 
@@ -250,17 +250,6 @@ void test_clear_buffer(CuTest *tc)
   CuAssertIntEquals(tc,  32, data[2]);
 }
 
-void test_add_surface(CuTest *tc)
-{
-  rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
-  object_t *object = make_object(black, 1);
-  CuAssertIntEquals(tc, 0, object->n_surfaces);
-  object_t *retval = add_surface(object, add_vertex(make_surface(NULL, 4, 1), make_vertex(2, 3, 5)));
-  CuAssertIntEquals(tc, 1, object->n_surfaces);
-  CuAssertDblEquals(tc, 5, object->surface[0]->vertex[0].z, 1e-6);
-  CuAssertPtrEquals(tc, object, retval);
-}
-
 void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 {
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
@@ -288,6 +277,18 @@ vertex_array_object_t *make_vertex_array_object(surface_t *surface)
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index, GL_STATIC_DRAW);
   glBindVertexArray(0);
   return retval;
+}
+
+void test_add_vertex_array_object(CuTest *tc)
+{
+  rgb_t black = make_rgb(0.0f, 0.0f, 0.0f);
+  object_t *object = make_object(black, 1);
+  CuAssertIntEquals(tc, 0, object->n_vertex_array_objects);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(make_surface(NULL, 4, 1));
+  object_t *retval = add_vertex_array_object(object, vertex_array_object);
+  CuAssertIntEquals(tc, 1, object->n_vertex_array_objects);
+  CuAssertPtrEquals(tc, vertex_array_object, object->vertex_array_object[0]);
+  CuAssertPtrEquals(tc, object, retval);
 }
 
 int report_status(const char *text, GLuint context, GLuint status)
@@ -440,7 +441,7 @@ void test_draw_triangle(CuTest *tc)
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
   object_t *object = make_object(make_rgb(1, 0, 0), 1);
-  add_surface(object, surface);/* TODO: replace with add vertex array object, remove program from surface? */
+  add_vertex_array_object(object, vertex_array_object);/* TODO: remove program from surface? */
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
   draw_elements(vertex_array_object);
@@ -463,7 +464,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_vertex);
   SUITE_ADD_TEST(suite, test_add_vertex);
   SUITE_ADD_TEST(suite, test_clear_buffer);
-  SUITE_ADD_TEST(suite, test_add_surface);
+  SUITE_ADD_TEST(suite, test_add_vertex_array_object);
   SUITE_ADD_TEST(suite, test_add_triangle);
   SUITE_ADD_TEST(suite, test_add_square);
   SUITE_ADD_TEST(suite, test_add_pentagon);
