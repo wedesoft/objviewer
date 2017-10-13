@@ -246,6 +246,7 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glDeleteBuffers(1, &target->vertex_buffer_object);
   glDeleteBuffers(1, &target->vertex_array_object);
   glBindVertexArray(0);
+  printf("done\n");
 }
 
 vertex_array_object_t *make_vertex_array_object(surface_t *surface)
@@ -306,6 +307,7 @@ void finalize_shader(GC_PTR obj, GC_PTR env)
   shader_t *target = (shader_t *)obj;
   if (target->shader)
     glDeleteShader(target->shader);
+  printf("done\n");
 }
 
 shader_t *make_shader(GLenum shader_type, const char *file_name)
@@ -348,6 +350,7 @@ void finalize_program(GC_PTR obj, GC_PTR env)
     glDetachShader(target->fragment_shader->shader);
     glDeleteProgram(target->program);
   };
+  printf("done\n");
 }
 
 program_t *make_program(const char *vertex_shader_file_name, const char *fragment_shader_file_name)
@@ -417,6 +420,10 @@ void test_connect_attributes(CuTest *tc)
 }
 
 /* TODO: split up tests some more */
+void draw_elements(program_t *program, vertex_array_object_t *vertex_array_object)
+{
+  glUseProgram(program->program);
+}
 
 void test_draw_triangle(CuTest *tc)
 {
@@ -435,7 +442,7 @@ void test_draw_triangle(CuTest *tc)
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-  glUseProgram(program->program);
+  draw_elements(program, vertex_array_object);
   glBindVertexArray(vertex_array_object->vertex_array_object);
   glEnableVertexAttribArray(0);
   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);/* TODO: draw method */
@@ -444,6 +451,12 @@ void test_draw_triangle(CuTest *tc)
   glFlush();
   GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
   glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  CuAssertIntEquals(tc, 0, data[0]);
+  CuAssertIntEquals(tc, 0, data[1]);
+  CuAssertIntEquals(tc, 0, data[2]);
+  CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 0]);
+  CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 1]);
+  CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 2]);
   write_ppm("draw_triangle.ppm", width, height, data);/* TODO: unit test */
 }
 
