@@ -253,7 +253,7 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
 {
   glUseProgram(vertex_array_object->program->program);
   glBindVertexArray(vertex_array_object->vertex_array_object);
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
+  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);/* TODO: use correct number of triangles */
   glBindVertexArray(0);
 }
 
@@ -525,6 +525,47 @@ void test_draw_triangle(CuTest *tc)
   CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 2]);
 }
 
+void test_draw_two_surfaces(CuTest *tc)
+{
+  surface_t *surface1 = make_surface(3, 3);
+  add_vertex(surface1, make_vertex( 0.5f,  0.5f, 0.0f));
+  add_vertex(surface1, make_vertex(-0.5f,  0.5f, 0.0f));
+  add_vertex(surface1, make_vertex( 0.5f, -0.5f, 0.0f));
+  build_facet(surface1, 0, 0);
+  build_facet(surface1, 1, 1);
+  build_facet(surface1, 2, 2);
+  surface_t *surface2 = make_surface(3, 3);
+  add_vertex(surface2, make_vertex( 0.5f, -0.5f, 0.0f));
+  add_vertex(surface2, make_vertex(-0.5f,  0.5f, 0.0f));
+  add_vertex(surface2, make_vertex(-0.5f, -0.5f, 0.0f));
+  build_facet(surface2, 0, 0);
+  build_facet(surface2, 1, 1);
+  build_facet(surface2, 2, 2);
+  program_t *program1 = make_program("vertex-identity.glsl", "fragment-blue.glsl");
+  program_t *program2 = make_program("vertex-identity.glsl", "fragment-red.glsl");
+  vertex_array_object_t *vertex_array_object1 = make_vertex_array_object(program1, surface1);
+  setup_vertex_attribute_pointer(vertex_array_object1, "point", 3, 3);
+  vertex_array_object_t *vertex_array_object2 = make_vertex_array_object(program2, surface2);
+  setup_vertex_attribute_pointer(vertex_array_object2, "point", 3, 3);
+  object_t *object = make_object(make_rgb(0, 1, 0), 2);
+  add_vertex_array_object(object, vertex_array_object1);
+  add_vertex_array_object(object, vertex_array_object2);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  render(object);
+  glFlush();
+  unsigned char *data = read_pixels();
+  write_ppm("draw_surfaces.ppm", width, height, data);
+  CuAssertIntEquals(tc,   0, data[0]);
+  CuAssertIntEquals(tc, 255, data[1]);
+  CuAssertIntEquals(tc,   0, data[2]);
+  CuAssertIntEquals(tc, 255, data[( 8 * 32 + 14 ) * 4 + 0]);
+  CuAssertIntEquals(tc,   0, data[( 8 * 32 + 14 ) * 4 + 1]);
+  CuAssertIntEquals(tc,   0, data[( 8 * 32 + 14 ) * 4 + 2]);
+  CuAssertIntEquals(tc,   0, data[(12 * 32 + 18 ) * 4 + 0]);
+  CuAssertIntEquals(tc,   0, data[(12 * 32 + 18 ) * 4 + 1]);
+  CuAssertIntEquals(tc, 255, data[(12 * 32 + 18 ) * 4 + 2]);
+}
+
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
@@ -552,6 +593,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_attribute_pointer);
   SUITE_ADD_TEST(suite, test_add_two_attribute_pointers);
   SUITE_ADD_TEST(suite, test_draw_triangle);
+  SUITE_ADD_TEST(suite, test_draw_two_surfaces);
   return suite;
 }
 
