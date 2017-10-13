@@ -103,17 +103,35 @@ int size_of_vertices(surface_t *surface)
   return surface->n_vertices * sizeof(vertex_t);
 }
 
-void test_add_vertex(CuTest *tc)
+void test_empty_surface(CuTest *tc)
 {
   surface_t *surface = make_surface(3, 3);
   CuAssertIntEquals(tc, 0, surface->n_vertices);
-  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+}
+
+void test_add_one_vertex(CuTest *tc)
+{
+  surface_t *surface = make_surface(3, 3);
+  surface_t *retval = add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   CuAssertIntEquals(tc, 1, surface->n_vertices);
   CuAssertDblEquals(tc, 2.5, surface->vertex[0].x, 1e-6);
-  surface_t *retval = add_vertex(surface, make_vertex(1.5f, 4.5f, 7.5f));
-  CuAssertDblEquals(tc, 1.5, surface->vertex[1].x, 1e-6);
   CuAssertPtrEquals(tc, surface, retval);
-  CuAssertIntEquals(tc, 2 * sizeof(vertex_t), size_of_vertices(surface));
+}
+
+void test_add_two_vertices(CuTest *tc)
+{
+  surface_t *surface = make_surface(3, 3);
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  add_vertex(surface, make_vertex(1.5f, 4.5f, 7.5f));
+  CuAssertDblEquals(tc, 1.5, surface->vertex[1].x, 1e-6);
+}
+
+void test_size_of_vertices(CuTest *tc)
+{
+  surface_t *surface = make_surface(3, 3);
+  CuAssertIntEquals(tc, 0, size_of_vertices(surface));
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  CuAssertIntEquals(tc, sizeof(vertex_t), size_of_vertices(surface));
 }
 
 void build_facet(surface_t *surface, int number, int vertex_index)
@@ -442,7 +460,7 @@ void test_draw_triangle(CuTest *tc)
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
   object_t *object = make_object(make_rgb(1, 0, 0), 1);
-  add_vertex_array_object(object, vertex_array_object);/* TODO: remove program from surface? */
+  add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
   glFlush();
@@ -462,7 +480,10 @@ CuSuite *opengl_suite(void)
   CuSuite *suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, test_rgb);
   SUITE_ADD_TEST(suite, test_vertex);
-  SUITE_ADD_TEST(suite, test_add_vertex);
+  SUITE_ADD_TEST(suite, test_empty_surface);
+  SUITE_ADD_TEST(suite, test_add_one_vertex);
+  SUITE_ADD_TEST(suite, test_add_two_vertices);
+  SUITE_ADD_TEST(suite, test_size_of_vertices);
   SUITE_ADD_TEST(suite, test_clear_buffer);
   SUITE_ADD_TEST(suite, test_add_vertex_array_object);
   SUITE_ADD_TEST(suite, test_add_triangle);
