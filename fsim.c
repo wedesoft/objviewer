@@ -237,7 +237,6 @@ typedef struct {
 
 void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 {
-  printf("finalise vao\n");
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
   glBindVertexArray(target->vertex_array_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -246,7 +245,6 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glDeleteBuffers(1, &target->vertex_buffer_object);
   glDeleteBuffers(1, &target->vertex_array_object);
   glBindVertexArray(0);
-  printf("done\n");
 }
 
 vertex_array_object_t *make_vertex_array_object(surface_t *surface)
@@ -303,11 +301,9 @@ typedef struct
 
 void finalize_shader(GC_PTR obj, GC_PTR env)
 {
-  printf("finalise shader\n");
   shader_t *target = (shader_t *)obj;
   if (target->shader)
     glDeleteShader(target->shader);
-  printf("done\n");
 }
 
 shader_t *make_shader(GLenum shader_type, const char *file_name)
@@ -343,14 +339,12 @@ typedef struct {
 
 void finalize_program(GC_PTR obj, GC_PTR env)
 {
-  printf("finalise program\n");
   program_t *target = (program_t *)obj;
   if (target->program) {
     glDetachShader(target->vertex_shader->shader);
     glDetachShader(target->fragment_shader->shader);
     glDeleteProgram(target->program);
   };
-  printf("done\n");
 }
 
 program_t *make_program(const char *vertex_shader_file_name, const char *fragment_shader_file_name)
@@ -443,8 +437,8 @@ void test_draw_triangle(CuTest *tc)
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(surface);
   setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);/* TODO: use renderer */
-  glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+  object_t *object = make_object(make_rgb(1, 0, 0), 1);
+  render(object);
   draw_elements(program, vertex_array_object);
   glFlush();
   GLubyte *data = GC_MALLOC_ATOMIC(width * height * 4);
@@ -489,8 +483,9 @@ int main(int argc, char *argv[])
 	CuSuiteDetails(suite, output);
 	printf("%s\n", output->buffer);
   glFlush();
-  printf("collecting\n");
   int retval = suite->failCount > 0 ? 1 : 0;
+  printf("collecting\n");
   GC_gcollect();
+  printf("done\n");
   return retval;
 }
