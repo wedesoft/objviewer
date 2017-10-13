@@ -253,9 +253,7 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
 {
   glUseProgram(vertex_array_object->program->program);
   glBindVertexArray(vertex_array_object->vertex_array_object);
-  glEnableVertexAttribArray(0);
   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
-  glDisableVertexAttribArray(0);
   glBindVertexArray(0);
 }
 
@@ -285,6 +283,9 @@ void test_clear_buffer(CuTest *tc)
 void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 {
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
+  int i;
+  for (i=0; i<target->program->n_attributes; i++)
+    glDisableVertexAttribArray(i);
   glBindVertexArray(target->vertex_array_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &target->element_buffer_object);
@@ -414,33 +415,55 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   return retval;
 }
 
-void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, program_t *program, const char *attribute, int size, int stride)
+void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride)
 {
   glBindVertexArray(vertex_array_object->vertex_array_object);
+  program_t *program = vertex_array_object->program;
   GLuint index = glGetAttribLocation(program->program, attribute);
   glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void *)program->attribute_pointer);
+  glEnableVertexAttribArray(program->n_attributes);
   program->n_attributes += 1;
   program->attribute_pointer += sizeof(float) * size;
   glBindVertexArray(0);
 }
 
-void test_load_shader(CuTest *tc)
+void test_shader_file_not_found(CuTest *tc)
 {
   CuAssertPtrEquals(tc, NULL, make_shader(GL_VERTEX_SHADER, "no-such-file.glsl"));
+}
+
+void test_compile_shader(CuTest *tc)
+{
   CuAssertTrue(tc, make_shader(GL_VERTEX_SHADER, "vertex-identity.glsl") != NULL);
+}
+
+void test_shader_syntax_error(CuTest *tc)
+{
   CuAssertPtrEquals(tc, NULL, make_shader(GL_VERTEX_SHADER, "invalid.glsl"));
+}
+
+void test_no_vertex_shader(CuTest *tc)
+{
   CuAssertPtrEquals(tc, NULL, make_program("no-such-file.glsl", "fragment-blue.glsl"));
-  CuAssertTrue(tc, make_program("vertex-identity.glsl", "fragment-blue.glsl") != NULL);
+}
+
+void test_no_fragment_shader(CuTest *tc)
+{
   CuAssertPtrEquals(tc, NULL, make_program("vertex-identity.glsl", "no-such-file.glsl"));
+}
+
+void test_load_shader(CuTest *tc)
+{
+  CuAssertTrue(tc, make_program("vertex-identity.glsl", "fragment-blue.glsl") != NULL);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   CuAssertIntEquals(tc, 0, program->n_attributes);
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
   surface_t *surface = make_surface(3, 3);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
-  setup_vertex_attribute_pointer(vertex_array_object, program, "texcoord", 2, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 5);
   CuAssertIntEquals(tc, 2, program->n_attributes);
   CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
 }
@@ -452,10 +475,10 @@ void test_connect_attributes(CuTest *tc)
   CuAssertIntEquals(tc, 0, program->attribute_pointer);
   surface_t *surface = make_surface(3, 3);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
-  setup_vertex_attribute_pointer(vertex_array_object, program, "texcoord", 2, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 5);
   CuAssertIntEquals(tc, 2, program->n_attributes);
   CuAssertIntEquals(tc, 5 * sizeof(float), program->attribute_pointer);
 }
@@ -471,7 +494,7 @@ void test_draw_triangle(CuTest *tc)
   build_facet(surface, 2, 2);
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, program, "point", 3, 3);
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   object_t *object = make_object(make_rgb(1, 0, 0), 1);
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
@@ -504,6 +527,11 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_triangle);
   SUITE_ADD_TEST(suite, test_add_square);
   SUITE_ADD_TEST(suite, test_add_pentagon);
+  SUITE_ADD_TEST(suite, test_shader_file_not_found);
+  SUITE_ADD_TEST(suite, test_compile_shader);
+  SUITE_ADD_TEST(suite, test_shader_syntax_error);
+  SUITE_ADD_TEST(suite, test_no_vertex_shader);
+  SUITE_ADD_TEST(suite, test_no_fragment_shader);
   SUITE_ADD_TEST(suite, test_load_shader);
   SUITE_ADD_TEST(suite, test_connect_attributes);
   SUITE_ADD_TEST(suite, test_draw_triangle);
