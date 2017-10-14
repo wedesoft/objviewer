@@ -524,29 +524,24 @@ void test_draw_triangle(CuTest *tc)
 
 void test_draw_two_surfaces(CuTest *tc)
 {
-  surface_t *surface1 = make_surface(3, 3);
-  add_vertex(surface1, make_vertex( 0.5f,  0.5f, 0.0f));
-  add_vertex(surface1, make_vertex(-0.5f,  0.5f, 0.0f));
-  add_vertex(surface1, make_vertex( 0.5f, -0.5f, 0.0f));
-  build_facet(surface1, 0, 0);
-  build_facet(surface1, 1, 1);
-  build_facet(surface1, 2, 2);
-  surface_t *surface2 = make_surface(3, 3);
-  add_vertex(surface2, make_vertex( 0.5f, -0.5f, 0.0f));
-  add_vertex(surface2, make_vertex(-0.5f,  0.5f, 0.0f));
-  add_vertex(surface2, make_vertex(-0.5f, -0.5f, 0.0f));
-  build_facet(surface2, 0, 0);
-  build_facet(surface2, 1, 1);
-  build_facet(surface2, 2, 2);
-  program_t *program1 = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  program_t *program2 = make_program("vertex-identity.glsl", "fragment-red.glsl");
-  vertex_array_object_t *vertex_array_object1 = make_vertex_array_object(program1, surface1);
-  setup_vertex_attribute_pointer(vertex_array_object1, "point", 3, 3);
-  vertex_array_object_t *vertex_array_object2 = make_vertex_array_object(program2, surface2);
-  setup_vertex_attribute_pointer(vertex_array_object2, "point", 3, 3);
+  float coord[] = {0.5f, -0.5f};
+  const char *fragment_shader_file_name[] = {"fragment-blue.glsl", "fragment-red.glsl"};
   object_t *object = make_object(make_rgb(0, 1, 0), 2);
-  add_vertex_array_object(object, vertex_array_object1);
-  add_vertex_array_object(object, vertex_array_object2);
+  int i;
+  for (i=0;i<2; i++) {
+    surface_t *surface = make_surface(3, 3);
+    float c = coord[i];
+    add_vertex(surface, make_vertex(    c,     c, 0.0f));
+    add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
+    add_vertex(surface, make_vertex( 0.5f, -0.5f, 0.0f));
+    build_facet(surface, 0, 0);
+    build_facet(surface, 1, 1);
+    build_facet(surface, 2, 2);
+    program_t *program = make_program("vertex-identity.glsl", fragment_shader_file_name[i]);
+    vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+    setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
+    add_vertex_array_object(object, vertex_array_object);
+  };
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
   glFlush();

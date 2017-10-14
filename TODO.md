@@ -1,7 +1,5 @@
 # TODO
 
-* split up tests some more
-* setup shader and attribute pointer, draw triangle, test output
 * add triangles to surface (collate vertices, normals, and texture coordinates)
 * create and load Blender model
 * objects with kinematic chain
