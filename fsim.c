@@ -55,6 +55,29 @@ void test_vertex(CuTest *tc)
   CuAssertDblEquals(tc, 5.0f, v.z, 1e-6f);
 }
 
+typedef struct {
+  GLfloat x;
+  GLfloat y;
+  GLfloat z;
+} normal_t;
+
+normal_t make_normal(GLfloat x, GLfloat y, GLfloat z)
+{
+  normal_t retval;
+  retval.x = x;
+  retval.y = y;
+  retval.z = z;
+  return retval;
+}
+
+void test_normal(CuTest *tc)
+{
+  normal_t n = make_normal(0.36f, 0.48f, 0.8f);
+  CuAssertDblEquals(tc, 0.36f, n.x, 1e-6f);
+  CuAssertDblEquals(tc, 0.48f, n.y, 1e-6f);
+  CuAssertDblEquals(tc, 0.80f, n.z, 1e-6f);
+}
+
 typedef struct
 {
   GLuint shader;
@@ -117,6 +140,8 @@ void test_add_one_vertex(CuTest *tc)
   surface_t *retval = add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   CuAssertIntEquals(tc, 3, surface->n_array);
   CuAssertDblEquals(tc, 2.5f, surface->array[0], 1e-6f);
+  CuAssertDblEquals(tc, 3.5f, surface->array[1], 1e-6f);
+  CuAssertDblEquals(tc, 5.5f, surface->array[2], 1e-6f);
   CuAssertPtrEquals(tc, surface, retval);
 }
 
@@ -126,6 +151,27 @@ void test_add_two_vertices(CuTest *tc)
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   add_vertex(surface, make_vertex(1.5f, 4.5f, 7.5f));
   CuAssertDblEquals(tc, 1.5f, surface->array[3], 1e-6f);
+  CuAssertDblEquals(tc, 4.5f, surface->array[4], 1e-6f);
+  CuAssertDblEquals(tc, 7.5f, surface->array[5], 1e-6f);
+}
+
+surface_t *add_normal(surface_t *surface, normal_t normal)
+{
+  surface->array[surface->n_array++] = normal.x;
+  surface->array[surface->n_array++] = normal.y;
+  surface->array[surface->n_array++] = normal.z;
+  return surface;
+}
+
+void test_add_normal(CuTest *tc)
+{
+  surface_t *surface = make_surface(9, 3);
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  add_normal(surface, make_normal(0.36f, 0.48f, 0.8f));
+  CuAssertIntEquals(tc, 6, surface->n_array);
+  CuAssertDblEquals(tc, 0.36f, surface->array[3], 1e-6f);
+  CuAssertDblEquals(tc, 0.48f, surface->array[4], 1e-6f);
+  CuAssertDblEquals(tc, 0.80f, surface->array[5], 1e-6f);
 }
 
 void test_size_of_array(CuTest *tc)
@@ -560,14 +606,43 @@ void test_draw_two_surfaces(CuTest *tc)
   CuAssertIntEquals(tc, 255, data[(12 * 32 + 18 ) * 4 + 2]);
 }
 
+void test_use_normal(CuTest *tc)
+{
+  surface_t *surface = make_surface(9, 3);
+  add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
+  add_normal(surface, make_normal( 0.0f,  0.0f, 1.0f));
+  add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
+  add_normal(surface, make_normal( 0.0f,  1.0f, 0.0f));
+  add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
+  add_normal(surface, make_normal( 1.0f,  0.0f, 0.0f));
+  build_facet(surface, 0, 0);
+  build_facet(surface, 1, 1);
+  build_facet(surface, 2, 2);
+  program_t *program = make_program("vertex-normal-identity.glsl", "fragment-normal.glsl");
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  setup_vertex_attribute_pointer(vertex_array_object, "point" , 3, 6);
+  setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, 6);
+  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  add_vertex_array_object(object, vertex_array_object);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  render(object);
+  glFlush();
+  unsigned char *data = read_pixels();
+  write_ppm("use_normal.ppm", width, height, data);
+  CuAssertTrue(tc, data[( 5 * 32 + 8 ) * 4 + 0] >= 192);
+  CuAssertTrue(tc, data[(14 * 32 + 8 ) * 4 + 0] <   64);
+}
+
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, test_rgb);
   SUITE_ADD_TEST(suite, test_vertex);
+  SUITE_ADD_TEST(suite, test_normal);
   SUITE_ADD_TEST(suite, test_empty_surface);
   SUITE_ADD_TEST(suite, test_add_one_vertex);
   SUITE_ADD_TEST(suite, test_add_two_vertices);
+  SUITE_ADD_TEST(suite, test_add_normal);
   SUITE_ADD_TEST(suite, test_size_of_array);
   SUITE_ADD_TEST(suite, test_clear_buffer);
   SUITE_ADD_TEST(suite, test_empty_object);
@@ -588,6 +663,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_add_two_attribute_pointers);
   SUITE_ADD_TEST(suite, test_draw_triangle);
   SUITE_ADD_TEST(suite, test_draw_two_surfaces);
+  SUITE_ADD_TEST(suite, test_use_normal);
   return suite;
 }
 
