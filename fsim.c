@@ -254,7 +254,6 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
   glUseProgram(vertex_array_object->program->program);
   glBindVertexArray(vertex_array_object->vertex_array_object);
   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);/* TODO: use correct number of triangles */
-  glBindVertexArray(0);
 }
 
 void render(object_t *object)
@@ -289,6 +288,7 @@ void test_clear_buffer(CuTest *tc)
 void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 {
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
+  glBindVertexArray(target->vertex_array_object);
   int i;
   for (i=0; i<target->program->n_attributes; i++)
     glDisableVertexAttribArray(i);
@@ -298,7 +298,6 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &target->vertex_buffer_object);
   glDeleteBuffers(1, &target->vertex_array_object);
-  glBindVertexArray(0);
 }
 
 vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface)
@@ -314,7 +313,6 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   glGenBuffers(1, &retval->element_buffer_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index, GL_STATIC_DRAW);
-  glBindVertexArray(0);
   return retval;
 }
 
@@ -437,7 +435,6 @@ void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, 
   glEnableVertexAttribArray(program->n_attributes);
   program->n_attributes += 1;
   program->attribute_pointer += sizeof(float) * size;
-  glBindVertexArray(0);
 }
 
 void test_shader_file_not_found(CuTest *tc)
