@@ -1,4 +1,3 @@
-#define GC_THREADS
 #include <string.h>
 #include <stdio.h>
 #include <sys/stat.h>
