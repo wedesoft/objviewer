@@ -1,8 +1,9 @@
+#define GC_THREADS
 #include <string.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <gc.h>
 #include <GL/glut.h>
+#include <gc.h>
 #include "CuTest.h"
 
 
