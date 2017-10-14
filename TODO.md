@@ -1,6 +1,7 @@
 # TODO
 
 * add triangles to surface (collate vertices, normals, and texture coordinates)
+* textures, texture coordinates
 * create and load Blender model
 * objects with kinematic chain
 * shadows (mask color pipeline output)
