@@ -5,6 +5,7 @@
 * create and load Blender model
 * objects with kinematic chain
 * shadows (mask color pipeline output)
+* blinking beacon lights
 * HDR bloom (separable convolution)
 * replace glGenTexture with glBindBuffer? (page 335)
 * multisampling

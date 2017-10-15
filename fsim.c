@@ -1,6 +1,9 @@
+#define GLEW_STATIC
 #include <string.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <magick/MagickCore.h>
+#include <GL/glew.h>
 #include <GL/glut.h>
 #include <gc.h>
 #include "CuTest.h"
@@ -8,6 +11,7 @@
 
 int width = 32;
 int height = 20;
+
 
 typedef struct {
   GLfloat red;
@@ -377,6 +381,37 @@ void finalize_shader(GC_PTR obj, GC_PTR env)
     glDeleteShader(target->shader);
 }
 
+int report_status(const char *text, GLuint context, GLuint status)
+{
+  GLint result = GL_FALSE;
+  GLint length = 0;
+  glGetShaderiv(context, status, &result);
+  if (result == GL_FALSE) {
+    glGetShaderiv(context, GL_INFO_LOG_LENGTH, &length);
+    char *info = GC_MALLOC_ATOMIC(length + 1);
+    info[0] = 0;
+    if (status == GL_COMPILE_STATUS)
+      glGetShaderInfoLog(context, length, NULL, info);
+    else
+      glGetProgramInfoLog(context, length, NULL, info);
+    if (info[0])
+      fprintf(stderr, "%s: %s\n", text, info);
+    else
+      result = GL_TRUE;
+  };
+  return result;
+}
+
+int report_compile_status(const char *file_name, GLuint context)
+{
+  return report_status(file_name, context, GL_COMPILE_STATUS);
+}
+
+int report_link_status(GLuint context)
+{
+  return report_status("link shader program", context, GL_LINK_STATUS);
+}
+
 shader_t *make_shader(GLenum shader_type, const char *file_name)
 {
   shader_t *retval = GC_MALLOC_ATOMIC(sizeof(shader_t));
@@ -391,7 +426,8 @@ shader_t *make_shader(GLenum shader_type, const char *file_name)
     source[st.st_size] = '\0';
     fclose(f);
     retval->shader = glCreateShader(shader_type);
-    glShaderSource(retval->shader, 1, &source, NULL);
+    const GLchar *shader_source = source;
+    glShaderSource(retval->shader, 1, &shader_source, NULL);
     glCompileShader(retval->shader);
     if (!report_compile_status(file_name, retval->shader))
       retval = NULL;
@@ -405,9 +441,9 @@ void finalize_program(GC_PTR obj, GC_PTR env)
   program_t *target = (program_t *)obj;
   if (target->program) {
     if (target->vertex_shader)
-      glDetachShader(target->vertex_shader->shader);
+      glDetachShader(target->program, target->vertex_shader->shader);
     if (target->fragment_shader)
-      glDetachShader(target->fragment_shader->shader);
+      glDetachShader(target->program, target->fragment_shader->shader);
     glDeleteProgram(target->program);
   };
 }
@@ -443,37 +479,6 @@ void test_add_vertex_array_object(CuTest *tc)
   CuAssertPtrEquals(tc, object, retval);
 }
 
-int report_status(const char *text, GLuint context, GLuint status)
-{
-  GLint result = GL_FALSE;
-  GLint length = 0;
-  glGetShaderiv(context, status, &result);
-  if (result == GL_FALSE) {
-    glGetShaderiv(context, GL_INFO_LOG_LENGTH, &length);
-    char *info = GC_MALLOC_ATOMIC(length + 1);
-    info[0] = 0;
-    if (status == GL_COMPILE_STATUS)
-      glGetShaderInfoLog(context, length, NULL, info);
-    else
-      glGetProgramInfoLog(context, length, NULL, info);
-    if (info[0])
-      fprintf(stderr, "%s: %s\n", text, info);
-    else
-      result = GL_TRUE;
-  };
-  return result;
-}
-
-int report_compile_status(const char *file_name, GLuint context)
-{
-  return report_status(file_name, context, GL_COMPILE_STATUS);
-}
-
-int report_link_status(GLuint context)
-{
-  return report_status("link shader program", context, GL_LINK_STATUS);
-}
-
 void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride)
 {
   glBindVertexArray(vertex_array_object->vertex_array_object);
@@ -497,7 +502,9 @@ void test_compile_shader(CuTest *tc)
 
 void test_shader_syntax_error(CuTest *tc)
 {
+  freopen("/dev/null", "w", stderr);
   CuAssertPtrEquals(tc, NULL, make_shader(GL_VERTEX_SHADER, "invalid.glsl"));
+  freopen("/dev/stderr", "w", stderr);
 }
 
 void test_no_vertex_shader(CuTest *tc)
@@ -634,6 +641,29 @@ void test_use_normal(CuTest *tc)
   CuAssertTrue(tc, data[(14 * 32 + 8 ) * 4 + 1] >= 192);
 }
 
+void read_image(const char *file_name, int *width, int *height)
+{
+  ExceptionInfo *exception_info = AcquireExceptionInfo();
+  ImageInfo *image_info = CloneImageInfo((ImageInfo *)NULL);
+  CopyMagickString(image_info->filename, file_name, MaxTextExtent);
+  Image *images = ReadImage(image_info, exception_info);
+  Image *image = RemoveFirstImageFromList(&images);
+  *width = image->columns;
+  *height = image->rows;
+  DestroyImage(image);
+  DestroyImageInfo(image_info);
+  DestroyExceptionInfo(exception_info);
+}
+
+void test_image_size(CuTest *tc)
+{
+  int width = 0;
+  int height = 0;
+  read_image("colors.png", &width, &height);
+  CuAssertIntEquals(tc, 64, width);
+  CuAssertIntEquals(tc, 64, height);
+}
+
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
@@ -665,6 +695,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_draw_triangle);
   SUITE_ADD_TEST(suite, test_draw_two_surfaces);
   SUITE_ADD_TEST(suite, test_use_normal);
+  SUITE_ADD_TEST(suite, test_image_size);
   return suite;
 }
 
@@ -675,6 +706,8 @@ int main(int argc, char *argv[])
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowSize(width, height);
   glutCreateWindow("test");
+  glewExperimental = 1;
+  glewInit();
 	CuString *output = CuStringNew();
   CuSuite *suite = opengl_suite();
   CuSuiteRun(suite);
