@@ -631,6 +631,7 @@ void test_use_normal(CuTest *tc)
   write_ppm("use_normal.ppm", width, height, data);
   CuAssertTrue(tc, data[( 5 * 32 + 8 ) * 4 + 0] >= 192);
   CuAssertTrue(tc, data[(14 * 32 + 8 ) * 4 + 0] <   64);
+  CuAssertTrue(tc, data[(14 * 32 + 8 ) * 4 + 1] >= 192);
 }
 
 CuSuite *opengl_suite(void)
