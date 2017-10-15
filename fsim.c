@@ -641,18 +641,33 @@ void test_use_normal(CuTest *tc)
   CuAssertTrue(tc, data[(14 * 32 + 8 ) * 4 + 1] >= 192);
 }
 
-void read_image(const char *file_name, int *width, int *height)
+unsigned char *read_image(const char *file_name, int *width, int *height)
 {
+  char *retval = NULL;
   ExceptionInfo *exception_info = AcquireExceptionInfo();
   ImageInfo *image_info = CloneImageInfo((ImageInfo *)NULL);
   CopyMagickString(image_info->filename, file_name, MaxTextExtent);
   Image *images = ReadImage(image_info, exception_info);
-  Image *image = RemoveFirstImageFromList(&images);
-  *width = image->columns;
-  *height = image->rows;
-  DestroyImage(image);
+  if (exception_info->severity < ErrorException) {
+    CatchException(exception_info);
+    Image *image = RemoveFirstImageFromList(&images);
+    if (width) *width = image->columns;
+    if (height) *height = image->rows;
+    retval = GC_MALLOC_ATOMIC(image->rows * image->columns * 3);
+    ExportImagePixels(image, 0, 0, image->columns, image->rows, "BGR", CharPixel, retval, exception_info);
+    if (exception_info->severity < ErrorException)
+      CatchException(exception_info);
+    else
+      retval = NULL;
+    DestroyImage(image);
+  };
+  if (exception_info->severity >= ErrorException) {
+    fprintf(stderr, exception_info->reason);
+    CatchException(exception_info);
+  };
   DestroyImageInfo(image_info);
   DestroyExceptionInfo(exception_info);
+  return retval;
 }
 
 void test_image_size(CuTest *tc)
@@ -662,6 +677,24 @@ void test_image_size(CuTest *tc)
   read_image("colors.png", &width, &height);
   CuAssertIntEquals(tc, 64, width);
   CuAssertIntEquals(tc, 64, height);
+}
+
+void test_image_size_not_requested(CuTest *tc)
+{
+  read_image("colors.png", NULL, NULL);
+}
+
+void test_load_image_data(CuTest *tc)
+{
+  unsigned char *data = read_image("colors.png", NULL, NULL);
+  CuAssertIntEquals(tc,   0, data[0]);
+  CuAssertIntEquals(tc,   0, data[1]);
+  CuAssertIntEquals(tc, 255, data[2]);
+}
+
+void test_image_not_found(CuTest *tc)
+{
+  CuAssertTrue(tc, read_image("nosuchfile.png", NULL, NULL) == NULL);
 }
 
 CuSuite *opengl_suite(void)
@@ -696,6 +729,9 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_draw_two_surfaces);
   SUITE_ADD_TEST(suite, test_use_normal);
   SUITE_ADD_TEST(suite, test_image_size);
+  SUITE_ADD_TEST(suite, test_image_size_not_requested);
+  SUITE_ADD_TEST(suite, test_load_image_data);
+  SUITE_ADD_TEST(suite, test_image_not_found);
   return suite;
 }
 
