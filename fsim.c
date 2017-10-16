@@ -736,22 +736,27 @@ void test_no_textures(CuTest *tc)
   CuAssertIntEquals(tc, 0, surface->n_textures);
 }
 
+float pixels[] = {
+  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
+};
 void add_texture(surface_t *surface, program_t *program, texture_t *texture, image_t *image)
 {
   surface->texture[surface->n_textures++] = texture;
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture->texture);/* TODO: unbind in a finalizer */
   glUniform1i(glGetAttribLocation(program->program, texture->name), 0);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_FLOAT, image->data);
+  /* glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data); */
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
+  /* if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
     GLfloat max_anisotropy;
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
   };
-  glGenerateMipmap(GL_TEXTURE_2D);
+  glGenerateMipmap(GL_TEXTURE_2D);*/
 }
 
 void test_add_textures(CuTest *tc)

@@ -4,5 +4,5 @@ out mediump vec3 fragColor;
 uniform sampler2D tex;
 void main()
 {
-  fragColor = vec3(1, 0, 0);
+  fragColor = texture(tex, UV).rgb;
 }
