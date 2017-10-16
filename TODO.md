@@ -1,6 +1,7 @@
 # TODO
 
 * textures, texture coordinates
+* dynamic lists
 * add triangles to surface (collate vertices, normals, and texture coordinates)
 * create and load Blender model
 * objects with kinematic chain
