@@ -142,12 +142,11 @@ surface_t *make_surface(int max_array, int max_indices, int max_textures)
   return retval;
 }
 
-surface_t *add_vertex(surface_t *surface, vertex_t vertex)
+void add_vertex(surface_t *surface, vertex_t vertex)
 {
   surface->array[surface->n_array++] = vertex.x;
   surface->array[surface->n_array++] = vertex.y;
   surface->array[surface->n_array++] = vertex.z;
-  return surface;
 }
 
 int size_of_array(surface_t *surface)
@@ -164,12 +163,11 @@ void test_empty_surface(CuTest *tc)
 void test_add_one_vertex(CuTest *tc)
 {
   surface_t *surface = make_surface(9, 3, 1);
-  surface_t *retval = add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   CuAssertIntEquals(tc, 3, surface->n_array);
   CuAssertDblEquals(tc, 2.5f, surface->array[0], 1e-6f);
   CuAssertDblEquals(tc, 3.5f, surface->array[1], 1e-6f);
   CuAssertDblEquals(tc, 5.5f, surface->array[2], 1e-6f);
-  CuAssertPtrEquals(tc, surface, retval);
 }
 
 void test_add_two_vertices(CuTest *tc)
@@ -182,12 +180,11 @@ void test_add_two_vertices(CuTest *tc)
   CuAssertDblEquals(tc, 7.5f, surface->array[5], 1e-6f);
 }
 
-surface_t *add_normal(surface_t *surface, normal_t normal)
+void add_normal(surface_t *surface, normal_t normal)
 {
   surface->array[surface->n_array++] = normal.x;
   surface->array[surface->n_array++] = normal.y;
   surface->array[surface->n_array++] = normal.z;
-  return surface;
 }
 
 void test_add_normal(CuTest *tc)
@@ -766,6 +763,22 @@ void test_texture_coordinate(CuTest *tc)
   CuAssertDblEquals(tc, 0.75f, coordinate.v, 1.0e-6f);
 }
 
+void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coordinate)
+{
+  surface->array[surface->n_array++] = texture_coordinate.u;
+  surface->array[surface->n_array++] = texture_coordinate.v;
+}
+
+void test_add_texture_coordinate(CuTest *tc)
+{
+  surface_t *surface = make_surface(15, 3, 1);
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  add_texture_coordinate(surface, make_texture_coordinate(0.25f, 0.75f));
+  CuAssertIntEquals(tc, 5, surface->n_array);
+  CuAssertDblEquals(tc, 0.25f, surface->array[3], 1e-6f);
+  CuAssertDblEquals(tc, 0.75f, surface->array[4], 1e-6f);
+}
+
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
@@ -804,6 +817,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_no_textures);
   SUITE_ADD_TEST(suite, test_add_textures);
   SUITE_ADD_TEST(suite, test_texture_coordinate);
+  SUITE_ADD_TEST(suite, test_add_texture_coordinate);
   return suite;
 }
 
