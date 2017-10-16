@@ -669,7 +669,7 @@ texture_t *read_texture(const char *file_name)
   };
   if (exception_info->severity >= ErrorException) {
     retval = NULL;
-    fprintf(stderr, exception_info->reason);
+    fprintf(stderr, "%s\n", exception_info->reason);
     CatchException(exception_info);
   };
   DestroyImageInfo(image_info);
