@@ -192,7 +192,7 @@ surface_t *add_normal(surface_t *surface, normal_t normal)
 
 void test_add_normal(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(18, 3, 1);
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   add_normal(surface, make_normal(0.36f, 0.48f, 0.8f));
   CuAssertIntEquals(tc, 6, surface->n_array);
@@ -638,7 +638,7 @@ void test_draw_two_surfaces(CuTest *tc)
 
 void test_use_normal(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(18, 3, 1);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   add_normal(surface, make_normal( 0.0f,  0.0f, 1.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
@@ -745,6 +745,27 @@ void test_add_textures(CuTest *tc)
   CuAssertPtrEquals(tc, texture, surface->texture[0]);
 }
 
+typedef struct
+{
+  GLfloat u;
+  GLfloat v;
+} texture_coordinate_t;
+
+texture_coordinate_t make_texture_coordinate(GLfloat u, GLfloat v)
+{
+  texture_coordinate_t retval;
+  retval.u = u;
+  retval.v = v;
+  return retval;
+}
+
+void test_texture_coordinate(CuTest *tc)
+{
+  texture_coordinate_t coordinate = make_texture_coordinate(0.25f, 0.75f);
+  CuAssertDblEquals(tc, 0.25f, coordinate.u, 1.0e-6f);
+  CuAssertDblEquals(tc, 0.75f, coordinate.v, 1.0e-6f);
+}
+
 CuSuite *opengl_suite(void)
 {
   CuSuite *suite = CuSuiteNew();
@@ -782,6 +803,7 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_make_texture);
   SUITE_ADD_TEST(suite, test_no_textures);
   SUITE_ADD_TEST(suite, test_add_textures);
+  SUITE_ADD_TEST(suite, test_texture_coordinate);
   return suite;
 }
 
