@@ -1,6 +1,7 @@
 # TODO
 
 * textures, texture coordinates
+* update CuTest: https://github.com/aiobofh/cutest
 * dynamic lists
 * add triangles to surface (collate vertices, normals, and texture coordinates)
 * create and load Blender model
