@@ -329,7 +329,7 @@ void test_clear_buffer(CuTest *tc)
 {
   object_t *object = make_object(make_rgb(0.75f, 0.25f, 0.125f), 1);
   render(object);
-  glFlush();
+  glFinish();
   unsigned char *data = read_pixels();
   write_ppm("clear_buffer.ppm", width, height, data);
   CuAssertIntEquals(tc, 191, data[0]);
@@ -566,7 +566,7 @@ void test_draw_triangle(CuTest *tc)
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
-  glFlush();
+  glFinish();
   unsigned char *data = read_pixels();
   write_ppm("draw_triangle.ppm", width, height, data);
   CuAssertIntEquals(tc,   0, data[0]);
@@ -599,7 +599,7 @@ void test_draw_two_surfaces(CuTest *tc)
   };
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
-  glFlush();
+  glFinish();
   unsigned char *data = read_pixels();
   write_ppm("draw_surfaces.ppm", width, height, data);
   CuAssertIntEquals(tc,   0, data[0]);
@@ -633,7 +633,7 @@ void test_use_normal(CuTest *tc)
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
-  glFlush();
+  glFinish();
   unsigned char *data = read_pixels();
   write_ppm("use_normal.ppm", width, height, data);
   CuAssertTrue(tc, data[( 5 * 32 + 8 ) * 4 + 0] >= 192);
@@ -729,8 +729,8 @@ CuSuite *opengl_suite(void)
   SUITE_ADD_TEST(suite, test_draw_two_surfaces);
   SUITE_ADD_TEST(suite, test_use_normal);
   SUITE_ADD_TEST(suite, test_texture_size);
-  /*SUITE_ADD_TEST(suite, test_load_image_data);
-  SUITE_ADD_TEST(suite, test_image_not_found);*/
+  SUITE_ADD_TEST(suite, test_load_image_data);
+  SUITE_ADD_TEST(suite, test_image_not_found);
   return suite;
 }
 
@@ -749,7 +749,7 @@ int main(int argc, char *argv[])
 	CuSuiteSummary(suite, output);
 	CuSuiteDetails(suite, output);
 	printf("%s\n", output->buffer);
-  glFlush();
+  glFinish();
   int retval = suite->failCount > 0 ? 1 : 0;
   GC_gcollect();
   return retval;
