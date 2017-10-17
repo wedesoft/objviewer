@@ -746,17 +746,10 @@ void add_texture(surface_t *surface, program_t *program, texture_t *texture, ima
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture->texture);/* TODO: unbind in a finalizer */
   glUniform1i(glGetAttribLocation(program->program, texture->name), 0);
-  /* glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data); */
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  /* if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
-    GLfloat max_anisotropy;
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
-  };
-  glGenerateMipmap(GL_TEXTURE_2D);*/
 }
 
 void test_add_textures(CuTest *tc)
@@ -833,6 +826,12 @@ void test_draw_texturized_square(CuTest *tc)
   glFinish();
   unsigned char *data = read_pixels();
   write_ppm("draw_texturized_square.ppm", width, height, data);
+  CuAssertIntEquals(tc, 255, data[( 8 * 32 + 14 ) * 4 + 0]);
+  CuAssertIntEquals(tc,   0, data[( 8 * 32 + 14 ) * 4 + 1]);
+  CuAssertIntEquals(tc,   0, data[( 8 * 32 + 14 ) * 4 + 2]);
+  CuAssertIntEquals(tc,   0, data[(12 * 32 + 14 ) * 4 + 0]);
+  CuAssertIntEquals(tc,   0, data[(12 * 32 + 14 ) * 4 + 1]);
+  CuAssertIntEquals(tc, 255, data[(12 * 32 + 14 ) * 4 + 2]);
 }
 
 CuSuite *opengl_suite(void)
