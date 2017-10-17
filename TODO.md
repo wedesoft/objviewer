@@ -1,10 +1,11 @@
 # TODO
 
 * separate files for tests, functions, and main program
-* try munit https://nemequ.github.io/munit/
+* automake files
 * dynamic lists
 * bind more than one texture
 * create and load Blender model
+* materials
 * objects with kinematic chain
 * shadows (mask color pipeline output)
 * blinking beacon lights
