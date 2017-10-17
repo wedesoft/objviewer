@@ -1,6 +1,10 @@
 CC = gcc
 CFLAGS = -g -O0 $(shell pkg-config --cflags ImageMagick)
 
+UNITS = rgb vertex normal surface
+TESTS = $(addprefix test_,$(UNITS))
+OBJECTS = $(addsuffix .o,$(UNITS) $(TESTS))
+
 all: fsim tetraeder mini test-fsim
 
 check: test-fsim
@@ -15,11 +19,11 @@ tetraeder: tetraeder.o
 mini: mini.o CuTest.o
 	$(CC) -o $@ mini.o CuTest.o -lglut -lGLEW -lGLU -lGL -lm
 
-test-fsim: test_fsim.o test_rgb.o rgb.o test_vertex.o vertex.o test_normal.o normal.o munit.o
-	$(CC) -o $@ test_fsim.o test_rgb.o rgb.o test_vertex.o vertex.o test_normal.o normal.o munit.o -lgomp
+test-fsim: test_fsim.o $(OBJECTS) munit.o
+	$(CC) -o $@ test_fsim.o $(OBJECTS) munit.o -lgomp -lgc
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f fsim tetraeder mini *.o *.ppm
+	rm -f fsim tetraeder mini test-fsim *.o *.ppm
