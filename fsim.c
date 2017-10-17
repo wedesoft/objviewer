@@ -95,19 +95,21 @@ typedef struct {
   long attribute_pointer;
 } program_t;
 
+typedef struct
+{
+  const char *name;
+  GLuint texture;
+} texture_t;
+
 typedef struct {
   program_t *program;
   GLuint vertex_array_object;
   GLuint vertex_buffer_object;
   GLuint element_buffer_object;
   int n_indices;
+  int n_textures;
+  texture_t **texture;
 } vertex_array_object_t;
-
-typedef struct
-{
-  const char *name;
-  GLuint texture;
-} texture_t;
 
 void finalize_texture(GC_PTR obj, GC_PTR env)
 {
@@ -129,19 +131,15 @@ typedef struct {
   GLfloat *array;
   int n_indices;
   int *vertex_index;
-  int n_textures;
-  texture_t **texture;
 } surface_t;
 
-surface_t *make_surface(int max_array, int max_indices, int max_textures)
+surface_t *make_surface(int max_array, int max_indices)
 {
   surface_t *retval = GC_MALLOC(sizeof(surface_t));
   retval->n_array = 0;
   retval->array = GC_MALLOC_ATOMIC(max_array * sizeof(GLfloat));
   retval->n_indices = 0;
   retval->vertex_index = GC_MALLOC_ATOMIC(max_indices * sizeof(int));
-  retval->n_textures = 0;
-  retval->texture = GC_MALLOC(max_textures * sizeof(texture_t *));
   return retval;
 }
 
@@ -159,13 +157,13 @@ int size_of_array(surface_t *surface)
 
 void test_empty_surface(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   CuAssertIntEquals(tc, 0, surface->n_array);
 }
 
 void test_add_one_vertex(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   CuAssertIntEquals(tc, 3, surface->n_array);
   CuAssertDblEquals(tc, 2.5f, surface->array[0], 1e-6f);
@@ -175,7 +173,7 @@ void test_add_one_vertex(CuTest *tc)
 
 void test_add_two_vertices(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   add_vertex(surface, make_vertex(1.5f, 4.5f, 7.5f));
   CuAssertDblEquals(tc, 1.5f, surface->array[3], 1e-6f);
@@ -192,7 +190,7 @@ void add_normal(surface_t *surface, normal_t normal)
 
 void test_add_normal(CuTest *tc)
 {
-  surface_t *surface = make_surface(18, 3, 1);
+  surface_t *surface = make_surface(18, 3);
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   add_normal(surface, make_normal(0.36f, 0.48f, 0.8f));
   CuAssertIntEquals(tc, 6, surface->n_array);
@@ -203,7 +201,7 @@ void test_add_normal(CuTest *tc)
 
 void test_size_of_array(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   CuAssertIntEquals(tc, 0, size_of_array(surface));
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   CuAssertIntEquals(tc, sizeof(vertex_t), size_of_array(surface));
@@ -229,13 +227,13 @@ int size_of_indices(surface_t *surface)
 
 void test_no_indices(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   CuAssertIntEquals(tc, 0, surface->n_indices);
 }
 
 void test_add_triangle(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   int i;
   for (i=0; i<3; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
@@ -250,7 +248,7 @@ void test_add_triangle(CuTest *tc)
 
 void test_add_square(CuTest *tc)
 {
-  surface_t *surface = make_surface(12, 6, 1);
+  surface_t *surface = make_surface(12, 6);
   int i;
   for (i=0; i<4; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
@@ -266,7 +264,7 @@ void test_add_square(CuTest *tc)
 
 void test_add_pentagon(CuTest *tc)
 {
-  surface_t *surface = make_surface(15, 9, 1);
+  surface_t *surface = make_surface(15, 9);
   int i;
   for (i=0; i<4; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
@@ -284,7 +282,7 @@ void test_add_pentagon(CuTest *tc)
 
 void test_size_of_indices(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   CuAssertIntEquals(tc, 0, size_of_indices(surface));
   add_vertex(surface, make_vertex(0, 0, 0));
   build_facet(surface, 0, 0);
@@ -376,12 +374,14 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glDeleteBuffers(1, &target->vertex_array_object);
 }
 
-vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface)
+vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface, int max_textures)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
   retval->n_indices = surface->n_indices;
   retval->program = program;
+  retval->n_textures = 0;
+  retval->texture = GC_MALLOC(max_textures * sizeof(texture_t *));
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
   glGenBuffers(1, &retval->vertex_buffer_object);
@@ -497,7 +497,7 @@ void test_add_vertex_array_object(CuTest *tc)
 {
   object_t *object = make_object(make_rgb(0, 0, 0), 1);
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(9, 3, 1));
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(9, 3), 1);
   object_t *retval = add_vertex_array_object(object, vertex_array_object);
   CuAssertIntEquals(tc, 1, object->n_vertex_array_objects);
   CuAssertPtrEquals(tc, vertex_array_object, object->vertex_array_object[0]);
@@ -557,9 +557,9 @@ void test_no_attribute_pointers(CuTest *tc)
 void test_add_attribute_pointer(CuTest *tc)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
   CuAssertIntEquals(tc, 1, program->n_attributes);
   CuAssertIntEquals(tc, 3 * sizeof(float), program->attribute_pointer);
@@ -568,8 +568,8 @@ void test_add_attribute_pointer(CuTest *tc)
 void test_add_two_attribute_pointers(CuTest *tc)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  surface_t *surface = make_surface(9, 3, 1);
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  surface_t *surface = make_surface(9, 3);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
   CuAssertIntEquals(tc, 2, program->n_attributes);
@@ -578,7 +578,7 @@ void test_add_two_attribute_pointers(CuTest *tc)
 
 void test_draw_triangle(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
+  surface_t *surface = make_surface(9, 3);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
@@ -586,7 +586,7 @@ void test_draw_triangle(CuTest *tc)
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   object_t *object = make_object(make_rgb(0, 1, 0), 1);
   add_vertex_array_object(object, vertex_array_object);
@@ -611,7 +611,7 @@ void test_draw_two_surfaces(CuTest *tc)
   object_t *object = make_object(make_rgb(0, 1, 0), 2);
   int i;
   for (i=0;i<2; i++) {
-    surface_t *surface = make_surface(9, 3, 1);
+    surface_t *surface = make_surface(9, 3);
     float c = coord[i];
     add_vertex(surface, make_vertex(    c,     c, 0.0f));
     add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
@@ -620,7 +620,7 @@ void test_draw_two_surfaces(CuTest *tc)
     build_facet(surface, 1, 1);
     build_facet(surface, 2, 2);
     program_t *program = make_program("vertex-identity.glsl", fragment_shader_file_name[i]);
-    vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+    vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
     setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
     add_vertex_array_object(object, vertex_array_object);
   };
@@ -642,7 +642,7 @@ void test_draw_two_surfaces(CuTest *tc)
 
 void test_use_normal(CuTest *tc)
 {
-  surface_t *surface = make_surface(18, 3, 1);
+  surface_t *surface = make_surface(18, 3);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   add_normal(surface, make_normal( 0.0f,  0.0f, 1.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
@@ -653,7 +653,7 @@ void test_use_normal(CuTest *tc)
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
   program_t *program = make_program("vertex-normal-identity.glsl", "fragment-normal.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point" , 3, 6);
   setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, 6);
   object_t *object = make_object(make_rgb(0, 0, 0), 1);
@@ -733,17 +733,18 @@ void test_make_texture(CuTest *tc)
 
 void test_no_textures(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
-  CuAssertIntEquals(tc, 0, surface->n_textures);
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(9, 3), 1);
+  CuAssertIntEquals(tc, 0, vertex_array_object->n_textures);
 }
 
 float pixels[] = {
   0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
   1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
 };
-void add_texture(surface_t *surface, program_t *program, texture_t *texture, image_t *image)
+void add_texture(vertex_array_object_t *vertex_array_object, program_t *program, texture_t *texture, image_t *image)
 {
-  surface->texture[surface->n_textures++] = texture;
+  vertex_array_object->texture[vertex_array_object->n_textures++] = texture;
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture->texture);/* TODO: unbind in a finalizer */
   glUniform1i(glGetAttribLocation(program->program, texture->name), 0);
@@ -755,12 +756,13 @@ void add_texture(surface_t *surface, program_t *program, texture_t *texture, ima
 
 void test_add_textures(CuTest *tc)
 {
-  surface_t *surface = make_surface(9, 3, 1);
-  texture_t *texture = make_texture("tex");
+  surface_t *surface = make_surface(9, 3);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
-  add_texture(surface, program, texture, read_image("colors.png"));
-  CuAssertIntEquals(tc, 1, surface->n_textures);
-  CuAssertPtrEquals(tc, texture, surface->texture[0]);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  texture_t *texture = make_texture("tex");
+  add_texture(vertex_array_object, program, texture, read_image("colors.png"));
+  CuAssertIntEquals(tc, 1, vertex_array_object->n_textures);
+  CuAssertPtrEquals(tc, texture, vertex_array_object->texture[0]);
 }
 
 typedef struct
@@ -792,7 +794,7 @@ void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coo
 
 void test_add_texture_coordinate(CuTest *tc)
 {
-  surface_t *surface = make_surface(15, 3, 1);
+  surface_t *surface = make_surface(15, 3);
   add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
   add_texture_coordinate(surface, make_texture_coordinate(0.25f, 0.75f));
   CuAssertIntEquals(tc, 5, surface->n_array);
@@ -802,7 +804,7 @@ void test_add_texture_coordinate(CuTest *tc)
 
 void test_draw_texturized_square(CuTest *tc)
 {
-  surface_t *surface = make_surface(20, 6, 1);
+  surface_t *surface = make_surface(20, 6);
   add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
   add_texture_coordinate(surface, make_texture_coordinate(0.0f, 0.0f));
   add_vertex(surface, make_vertex( 0.5f, -0.5f, 0.0f));
@@ -816,10 +818,10 @@ void test_draw_texturized_square(CuTest *tc)
   build_facet(surface, 2, 3);
   build_facet(surface, 3, 2);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
-  add_texture(surface, program, make_texture("tex"), read_image("colors.png"));
+  add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
   object_t *object = make_object(make_rgb(0, 0, 0), 1);
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
