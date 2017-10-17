@@ -1,7 +1,7 @@
 # TODO
 
 * separate files for tests, functions, and main program
-* update CuTest: https://github.com/aiobofh/cutest
+* try munit https://nemequ.github.io/munit/
 * dynamic lists
 * bind more than one texture
 * create and load Blender model
