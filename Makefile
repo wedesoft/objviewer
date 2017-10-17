@@ -19,4 +19,4 @@ mini: mini.o CuTest.o
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f fsim tetraeder *.o *.ppm
+	rm -f fsim tetraeder mini *.o *.ppm

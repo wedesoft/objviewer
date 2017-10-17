@@ -23,8 +23,8 @@ GLuint vao;
 GLuint vbo;
 GLuint idx;
 GLuint program;
-int width = 32;
-int height = 20;
+int width = 320;
+int height = 240;
 
 void onDisplay(void)
 {
@@ -88,6 +88,9 @@ int main(int argc, char** argv)
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowSize(width, height);
   glutCreateWindow("tetraeder");
+
+  glewExperimental = 1;
+  glewInit();
 
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vertexSource, NULL);
