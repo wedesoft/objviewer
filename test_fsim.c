@@ -1,11 +1,13 @@
 #include "munit.h"
 #include "test_rgb.h"
 #include "test_vertex.h"
+#include "test_normal.h"
 
 
 static MunitSuite test_fsim[] = {
   {"/rgb"   , test_rgb   , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/vertex", test_vertex, NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/normal", test_normal, NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {NULL     , NULL       , NULL, 0, MUNIT_SUITE_OPTION_NONE}
 };
 

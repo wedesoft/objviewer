@@ -15,8 +15,8 @@ tetraeder: tetraeder.o
 mini: mini.o CuTest.o
 	$(CC) -o $@ mini.o CuTest.o -lglut -lGLEW -lGLU -lGL -lm
 
-test-fsim: test_fsim.o test_rgb.o rgb.o test_vertex.o vertex.o munit.o
-	$(CC) -o $@ test_fsim.o test_rgb.o rgb.o test_vertex.o vertex.o munit.o -lgomp
+test-fsim: test_fsim.o test_rgb.o rgb.o test_vertex.o vertex.o test_normal.o normal.o munit.o
+	$(CC) -o $@ test_fsim.o test_rgb.o rgb.o test_vertex.o vertex.o test_normal.o normal.o munit.o -lgomp
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
