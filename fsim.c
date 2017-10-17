@@ -372,6 +372,7 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glDeleteBuffers(1, &target->element_buffer_object);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &target->vertex_buffer_object);
+  glBindVertexArray(0);
   glDeleteBuffers(1, &target->vertex_array_object);
 }
 

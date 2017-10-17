@@ -153,6 +153,9 @@ int main(int argc, char** argv)
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(0);
 
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glDeleteTextures(1, &tex);
+
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &idx);
 
