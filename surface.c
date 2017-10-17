@@ -11,3 +11,10 @@ surface_t *make_surface(int max_array, int max_indices)
   retval->vertex_index = GC_MALLOC_ATOMIC(max_indices * sizeof(int));
   return retval;
 }
+
+void add_vertex(surface_t *surface, vertex_t vertex)
+{
+  surface->array[surface->n_array++] = vertex.x;
+  surface->array[surface->n_array++] = vertex.y;
+  surface->array[surface->n_array++] = vertex.z;
+}
