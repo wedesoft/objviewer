@@ -1,10 +1,9 @@
 # TODO
 
-* textures, texture coordinates
+* separate files for tests, functions, and main program
 * update CuTest: https://github.com/aiobofh/cutest
 * dynamic lists
 * bind more than one texture
-* add triangles to surface (collate vertices, normals, and texture coordinates)
 * create and load Blender model
 * objects with kinematic chain
 * shadows (mask color pipeline output)
