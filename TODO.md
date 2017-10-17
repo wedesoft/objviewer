@@ -3,6 +3,7 @@
 * textures, texture coordinates
 * update CuTest: https://github.com/aiobofh/cutest
 * dynamic lists
+* bind more than one texture
 * add triangles to surface (collate vertices, normals, and texture coordinates)
 * create and load Blender model
 * objects with kinematic chain

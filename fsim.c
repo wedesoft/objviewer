@@ -365,6 +365,10 @@ void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   int i;
   for (i=0; i<target->program->n_attributes; i++)
     glDisableVertexAttribArray(i);
+  if (target->n_textures > 0) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+  };
   glBindVertexArray(target->vertex_array_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &target->element_buffer_object);
@@ -746,7 +750,7 @@ void add_texture(vertex_array_object_t *vertex_array_object, program_t *program,
 {
   vertex_array_object->texture[vertex_array_object->n_textures++] = texture;
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture->texture);/* TODO: unbind in a finalizer */
+  glBindTexture(GL_TEXTURE_2D, texture->texture);
   glUniform1i(glGetAttribLocation(program->program, texture->name), 0);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
