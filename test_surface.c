@@ -1,6 +1,6 @@
-#include "surface.h"
 #include "test_surface.h"
 #include "test_helper.h"
+#include "surface.h"
 
 
 static MunitResult test_empty_surface(const MunitParameter params[], void *data)

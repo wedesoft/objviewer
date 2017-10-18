@@ -1,8 +1,8 @@
 #include <GL/gl.h>
-#include "object.h"
-#include "program.h"
 #include "test_object.h"
 #include "test_helper.h"
+#include "object.h"
+#include "program.h"
 
 
 static MunitResult test_clear_buffer(const MunitParameter params[], void *data)

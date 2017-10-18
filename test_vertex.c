@@ -1,5 +1,5 @@
-#include "vertex.h"
 #include "test_vertex.h"
+#include "vertex.h"
 
 
 static MunitResult test_make_vertex(const MunitParameter params[], void *data)

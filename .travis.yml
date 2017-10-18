@@ -15,7 +15,7 @@ install:
   - sudo apt-get install -q -y libglew-dev
   - sudo apt-get install -q -y libmagickcore-dev
   - sudo apt-get install -q -y libgc-dev
-  - make
+  - make -j
 script:
   - make check
 after_failure:

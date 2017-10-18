@@ -1,5 +1,5 @@
-#include "rgb.h"
 #include "test_rgb.h"
+#include "rgb.h"
 
 
 static MunitResult test_make_rgb(const MunitParameter params[], void *data)

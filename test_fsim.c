@@ -6,6 +6,7 @@
 #include "test_normal.h"
 #include "test_surface.h"
 #include "test_object.h"
+#include "test_shader.h"
 
 
 static MunitSuite test_fsim[] = {
@@ -14,6 +15,7 @@ static MunitSuite test_fsim[] = {
   {"/normal" , test_normal , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/surface", test_surface, NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/object" , test_object , NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/shader" , test_shader , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {NULL      , NULL        , NULL, 0, MUNIT_SUITE_OPTION_NONE}
 };
 
