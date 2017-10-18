@@ -43,3 +43,8 @@ void build_facet(surface_t *surface, int number, int vertex_index)
     build_facet(surface, 2, vertex_index);
   };
 }
+
+int size_of_indices(surface_t *surface)
+{
+  return surface->n_indices * sizeof(int);
+}

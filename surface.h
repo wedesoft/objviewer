@@ -20,3 +20,5 @@ void add_normal(surface_t *surface, normal_t normal);
 int size_of_array(surface_t *surface);
 
 void build_facet(surface_t *surface, int number, int vertex_index);
+
+int size_of_indices(surface_t *surface);

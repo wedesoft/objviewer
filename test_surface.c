@@ -81,6 +81,58 @@ static MunitResult test_add_triangle(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_add_square(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(12, 6);
+  int i;
+  for (i=0; i<4; i++)
+    add_vertex(surface, make_vertex(i % 2, 0, i / 2));
+  build_facet(surface, 0, 2);
+  build_facet(surface, 1, 0);
+  build_facet(surface, 2, 1);
+  build_facet(surface, 3, 3);
+  munit_assert_int(surface->n_indices, ==, 6);
+  munit_assert_int(surface->vertex_index[3], ==, 2);
+  munit_assert_int(surface->vertex_index[4], ==, 1);
+  munit_assert_int(surface->vertex_index[5], ==, 3);
+  return MUNIT_OK;
+}
+
+static MunitResult test_add_pentagon(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(15, 9);
+  int i;
+  for (i=0; i<4; i++)
+    add_vertex(surface, make_vertex(i % 2, 0, i / 2));
+  add_vertex(surface, make_vertex(0.5, 0, 1.5));
+  build_facet(surface, 0, 0);
+  build_facet(surface, 1, 1);
+  build_facet(surface, 2, 3);
+  build_facet(surface, 3, 4);
+  build_facet(surface, 4, 2);
+  munit_assert_int(surface->n_indices, ==, 9);
+  munit_assert_int(surface->vertex_index[6], ==, 0);
+  munit_assert_int(surface->vertex_index[7], ==, 4);
+  munit_assert_int(surface->vertex_index[8], ==, 2);
+  return MUNIT_OK;
+}
+
+static MunitResult test_empty_indices(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(9, 3);
+  munit_assert_int(size_of_indices(surface), ==, 0);
+  return MUNIT_OK;
+}
+
+static MunitResult test_size_of_indices(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(9, 3);
+  add_vertex(surface, make_vertex(0, 0, 0));
+  build_facet(surface, 0, 0);
+  munit_assert_int(size_of_indices(surface), ==, sizeof(int));
+  return MUNIT_OK;
+}
+
 MunitTest test_surface[] = {
   {"/empty_surface"   , test_empty_surface   , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_one_vertex"  , test_add_one_vertex  , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
@@ -90,5 +142,9 @@ MunitTest test_surface[] = {
   {"/size_of_array"   , test_size_of_array   , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_indices"      , test_no_indices      , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_triangle"    , test_add_triangle    , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_square"      , test_add_square      , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_pentagon"    , test_add_pentagon    , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/empty_indices"   , test_empty_indices   , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/size_of_indices" , test_size_of_indices , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL               , NULL                 , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}
 };
