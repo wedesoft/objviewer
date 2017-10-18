@@ -1,4 +1,5 @@
 #pragma once
+#include <GL/gl.h>
 
 
 typedef struct
@@ -7,3 +8,4 @@ typedef struct
   GLuint texture;
 } texture_t;
 
+texture_t *make_texture(const char *name);

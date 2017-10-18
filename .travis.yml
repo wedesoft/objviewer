@@ -18,6 +18,3 @@ install:
   - make -j
 script:
   - make check
-after_failure:
-  - COREFILE=$(find . -maxdepth 1 -name "core*" | head -n 1)
-  - if [[ -f "$COREFILE" ]]; then gdb -c "$COREFILE" fsim -ex "thread apply all bt" -ex "set pagination 0" -batch; fi

@@ -10,6 +10,7 @@
 #include "test_program.h"
 #include "test_vertex_array_object.h"
 #include "test_image.h"
+#include "test_texture.h"
 
 
 static MunitSuite test_fsim[] = {
@@ -22,6 +23,7 @@ static MunitSuite test_fsim[] = {
   {"/program", test_program, NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/vao"    , test_vao    , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/image"  , test_image  , NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/texture", test_texture, NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {NULL      , NULL        , NULL, 0, MUNIT_SUITE_OPTION_NONE}
 };
 
