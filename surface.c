@@ -30,3 +30,16 @@ int size_of_array(surface_t *surface)
 {
   return surface->n_array * sizeof(GLfloat);
 }
+
+void build_facet(surface_t *surface, int number, int vertex_index)
+{
+  int n = surface->n_indices;
+  if (number < 3) {
+    surface->vertex_index[n] = vertex_index;
+    surface->n_indices = n + 1;
+  } else {
+    build_facet(surface, 0, surface->vertex_index[n - 3]);
+    build_facet(surface, 1, surface->vertex_index[n - 1]);
+    build_facet(surface, 2, vertex_index);
+  };
+}
