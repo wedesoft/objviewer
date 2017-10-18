@@ -1,5 +1,6 @@
 #include "surface.h"
 #include "test_surface.h"
+#include "test_helper.h"
 
 
 static MunitResult test_empty_surface(const MunitParameter params[], void *data)
@@ -134,17 +135,17 @@ static MunitResult test_size_of_indices(const MunitParameter params[], void *dat
 }
 
 MunitTest test_surface[] = {
-  {"/empty_surface"   , test_empty_surface   , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_one_vertex"  , test_add_one_vertex  , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_two_vertices", test_add_two_vertices, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_normal"      , test_add_normal      , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/empty_array"     , test_empty_array     , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/size_of_array"   , test_size_of_array   , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_indices"      , test_no_indices      , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_triangle"    , test_add_triangle    , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_square"      , test_add_square      , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_pentagon"    , test_add_pentagon    , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/empty_indices"   , test_empty_indices   , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/size_of_indices" , test_size_of_indices , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {NULL               , NULL                 , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}
+  {"/empty_surface"   , test_empty_surface   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_one_vertex"  , test_add_one_vertex  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_two_vertices", test_add_two_vertices, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_normal"      , test_add_normal      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/empty_array"     , test_empty_array     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/size_of_array"   , test_size_of_array   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_indices"      , test_no_indices      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_triangle"    , test_add_triangle    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_square"      , test_add_square      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_pentagon"    , test_add_pentagon    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/empty_indices"   , test_empty_indices   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/size_of_indices" , test_size_of_indices , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {NULL               , NULL                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL}
 };

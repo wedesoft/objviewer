@@ -8,7 +8,6 @@
 
 int width = 32;
 int height = 20;
-char opengl_ready = 0;
 
 void write_ppm(const char *file_name, int width, int height, unsigned char *data)
 {
@@ -29,18 +28,32 @@ unsigned char *read_pixels(void)
   return retval;
 }
 
+void* test_setup_gc(const MunitParameter params[], void* user_data)
+{
+  GC_INIT();
+}
+
+void test_teardown_gc(void *fixture)
+{
+  GC_gcollect();
+}
+
 void* test_setup_gl(const MunitParameter params[], void* user_data)
 {
-  if (!opengl_ready) {
-    int argc = 0;
-    char **argv = NULL;
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(width, height);
-    glutCreateWindow("test");
-    glewExperimental = 1;
-    glewInit();
-    opengl_ready = 1;
-  };
+  test_setup_gc(params, user_data);
+  int argc = 0;
+  char **argv = NULL;
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+  glutInitWindowSize(width, height);
+  glutCreateWindow("test");
+  glewExperimental = 1;
+  glewInit();
   return NULL;
+}
+
+void test_teardown_gl(void *fixture)
+{
+  glFinish();
+  test_teardown_gc(fixture);
 }

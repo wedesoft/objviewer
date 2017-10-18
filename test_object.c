@@ -17,7 +17,15 @@ static MunitResult test_clear_buffer(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_empty_object(const MunitParameter params[], void *data)
+{
+  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  munit_assert_int(object->n_vertex_array_objects, ==, 0);
+  return MUNIT_OK;
+}
+
 MunitTest test_object[] = {
-  {"/clear_buffer", test_clear_buffer, test_setup_gl, NULL, MUNIT_TEST_OPTION_NONE, NULL},
-  {NULL           , NULL             , NULL         , NULL, MUNIT_TEST_OPTION_NONE, NULL}
+  {"/clear_buffer", test_clear_buffer, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/empty_object", test_empty_object, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {NULL           , NULL             , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

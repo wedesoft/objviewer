@@ -346,8 +346,6 @@ unsigned char *read_pixels(void)
   return retval;
 }
 
-/* -------------------------------------------------------------------------------- */
-
 void test_clear_buffer(CuTest *tc)
 {
   object_t *object = make_object(make_rgb(0.75f, 0.25f, 0.125f), 1);
