@@ -16,3 +16,5 @@ typedef struct {
 } vertex_array_object_t;
 
 vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface, int max_textures);
+
+void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride);

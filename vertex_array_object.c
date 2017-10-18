@@ -41,3 +41,14 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index, GL_STATIC_DRAW);
   return retval;
 }
+
+void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride)
+{
+  glBindVertexArray(vertex_array_object->vertex_array_object);
+  program_t *program = vertex_array_object->program;
+  GLuint index = glGetAttribLocation(program->program, attribute);
+  glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void *)program->attribute_pointer);
+  glEnableVertexAttribArray(program->n_attributes);
+  program->n_attributes += 1;
+  program->attribute_pointer += sizeof(float) * size;
+}

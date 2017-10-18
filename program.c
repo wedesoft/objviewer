@@ -36,5 +36,3 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
     retval = NULL;
   return retval;
 }
-
-
