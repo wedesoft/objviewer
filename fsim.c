@@ -207,6 +207,8 @@ void test_size_of_array(CuTest *tc)
   CuAssertIntEquals(tc, sizeof(vertex_t), size_of_array(surface));
 }
 
+/* -------------------------------------------------------------------------------- */
+
 void build_facet(surface_t *surface, int number, int vertex_index)
 {
   int n = surface->n_indices;

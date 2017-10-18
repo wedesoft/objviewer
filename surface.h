@@ -16,3 +16,5 @@ surface_t *make_surface(int max_array, int max_indices);
 void add_vertex(surface_t *surface, vertex_t vertex);
 
 void add_normal(surface_t *surface, normal_t normal);
+
+int size_of_array(surface_t *surface);

@@ -25,3 +25,8 @@ void add_normal(surface_t *surface, normal_t normal)
   surface->array[surface->n_array++] = normal.y;
   surface->array[surface->n_array++] = normal.z;
 }
+
+int size_of_array(surface_t *surface)
+{
+  return surface->n_array * sizeof(GLfloat);
+}
