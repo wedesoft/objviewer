@@ -9,6 +9,7 @@
 #include "test_shader.h"
 #include "test_program.h"
 #include "test_vertex_array_object.h"
+#include "test_image.h"
 
 
 static MunitSuite test_fsim[] = {
@@ -20,6 +21,7 @@ static MunitSuite test_fsim[] = {
   {"/shader" , test_shader , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/program", test_program, NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/vao"    , test_vao    , NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/image"  , test_image  , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {NULL      , NULL        , NULL, 0, MUNIT_SUITE_OPTION_NONE}
 };
 
