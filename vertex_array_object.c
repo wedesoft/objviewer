@@ -1,0 +1,43 @@
+#include <gc.h>
+#include <GL/glew.h>
+#include "vertex_array_object.h"
+
+
+static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
+{
+  vertex_array_object_t *target = (vertex_array_object_t *)obj;
+  glBindVertexArray(target->vertex_array_object);
+  int i;
+  for (i=0; i<target->program->n_attributes; i++)
+    glDisableVertexAttribArray(i);
+  if (target->n_textures > 0) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+  };
+  glBindVertexArray(target->vertex_array_object);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &target->element_buffer_object);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &target->vertex_buffer_object);
+  glBindVertexArray(0);
+  glDeleteBuffers(1, &target->vertex_array_object);
+}
+
+vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface, int max_textures)
+{
+  vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
+  GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
+  retval->n_indices = surface->n_indices;
+  retval->program = program;
+  retval->n_textures = 0;
+  retval->texture = GC_MALLOC(max_textures * sizeof(texture_t *));
+  glGenVertexArrays(1, &retval->vertex_array_object);
+  glBindVertexArray(retval->vertex_array_object);
+  glGenBuffers(1, &retval->vertex_buffer_object);
+  glBindBuffer(GL_ARRAY_BUFFER, retval->vertex_buffer_object);
+  glBufferData(GL_ARRAY_BUFFER, size_of_array(surface), surface->array, GL_STATIC_DRAW);
+  glGenBuffers(1, &retval->element_buffer_object);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index, GL_STATIC_DRAW);
+  return retval;
+}

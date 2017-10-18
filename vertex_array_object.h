@@ -1,6 +1,7 @@
 #pragma once
 #include <GL/gl.h>
 #include "program.h"
+#include "surface.h"
 #include "texture.h"
 
 
@@ -13,3 +14,5 @@ typedef struct {
   int n_textures;
   texture_t **texture;
 } vertex_array_object_t;
+
+vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface, int max_textures);

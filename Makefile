@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -g -O0 $(shell pkg-config --cflags ImageMagick)
+CFLAGS = -g -O0 $(shell pkg-config --cflags ImageMagick) -DGLEW_STATIC
 
-UNITS = rgb vertex normal surface object
+UNITS = rgb vertex normal surface object program shader vertex_array_object
 TESTS = $(addprefix test_,$(UNITS))
 OBJECTS = $(addsuffix .o,$(UNITS) $(TESTS))
 
@@ -19,8 +19,8 @@ tetraeder: tetraeder.o
 mini: mini.o CuTest.o
 	$(CC) -o $@ mini.o CuTest.o -lGLEW -lglut -lGLU -lGL -lm
 
-test-fsim: test_fsim.o $(OBJECTS) munit.o test_helper.o
-	$(CC) -o $@ test_fsim.o $(OBJECTS) munit.o test_helper.o -lgomp -lGLEW -lglut -lGLU -lGL -lgc
+test-fsim: test_fsim.o $(OBJECTS) report_status.o test_helper.o munit.o
+	$(CC) -o $@ test_fsim.o $(OBJECTS) report_status.o test_helper.o munit.o -lgomp -lGLEW -lglut -lGLU -lGL -lgc
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@

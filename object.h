@@ -11,6 +11,8 @@ typedef struct {
 
 object_t *make_object(rgb_t background_color, int max_vertex_array_objects);
 
+object_t *add_vertex_array_object(object_t *object, vertex_array_object_t *vertex_array_object);
+
 void draw_elements(vertex_array_object_t *vertex_array_object);
 
 void render(object_t *object);

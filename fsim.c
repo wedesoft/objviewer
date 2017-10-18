@@ -1,4 +1,3 @@
-#define GLEW_STATIC
 #include <string.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -111,7 +110,7 @@ typedef struct {
   texture_t **texture;
 } vertex_array_object_t;
 
-void finalize_texture(GC_PTR obj, GC_PTR env)
+static void finalize_texture(GC_PTR obj, GC_PTR env)
 {
   texture_t *target = (texture_t *)obj;
   glDeleteTextures(1, &target->texture);
@@ -358,7 +357,7 @@ void test_clear_buffer(CuTest *tc)
   CuAssertIntEquals(tc,  32, data[2]);
 }
 
-void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
+static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 {
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
   glBindVertexArray(target->vertex_array_object);
@@ -403,7 +402,7 @@ void test_empty_object(CuTest *tc)
   CuAssertIntEquals(tc, 0, object->n_vertex_array_objects);
 }
 
-void finalize_shader(GC_PTR obj, GC_PTR env)
+static void finalize_shader(GC_PTR obj, GC_PTR env)
 {
   shader_t *target = (shader_t *)obj;
   if (target->shader)
@@ -465,7 +464,7 @@ shader_t *make_shader(GLenum shader_type, const char *file_name)
   return retval;
 }
 
-void finalize_program(GC_PTR obj, GC_PTR env)
+static void finalize_program(GC_PTR obj, GC_PTR env)
 {
   program_t *target = (program_t *)obj;
   if (target->program) {

@@ -1,4 +1,3 @@
-#define GLEW_STATIC
 #include <GL/glew.h>
 #include <gc.h>
 #include "object.h"
@@ -11,6 +10,12 @@ object_t *make_object(rgb_t background_color, int max_vertex_array_objects)
   retval->n_vertex_array_objects = 0;
   retval->vertex_array_object = GC_MALLOC(max_vertex_array_objects * sizeof(vertex_array_object_t *));
   return retval;
+}
+
+object_t *add_vertex_array_object(object_t *object, vertex_array_object_t *vertex_array_object)
+{
+  object->vertex_array_object[object->n_vertex_array_objects++] = vertex_array_object;
+  return object;
 }
 
 void draw_elements(vertex_array_object_t *vertex_array_object)
