@@ -29,7 +29,7 @@ void render(object_t *object)
 {
   rgb_t c = object->background_color;
   glClearColor(c.red, c.green, c.blue, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   int i;
   for (i=0; i<object->n_vertex_array_objects; i++)
     draw_elements(object->vertex_array_object[i]);
