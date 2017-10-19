@@ -132,6 +132,42 @@ static MunitResult test_use_normal(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_draw_texturized_square(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(20, 6);
+  add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
+  add_texture_coordinate(surface, make_texture_coordinate(0.0f, 0.0f));
+  add_vertex(surface, make_vertex( 0.5f, -0.5f, 0.0f));
+  add_texture_coordinate(surface, make_texture_coordinate(1.0f, 0.0f));
+  add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
+  add_texture_coordinate(surface, make_texture_coordinate(0.0f, 1.0f));
+  add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
+  add_texture_coordinate(surface, make_texture_coordinate(1.0f, 1.0f));
+  build_facet(surface, 0, 0);
+  build_facet(surface, 1, 1);
+  build_facet(surface, 2, 3);
+  build_facet(surface, 3, 2);
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
+  add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
+  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  add_vertex_array_object(object, vertex_array_object);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  render(object);
+  glFinish();
+  unsigned char *pixels = read_pixels();
+  write_ppm("draw_texturized_square.ppm", width, height, pixels);
+  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 0], ==, 255);
+  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 1], ==,   0);
+  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 2], ==,   0);
+  munit_assert_int(pixels[(12 * 32 + 14 ) * 4 + 0], ==,   0);
+  munit_assert_int(pixels[(12 * 32 + 14 ) * 4 + 1], ==,   0);
+  munit_assert_int(pixels[(12 * 32 + 14 ) * 4 + 2], ==, 255);
+  return MUNIT_OK;
+}
+
 MunitTest test_object[] = {
   {"/clear_buffer"           , test_clear_buffer           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/empty_object"           , test_empty_object           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -139,5 +175,6 @@ MunitTest test_object[] = {
   {"/draw_triangle"          , test_draw_triangle          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/draw_two_surfaces"      , test_draw_two_surfaces      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/use_normal"             , test_use_normal             , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/draw_texturized_square" , test_draw_texturized_square , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                      , NULL                        , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
