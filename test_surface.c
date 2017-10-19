@@ -134,6 +134,17 @@ static MunitResult test_size_of_indices(const MunitParameter params[], void *dat
   return MUNIT_OK;
 }
 
+static MunitResult test_add_texcoord(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(15, 3);
+  add_vertex(surface, make_vertex(2.5f, 3.5f, 5.5f));
+  add_texture_coordinate(surface, make_texture_coordinate(0.25f, 0.75f));
+  munit_assert_int(surface->n_array, ==, 5);
+  munit_assert_float(surface->array[3], ==, 0.25f);
+  munit_assert_float(surface->array[4], ==, 0.75f);
+  return MUNIT_OK;
+}
+
 MunitTest test_surface[] = {
   {"/empty_surface"   , test_empty_surface   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_one_vertex"  , test_add_one_vertex  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -147,5 +158,6 @@ MunitTest test_surface[] = {
   {"/add_pentagon"    , test_add_pentagon    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/empty_indices"   , test_empty_indices   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/size_of_indices" , test_size_of_indices , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_texcoord"    , test_add_texcoord    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL               , NULL                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL}
 };

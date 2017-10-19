@@ -26,6 +26,12 @@ void add_normal(surface_t *surface, normal_t normal)
   surface->array[surface->n_array++] = normal.z;
 }
 
+void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coordinate)
+{
+  surface->array[surface->n_array++] = texture_coordinate.u;
+  surface->array[surface->n_array++] = texture_coordinate.v;
+}
+
 int size_of_array(surface_t *surface)
 {
   return surface->n_array * sizeof(GLfloat);
