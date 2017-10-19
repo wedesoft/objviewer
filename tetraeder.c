@@ -1,69 +1,25 @@
+#include <gc.h>
 #include <math.h>
-#include <stdio.h>
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include "object.h"
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327
 #endif
 
-const char *vertexSource = "#version 130\n\
-in mediump vec3 point;\n\
-in mediump vec2 texcoord;\n\
-in mediump vec3 vector;\n\
-uniform mat4 yaw;\n\
-uniform mat4 pitch;\n\
-uniform mat4 translation;\n\
-uniform mat4 projection;\n\
-uniform vec3 ray;\n\
-out mediump vec2 UV;\n\
-flat out mediump vec3 normal;\n\
-flat out mediump vec3 light;\n\
-out mediump vec3 direction;\n\
-flat out mediump float diffuse;\n\
-out mediump float fog;\n\
-void main()\n\
-{\n\
-  mat4 model = translation * yaw * pitch;\n\
-  gl_Position = projection * model * vec4(point, 1);\n\
-  fog = pow(0.8, length(gl_Position.xyz));\n\
-  direction = (model * vec4(point, 1)).xyz;\n\
-  UV = texcoord;\n\
-  normal = (model * vec4(vector, 0)).xyz;\n\
-  light = ray;\n\
-  diffuse = max(0.0, dot(normal, light));\n\
-}";
-
-const char *fragmentSource = "#version 130\n\
-in mediump vec2 UV;\n\
-flat in mediump vec3 normal;\n\
-flat in mediump vec3 light;\n\
-in mediump vec3 direction;\n\
-flat in mediump float diffuse;\n\
-in mediump float fog;\n\
-out mediump vec3 fragColor;\n\
-uniform sampler2D tex;\n\
-void main()\n\
-{\n\
-  mediump float specular = max(0.0, dot(normalize(direction), reflect(light, normal)));\n\
-  if (specular != 0.0)\n\
-    specular = 6.0 * pow(specular, 128.0);\n\
-  fragColor = 0.1 * (1.0 - fog) + fog * (texture(tex, UV).rgb * (0.1 + 0.5 * diffuse) + 0.4 * specular);\n\
-}";
-
-GLuint vao;
-GLuint vbo;
-GLuint idx;
-GLuint program;
-GLuint tex;
-int width = 640;
-int height = 480;
+int width = 320;
+int height = 240;
 
 float yaw = 0;
 float pitch = 0;
 float distance = 2;
 
-void projection(const char *target)
+object_t *object;
+program_t *program;
+
+void projection()
 {
   float d = 1 / tan(90 / 2 * M_PI / 180);
   float d2 = d * width / height;
@@ -72,46 +28,42 @@ void projection(const char *target)
   float a = (n + f) / (n - f);
   float b = 2 * n * f / (n - f);
   float columns[4][4] = {{d, 0, 0, 0}, {0, d2, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
-  glUniformMatrix4fv(glGetUniformLocation(program, target), 1, GL_FALSE, &columns[0][0]);
+  glUniformMatrix4fv(glGetUniformLocation(program->program, "projection"), 1, GL_FALSE, &columns[0][0]);
 }
 
-void transform(float yaw, float pitch, float distance)
+void transform(void)
 {
   float sin_yaw = sin(yaw * M_PI / 180);
   float cos_yaw = cos(yaw * M_PI / 180);
-  float yawColumns[4][4] = {{cos_yaw, 0, sin_yaw, 0}, {0, 1, 0, 0}, {-sin_yaw, 0, cos_yaw, 0}, {0, 0, 0, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program, "yaw"), 1, GL_FALSE, &yawColumns[0][0]);
+  float yaw_columns[4][4] = {{cos_yaw, 0, sin_yaw, 0}, {0, 1, 0, 0}, {-sin_yaw, 0, cos_yaw, 0}, {0, 0, 0, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program->program, "yaw"), 1, GL_FALSE, &yaw_columns[0][0]);
   float sin_pitch = sin(pitch * M_PI / 180);
   float cos_pitch = cos(pitch * M_PI / 180);
-  float pitchColumns[4][4] = {{1, 0, 0, 0}, {0, cos_pitch, -sin_pitch, 0}, {0, sin_pitch, cos_pitch, 0}, {0, 0, 0, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program, "pitch"), 1, GL_FALSE, &pitchColumns[0][0]);
-  float translationColumns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -distance, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program, "translation"), 1, GL_FALSE, &translationColumns[0][0]);
+  float pitch_columns[4][4] = {{1, 0, 0, 0}, {0, cos_pitch, -sin_pitch, 0}, {0, sin_pitch, cos_pitch, 0}, {0, 0, 0, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program->program, "pitch"), 1, GL_FALSE, &pitch_columns[0][0]);
+  float translation_columns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -distance, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program->program, "translation"), 1, GL_FALSE, &translation_columns[0][0]);
 }
 
 void light() {
   float vector[] = {0.37139068f,  0.74278135f,  0.55708601f};
-  glUniform3fv(glGetUniformLocation(program, "ray"), 1, &vector[0]);
-}
-
-void onDisplay(void)
-{
-  glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glUseProgram(program);
-  projection("projection");
-  transform(yaw, pitch, distance);
-  light();
-  glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0);
-
-  glutSwapBuffers();
+  glUniform3fv(glGetUniformLocation(program->program, "ray"), 1, &vector[0]);
 }
 
 void onResize(int w, int h)
 {
   width = w; height = h;
   glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+}
+
+void onDisplay(void)
+{
+  glUseProgram(program->program);
+  transform();
+  projection();
+  light();
+  render(object);
+  glutSwapBuffers();
 }
 
 void onKey(int key, int x, int y)
@@ -146,147 +98,46 @@ void onKey(int key, int x, int y)
   glutPostRedisplay();
 }
 
-void printError(const char *context)
+int main(int argc, char **argv)
 {
-  GLenum error = glGetError();
-  if (error != GL_NO_ERROR) {
-    fprintf(stderr, "%s: %s\n", context, gluErrorString(error));
-  };
-}
-
-void printStatus(const char *step, GLuint context, GLuint status)
-{
-  GLint result = GL_FALSE;
-  glGetShaderiv(context, status, &result);
-  if (result == GL_FALSE) {
-    char buffer[1024];
-    if (status == GL_COMPILE_STATUS)
-      glGetShaderInfoLog(context, 1024, NULL, buffer);
-    else
-      glGetProgramInfoLog(context, 1024, NULL, buffer);
-    if (buffer[0])
-      fprintf(stderr, "%s: %s\n", step, buffer);
-  };
-}
-
-void printCompileStatus(const char *step, GLuint context)
-{
-  printStatus(step, context, GL_COMPILE_STATUS);
-}
-
-void printLinkStatus(const char *step, GLuint context)
-{
-  printStatus(step, context, GL_LINK_STATUS);
-}
-
-GLfloat vertices[] = {
-   0.5f,  0.5f,  0.5f, 16.0f, 16.0f, -0.577350269f,  0.577350269f,  0.577350269f,
-  -0.5f,  0.5f, -0.5f,  0.0f, 16.0f, -0.577350269f, -0.577350269f, -0.577350269f,
-  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  0.577350269f, -0.577350269f,  0.577350269f,
-   0.5f, -0.5f, -0.5f, 16.0f,  0.0f,  0.577350269f,  0.577350269f, -0.577350269f
-};
-
-unsigned int indices[] = {
-  1, 2, 0,
-  3, 2, 1,
-  3, 0, 2,
-  1, 0, 3
-};
-
-float pixels[] = {
-  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
-};
-
-int main(int argc, char** argv)
-{
+  GC_INIT();
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(width, height);
   glutCreateWindow("tetraeder");
-
   glewExperimental = 1;
   glewInit();
-
   glEnable(GL_DEPTH_TEST);
 
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  glGenBuffers(1, &idx);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexSource, NULL);
-  glCompileShader(vertexShader);
-  printCompileStatus("Vertex shader", vertexShader);
-
-  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-  glCompileShader(fragmentShader);
-  printCompileStatus("Fragment shader", fragmentShader);
-
-  program = glCreateProgram();
-  glAttachShader(program, vertexShader);
-  glAttachShader(program, fragmentShader);
-  glLinkProgram(program);
-  printLinkStatus("Shader program", program);
-
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-  glVertexAttribPointer(glGetAttribLocation(program, "point"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-  glVertexAttribPointer(glGetAttribLocation(program, "texcoord"), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-  glVertexAttribPointer(glGetAttribLocation(program, "vector"), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
-
-  glGenTextures(1, &tex);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex);
-  glUniform1i(glGetUniformLocation(program, "tex"), 0);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_BGR, GL_FLOAT, pixels);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
-    GLfloat max_anisotropy;
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
-  };
-  glGenerateMipmap(GL_TEXTURE_2D);
+  surface_t *surface = make_surface(32, 12);
+  add_vertex(surface, make_vertex( 0.5f,  0.5f,  0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate(16.0f, 16.0f));
+  add_normal(surface, make_normal(-0.577350269f,  0.577350269f,  0.577350269f));
+  add_vertex(surface, make_vertex(-0.5f,  0.5f, -0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate( 0.0f, 16.0f));
+  add_normal(surface, make_normal(-0.577350269f, -0.577350269f, -0.577350269f));
+  add_vertex(surface, make_vertex(-0.5f, -0.5f,  0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate( 0.0f,  0.0f));
+  add_normal(surface, make_normal( 0.577350269f, -0.577350269f,  0.577350269f));
+  add_vertex(surface, make_vertex( 0.5f, -0.5f, -0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate(16.0f,  0.0f));
+  add_normal(surface, make_normal( 0.577350269f,  0.577350269f, -0.577350269f));
+  build_facet(surface, 0, 1); build_facet(surface, 1, 2); build_facet(surface, 2, 0);
+  build_facet(surface, 0, 3); build_facet(surface, 1, 2); build_facet(surface, 2, 1);
+  build_facet(surface, 0, 3); build_facet(surface, 1, 0); build_facet(surface, 2, 2);
+  build_facet(surface, 0, 1); build_facet(surface, 1, 0); build_facet(surface, 2, 3);
+  program = make_program("vertex.glsl", "fragment.glsl");
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  setup_vertex_attribute_pointer(vertex_array_object, "point"   , 3, 8);
+  setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 8);
+  setup_vertex_attribute_pointer(vertex_array_object, "vector"  , 3, 8);
+  add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
+  object = make_object(make_rgb(0, 0, 0), 1);
+  add_vertex_array_object(object, vertex_array_object);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);
   glutSpecialFunc(onKey);
   glutMainLoop();
-
-  glDisableVertexAttribArray(2);
-  glDisableVertexAttribArray(1);
-  glDisableVertexAttribArray(0);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-  glDeleteTextures(1, &tex);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &idx);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &vbo);
-
-  glBindVertexArray(0);
-  glDeleteVertexArrays(1, &vao);
-
-  glDetachShader(program, vertexShader);
-  glDetachShader(program, fragmentShader);
-  glDeleteProgram(program);
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
   return 0;
 }
