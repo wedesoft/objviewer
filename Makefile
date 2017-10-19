@@ -6,10 +6,10 @@ UNITS = rgb vertex normal surface object program shader vertex_array_object imag
 TESTS = $(addprefix test_,$(UNITS))
 OBJECTS = $(addsuffix .o,$(UNITS) $(TESTS))
 
-all: tetraeder mini test-fsim
+all: tetraeder mini testsuite
 
-check: test-fsim
-	./test-fsim
+check: testsuite
+	./testsuite
 
 tetraeder: tetraeder.o
 	$(CC) -o $@ tetraeder.o $(LIBS)
@@ -17,11 +17,11 @@ tetraeder: tetraeder.o
 mini: mini.o
 	$(CC) -o $@ mini.o $(LIBS)
 
-test-fsim: test_fsim.o $(OBJECTS) report_status.o test_helper.o munit.o
-	$(CC) -o $@ test_fsim.o $(OBJECTS) report_status.o test_helper.o munit.o $(LIBS)
+testsuite: testsuite.o $(OBJECTS) report_status.o test_helper.o munit.o
+	$(CC) -o $@ testsuite.o $(OBJECTS) report_status.o test_helper.o munit.o $(LIBS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f tetraeder mini test-fsim *.o *.ppm
+	rm -f tetraeder mini testsuite *.o *.ppm

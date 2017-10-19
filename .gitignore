@@ -1,5 +1,5 @@
 tetraeder
 mini
-test-fsim
+testsuite
 *.o
 *.ppm
