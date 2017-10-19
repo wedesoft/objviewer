@@ -16,4 +16,3 @@ texture_t *make_texture(const char *name)
   glGenTextures(1, &retval->texture);
   return retval;
 }
-

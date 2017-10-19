@@ -4,13 +4,17 @@
 #include <GL/glut.h>
 #include "object.h"
 
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327
 #endif
 
-
 int width = 320;
 int height = 240;
+
+float yaw = 0;
+float pitch = 0;
+float distance = 2;
 
 object_t *object;
 program_t *program;
@@ -27,10 +31,18 @@ void projection()
   glUniformMatrix4fv(glGetUniformLocation(program->program, "projection"), 1, GL_FALSE, &columns[0][0]);
 }
 
-void transform(float distance)
+void transform(void)
 {
-  float translation[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -distance, 1}};
-  glUniformMatrix4fv(glGetUniformLocation(program->program, "translation"), 1, GL_FALSE, &translation[0][0]);
+  float sin_yaw = sin(yaw * M_PI / 180);
+  float cos_yaw = cos(yaw * M_PI / 180);
+  float yaw_columns[4][4] = {{cos_yaw, 0, sin_yaw, 0}, {0, 1, 0, 0}, {-sin_yaw, 0, cos_yaw, 0}, {0, 0, 0, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program->program, "yaw"), 1, GL_FALSE, &yaw_columns[0][0]);
+  float sin_pitch = sin(pitch * M_PI / 180);
+  float cos_pitch = cos(pitch * M_PI / 180);
+  float pitch_columns[4][4] = {{1, 0, 0, 0}, {0, cos_pitch, -sin_pitch, 0}, {0, sin_pitch, cos_pitch, 0}, {0, 0, 0, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program->program, "pitch"), 1, GL_FALSE, &pitch_columns[0][0]);
+  float translation_columns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -distance, 1}};
+  glUniformMatrix4fv(glGetUniformLocation(program->program, "translation"), 1, GL_FALSE, &translation_columns[0][0]);
 }
 
 void onResize(int w, int h)
@@ -42,10 +54,42 @@ void onResize(int w, int h)
 void onDisplay(void)
 {
   glUseProgram(program->program);
-  transform(2);
+  transform();
   projection();
   render(object);
   glutSwapBuffers();
+}
+
+void onKey(int key, int x, int y)
+{
+  switch (key) {
+  case GLUT_KEY_LEFT:
+    yaw -= 2;
+    break;
+  case GLUT_KEY_RIGHT:
+    yaw += 2;
+    break;
+  case GLUT_KEY_UP:
+    pitch -= 2;
+    break;
+  case GLUT_KEY_DOWN:
+    pitch += 2;
+    break;
+  case GLUT_KEY_PAGE_UP:
+    distance += 0.05;
+    break;
+  case GLUT_KEY_PAGE_DOWN:
+    distance -= 0.05;
+    break;
+  case GLUT_KEY_HOME:
+    yaw = 0;
+    pitch = 0;
+    distance = 2;
+    break;
+  default:
+    return;
+  };
+  glutPostRedisplay();
 }
 
 int main(int argc, char **argv)
@@ -59,29 +103,35 @@ int main(int argc, char **argv)
   glewInit();
   glEnable(GL_DEPTH_TEST);
 
-  surface_t *surface = make_surface(20, 6);
-  add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
-  add_texture_coordinate(surface, make_texture_coordinate(0.0f, 0.0f));
-  add_vertex(surface, make_vertex( 0.5f, -0.5f, 0.0f));
-  add_texture_coordinate(surface, make_texture_coordinate(1.0f, 0.0f));
-  add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
-  add_texture_coordinate(surface, make_texture_coordinate(0.0f, 1.0f));
-  add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
-  add_texture_coordinate(surface, make_texture_coordinate(1.0f, 1.0f));
-  build_facet(surface, 0, 0);
-  build_facet(surface, 1, 1);
-  build_facet(surface, 2, 3);
-  build_facet(surface, 3, 2);
+  surface_t *surface = make_surface(32, 12);
+  add_vertex(surface, make_vertex( 0.5f,  0.5f,  0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate(16.0f, 16.0f));
+  add_normal(surface, make_normal(-0.577350269f,  0.577350269f,  0.577350269f));
+  add_vertex(surface, make_vertex(-0.5f,  0.5f, -0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate( 0.0f, 16.0f));
+  add_normal(surface, make_normal(-0.577350269f, -0.577350269f, -0.577350269f));
+  add_vertex(surface, make_vertex(-0.5f, -0.5f,  0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate( 0.0f,  0.0f));
+  add_normal(surface, make_normal( 0.577350269f, -0.577350269f,  0.577350269f));
+  add_vertex(surface, make_vertex( 0.5f, -0.5f, -0.5f));
+  add_texture_coordinate(surface, make_texture_coordinate(16.0f,  0.0f));
+  add_normal(surface, make_normal( 0.577350269f,  0.577350269f, -0.577350269f));
+  build_facet(surface, 0, 1); build_facet(surface, 1, 2); build_facet(surface, 2, 0);
+  build_facet(surface, 0, 3); build_facet(surface, 1, 2); build_facet(surface, 2, 1);
+  build_facet(surface, 0, 3); build_facet(surface, 1, 0); build_facet(surface, 2, 2);
+  build_facet(surface, 0, 1); build_facet(surface, 1, 0); build_facet(surface, 2, 3);
   program = make_program("vertex.glsl", "fragment.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
-  setup_vertex_attribute_pointer(vertex_array_object, "point"   , 3, 5);
-  setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "point"   , 3, 8);
+  setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 8);
+  setup_vertex_attribute_pointer(vertex_array_object, "vector"  , 3, 8);
   add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
   object = make_object(make_rgb(0, 0, 0), 1);
   add_vertex_array_object(object, vertex_array_object);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);
+  glutSpecialFunc(onKey);
   glutMainLoop();
   return 0;
 }
