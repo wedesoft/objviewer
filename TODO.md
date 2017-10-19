@@ -1,6 +1,6 @@
 # TODO
 
-* separate files for tests, functions, and main program
+* port tetraeder to new thing
 * automake files
 * dynamic lists
 * bind more than one texture
