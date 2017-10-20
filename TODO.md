@@ -2,6 +2,7 @@
 
 * automake files
 * test two vertex array objects
+* rename project and library, project directory structure, install header in package directory
 * projection matrix method
 * dynamic lists
 * bind more than one texture

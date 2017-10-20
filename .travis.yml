@@ -8,13 +8,16 @@ before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3
-install:
+before_install:
   - sudo apt-get install -q -y gdb
   - sudo apt-get install -q -y colorgcc
   - sudo apt-get install -q -y freeglut3-dev
   - sudo apt-get install -q -y libglew-dev
   - sudo apt-get install -q -y libmagickcore-dev
   - sudo apt-get install -q -y libgc-dev
+install:
+  - ./bootstrap
+  - ./configure CC=colorgcc
   - make -j
 script:
-  - make check
+  - make check -j
