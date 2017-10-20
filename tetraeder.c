@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(width, height);
   glutCreateWindow("tetraeder");
-  glewExperimental = 1;
+  glewExperimental = GL_TRUE;
   glewInit();
   glEnable(GL_DEPTH_TEST);
 

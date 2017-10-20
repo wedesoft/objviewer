@@ -46,8 +46,8 @@ void* test_setup_gl(const MunitParameter params[], void* user_data)
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowSize(width, height);
-  glutCreateWindow("test");
-  glewExperimental = 1;
+  glutCreateWindow("munit");
+  glewExperimental = GL_TRUE;
   glewInit();
   return NULL;
 }

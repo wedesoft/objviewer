@@ -97,9 +97,9 @@ int main(int argc, char** argv)
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowSize(width, height);
-  glutCreateWindow("tetraeder");
+  glutCreateWindow("mini");
 
-  glewExperimental = 1;
+  glewExperimental = GL_TRUE;
   glewInit();
 
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
