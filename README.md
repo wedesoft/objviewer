@@ -1,5 +1,27 @@
 # FSim
 
+Small library to define and render OpenGL objects.
+
+![OpenGL rendering of tetraeder](tetraeder.png)
+
+## Install dependencies
+```
+sudo apt-get install colorgcc freeglut3-dev libglew-dev libmagickcore-dev libgc-dev
+```
+
+## Build
+```
+./bootstrap
+./configure CC=colorgcc
+make -j
+make check -j
+```
+
+## Run
+```
+./tetraeder
+```
+
 # External links
 
 * [OpenGL GLSL vertex buffer objects example][1]
