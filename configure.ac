@@ -27,6 +27,13 @@ if test "x$have_GLU" != "xyes"; then
 else
   AC_MSG_RESULT([yes])
 fi
+AC_MSG_CHECKING([for glut])
+if test "x$have_glut" != "xyes"; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([Could not find glut])
+else
+  AC_MSG_RESULT([yes])
+fi
 
 PKG_CHECK_MODULES(GLEW, glew >= 2.0.0)
 AC_SUBST(GLEW_CFLAGS)
@@ -35,5 +42,9 @@ AC_SUBST(GLEW_LIBS)
 PKG_CHECK_MODULES(MAGICK, ImageMagick >= 6.7.7)
 AC_SUBST(MAGICK_CFLAGS)
 AC_SUBST(MAGICK_LIBS)
+
+PKG_CHECK_MODULES(BOEHM, bdw-gc >= 7.4.2)
+AC_SUBST(BOEHM_CFLAGS)
+AC_SUBST(BOEHM_LIBS)
 
 AC_OUTPUT(Makefile)
