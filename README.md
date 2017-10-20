@@ -1,7 +1,5 @@
 # FSim
 
-[![Travis CI](doc/travis.png)](https://travis-ci.org/wedesoft/fsim)
-
 # External links
 
 * [OpenGL GLSL vertex buffer objects example][1]
