@@ -1,11 +1,16 @@
+.deps
 aclocal.m4
 autom4te.cache
 build-aux
 ChangeLog
 configure
+config.status
+libtool
+Makefile
 mini
 testsuite
 tetraeder
 *.in
+*.log
 *.o
 *.ppm

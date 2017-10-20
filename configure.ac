@@ -10,5 +10,26 @@ LT_INIT
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_LANG(C)
+PKG_PROG_PKG_CONFIG
+
+AX_HAVE_OPENGL
+AC_MSG_CHECKING([for GL])
+if test "x$have_GL" != "xyes"; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([Could not find GL])
+else
+  AC_MSG_RESULT([yes])
+fi
+AC_MSG_CHECKING([for GLU])
+if test "x$have_GLU" != "xyes"; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([Could not find GLU])
+else
+  AC_MSG_RESULT([yes])
+fi
+
+PKG_CHECK_MODULES(GLEW, glew >= 2.0.0)
+AC_SUBST(GLEW_CFLAGS)
+AC_SUBST(GLEW_LIBS)
 
 AC_OUTPUT(Makefile)
