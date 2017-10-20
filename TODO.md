@@ -1,6 +1,8 @@
 # TODO
 
 * automake files
+* test two vertex array objects
+* projection matrix method
 * dynamic lists
 * bind more than one texture
 * create and load Blender model
@@ -9,7 +11,6 @@
 * shadows (mask color pipeline output)
 * blinking beacon lights
 * HDR bloom (separable convolution)
-* replace glGenTexture with glBindBuffer? (page 335)
 * multisampling
 * windows (blending, reflections), greyscale cameras, MFDs
 * frame buffer objects for non-blocking data transfer

@@ -1,5 +1,11 @@
-tetraeder
+aclocal.m4
+autom4te.cache
+build-aux
+ChangeLog
+configure
 mini
 testsuite
+tetraeder
+*.in
 *.o
 *.ppm
