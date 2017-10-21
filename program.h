@@ -12,3 +12,5 @@ typedef struct {
 } program_t;
 
 program_t *make_program(const char *vertex_shader_file_name, const char *fragment_shader_file_name);
+
+void uniform_matrix(program_t *program, const char *name, float *columns);

@@ -36,3 +36,9 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
     retval = NULL;
   return retval;
 }
+
+void uniform_matrix(program_t *program, const char *name, float *columns)
+{
+  glUseProgram(program->program);
+  glUniformMatrix4fv(glGetUniformLocation(program->program, name), 1, GL_FALSE, columns);
+}

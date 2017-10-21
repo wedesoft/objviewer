@@ -1,10 +1,10 @@
 # TODO
 
-* automake files
-* test two vertex array objects
-* rename project and library, project directory structure, install header in package directory
 * projection matrix method
 * dynamic lists
+* project directory structure
+* test two vertex array objects
+* rename project and library, install header in package directory
 * bind more than one texture
 * create and load Blender model
 * materials
