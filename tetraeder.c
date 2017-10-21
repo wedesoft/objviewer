@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "object.h"
+#include "projection.h"
 
 
 #ifndef M_PI
@@ -18,18 +19,6 @@ float distance = 2;
 
 object_t *object;
 program_t *program;
-
-void projection()
-{
-  float d = 1 / tan(90 / 2 * M_PI / 180);
-  float d2 = d * width / height;
-  float n = 0.1;
-  float f = 100;
-  float a = (n + f) / (n - f);
-  float b = 2 * n * f / (n - f);
-  float columns[4][4] = {{d, 0, 0, 0}, {0, d2, 0, 0}, {0, 0, a, -1}, {0, 0, b, 0}};
-  glUniformMatrix4fv(glGetUniformLocation(program->program, "projection"), 1, GL_FALSE, &columns[0][0]);
-}
 
 void transform(void)
 {
@@ -58,9 +47,9 @@ void onResize(int w, int h)
 
 void onDisplay(void)
 {
+  uniform_matrix(program, "projection", projection(width, height, 0.1, 100, 90.0));
   glUseProgram(program->program);
   transform();
-  projection();
   light();
   render(object);
   glutSwapBuffers();
