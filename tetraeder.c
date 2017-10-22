@@ -2,8 +2,8 @@
 #include <math.h>
 #include <GL/glew.h>
 #include <GL/glut.h>
-#include "object.h"
-#include "projection.h"
+#include "fsim/object.h"
+#include "fsim/projection.h"
 
 
 #ifndef M_PI

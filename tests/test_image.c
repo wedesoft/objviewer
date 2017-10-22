@@ -1,6 +1,6 @@
+#include "fsim/image.h"
 #include "test_image.h"
 #include "test_helper.h"
-#include "image.h"
 
 
 static MunitResult test_image_size(const MunitParameter params[], void *data)

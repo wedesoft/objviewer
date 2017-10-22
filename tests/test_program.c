@@ -1,6 +1,6 @@
+#include "fsim/program.h"
 #include "test_program.h"
 #include "test_helper.h"
-#include "program.h"
 
 
 static MunitResult test_no_vertex_shader(const MunitParameter params[], void *data)

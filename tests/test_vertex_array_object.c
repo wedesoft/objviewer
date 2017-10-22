@@ -1,6 +1,6 @@
+#include "fsim/vertex_array_object.h"
 #include "test_vertex_array_object.h"
 #include "test_helper.h"
-#include "vertex_array_object.h"
 
 
 static MunitResult test_no_attribute_pointers(const MunitParameter params[], void *data)

@@ -1,9 +1,9 @@
 #include <GL/gl.h>
+#include "fsim/object.h"
+#include "fsim/program.h"
+#include "fsim/projection.h"
 #include "test_object.h"
 #include "test_helper.h"
-#include "object.h"
-#include "program.h"
-#include "projection.h"
 
 
 static MunitResult test_clear_buffer(const MunitParameter params[], void *data)

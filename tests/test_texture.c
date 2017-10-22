@@ -1,5 +1,5 @@
+#include "fsim/texture.h"
 #include "test_texture.h"
-#include "texture.h"
 
 
 static MunitResult test_make_texture(const MunitParameter params[], void *data)

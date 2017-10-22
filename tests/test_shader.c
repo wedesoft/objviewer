@@ -1,6 +1,6 @@
+#include "fsim/shader.h"
 #include "test_shader.h"
 #include "test_helper.h"
-#include "shader.h"
 
 
 static MunitResult test_shader_file_not_found(const MunitParameter params[], void *data)

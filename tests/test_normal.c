@@ -1,5 +1,5 @@
+#include "fsim/normal.h"
 #include "test_normal.h"
-#include "normal.h"
 
 
 static MunitResult test_make_normal(const MunitParameter params[], void *data)

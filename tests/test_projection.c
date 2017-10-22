@@ -1,7 +1,7 @@
 #include <math.h>
+#include "fsim/projection.h"
 #include "test_projection.h"
 #include "test_helper.h"
-#include "projection.h"
 
 
 static MunitResult test_horizontal_fov(const MunitParameter params[], void *data)

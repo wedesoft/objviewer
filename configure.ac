@@ -47,4 +47,6 @@ PKG_CHECK_MODULES(BOEHM, bdw-gc >= 7.4.2)
 AC_SUBST(BOEHM_CFLAGS)
 AC_SUBST(BOEHM_LIBS)
 
-AC_OUTPUT(Makefile)
+AC_OUTPUT(Makefile
+          fsim/Makefile
+          tests/Makefile)

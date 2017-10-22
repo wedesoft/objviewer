@@ -1,5 +1,5 @@
+#include "fsim/texture_coordinate.h"
 #include "test_texture_coordinate.h"
-#include "texture_coordinate.h"
 
 
 static MunitResult test_make_texcoord(const MunitParameter params[], void *data)
