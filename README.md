@@ -41,7 +41,7 @@ make check -j
 * [High dynamic range effects][15]
 * [Bullet physics engine][16]
 * [Gmsh Mesh generator and file format][24]
-* [Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]
+* *[Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]*
 * [Spherical cube map rendering library][18]
 * [Boehm garbage collector interface][19]
 * [Getting Core Dumps of Failed TravisCI Builds][20]
