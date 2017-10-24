@@ -42,7 +42,6 @@ make check -j
 * [Star Citizen demo video][14]
 * [High dynamic range effects][15]
 * [Bullet physics engine][16]
-* [Gmsh Mesh generator and file format][24]
 * [Boehm garbage collector interface][19]
 * [Getting Core Dumps of Failed TravisCI Builds][20]
 * [EF2000 by DID][21]
@@ -72,5 +71,4 @@ make check -j
 [21]: https://en.wikipedia.org/wiki/EF2000_(video_game)
 [22]: https://www.prepar3d.com/
 [23]: https://nemequ.github.io/munit/
-[24]: http://gmsh.info/
 [25]: https://github.com/dseagrav/NASSP/
