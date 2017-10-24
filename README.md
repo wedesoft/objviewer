@@ -24,6 +24,8 @@ make check -j
 
 # External links
 
+* [Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]
+* [Spherical cube map rendering library][18]
 * [OpenGL GLSL vertex buffer objects example][1]
 * [OpenGL tutorial][2]
 * [OpenGL triangle][3]
@@ -41,12 +43,11 @@ make check -j
 * [High dynamic range effects][15]
 * [Bullet physics engine][16]
 * [Gmsh Mesh generator and file format][24]
-* *[Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]*
-* [Spherical cube map rendering library][18]
 * [Boehm garbage collector interface][19]
 * [Getting Core Dumps of Failed TravisCI Builds][20]
 * [EF2000 by DID][21]
 * [Prepar3D][22]
+* [Project Apollo NASSP add-on for Orbiter][25]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -72,3 +73,4 @@ make check -j
 [22]: https://www.prepar3d.com/
 [23]: https://nemequ.github.io/munit/
 [24]: http://gmsh.info/
+[25]: https://github.com/dseagrav/NASSP/
