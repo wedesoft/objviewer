@@ -3,18 +3,17 @@
 #include "object.h"
 
 
-object_t *make_object(rgb_t background_color, int max_vertex_array_objects)
+object_t *make_object(rgb_t background_color)
 {
   object_t *retval = GC_MALLOC(sizeof(object_t));
   retval->background_color = background_color;
-  retval->n_vertex_array_objects = 0;
-  retval->vertex_array_object = GC_MALLOC(max_vertex_array_objects * sizeof(vertex_array_object_t *));
+  retval->vertex_array_object = make_list();
   return retval;
 }
 
 object_t *add_vertex_array_object(object_t *object, vertex_array_object_t *vertex_array_object)
 {
-  object->vertex_array_object[object->n_vertex_array_objects++] = vertex_array_object;
+  append_pointer(&object->vertex_array_object, vertex_array_object);
   return object;
 }
 
@@ -31,6 +30,6 @@ void render(object_t *object)
   glClearColor(c.red, c.green, c.blue, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   int i;
-  for (i=0; i<object->n_vertex_array_objects; i++)
-    draw_elements(object->vertex_array_object[i]);
+  for (i=0; i<object->vertex_array_object.size; i++)
+    draw_elements(get_pointer(&object->vertex_array_object)[i]);
 }

@@ -8,7 +8,7 @@
 
 static MunitResult test_clear_buffer(const MunitParameter params[], void *data)
 {
-  object_t *object = make_object(make_rgb(0.75f, 0.25f, 0.125f), 1);
+  object_t *object = make_object(make_rgb(0.75f, 0.25f, 0.125f));
   render(object);
   glFinish();
   unsigned char *pixels = read_pixels();
@@ -21,19 +21,19 @@ static MunitResult test_clear_buffer(const MunitParameter params[], void *data)
 
 static MunitResult test_empty_object(const MunitParameter params[], void *data)
 {
-  object_t *object = make_object(make_rgb(0, 0, 0), 1);
-  munit_assert_int(object->n_vertex_array_objects, ==, 0);
+  object_t *object = make_object(make_rgb(0, 0, 0));
+  munit_assert_int(object->vertex_array_object.size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_add_vertex_array_object(const MunitParameter params[], void *data)
 {
-  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  object_t *object = make_object(make_rgb(0, 0, 0));
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(), 1);
   object_t *retval = add_vertex_array_object(object, vertex_array_object);
-  munit_assert_int(object->n_vertex_array_objects, ==, 1);
-  munit_assert_ptr(object->vertex_array_object[0], ==, vertex_array_object);
+  munit_assert_int(object->vertex_array_object.size, ==, 1);
+  munit_assert_ptr(get_pointer(&object->vertex_array_object)[0], ==, vertex_array_object);
   munit_assert_ptr(retval, ==, object);
   return MUNIT_OK;
 }
@@ -50,7 +50,7 @@ static MunitResult test_draw_triangle(const MunitParameter params[], void *data)
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
-  object_t *object = make_object(make_rgb(0, 1, 0), 1);
+  object_t *object = make_object(make_rgb(0, 1, 0));
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
@@ -71,7 +71,7 @@ static MunitResult test_draw_two_surfaces(const MunitParameter params[], void *d
 {
   float coord[] = {0.5f, -0.5f};
   const char *fragment_shader_file_name[] = {"fragment-blue.glsl", "fragment-red.glsl"};
-  object_t *object = make_object(make_rgb(0, 1, 0), 2);
+  object_t *object = make_object(make_rgb(0, 1, 0));
   int i;
   for (i=0;i<2; i++) {
     surface_t *surface = make_surface();
@@ -120,7 +120,7 @@ static MunitResult test_use_normal(const MunitParameter params[], void *data)
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point" , 3, 6);
   setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, 6);
-  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  object_t *object = make_object(make_rgb(0, 0, 0));
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
@@ -153,7 +153,7 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
   add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
-  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  object_t *object = make_object(make_rgb(0, 0, 0));
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   render(object);
@@ -181,7 +181,7 @@ static MunitResult test_perspective_triangle(const MunitParameter params[], void
   program_t *program = make_program("vertex-projection.glsl", "fragment-blue.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
-  object_t *object = make_object(make_rgb(0, 0, 0), 1);
+  object_t *object = make_object(make_rgb(0, 0, 0));
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   uniform_matrix(program, "projection", projection(width, height, 0.1, 2.0, 90.0));

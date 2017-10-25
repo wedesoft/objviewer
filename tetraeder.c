@@ -121,7 +121,7 @@ int main(int argc, char **argv)
   setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 8);
   setup_vertex_attribute_pointer(vertex_array_object, "vector"  , 3, 8);
   add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
-  object = make_object(make_rgb(0, 0, 0), 1);
+  object = make_object(make_rgb(0, 0, 0));
   add_vertex_array_object(object, vertex_array_object);
 
   glutDisplayFunc(onDisplay);
