@@ -4,14 +4,15 @@
 typedef struct {
   int size;
   int buffer_size;
-  GLuint *element;
+  void *element;
 } list_t;
 
 list_t make_list(void);
 
 void append_gluint(list_t *list, GLuint value);
 
-inline GLuint *get_gluint(list_t *list)
-{
-  return &list->element[0];
-}
+void append_glfloat(list_t *list, GLfloat value);
+
+inline GLuint *get_gluint(list_t *list) { return (GLuint *)list->element; }
+
+inline GLfloat *get_glfloat(list_t *list) { return (GLfloat *)list->element; }

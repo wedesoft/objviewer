@@ -78,6 +78,22 @@ static MunitResult test_double_size(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_append_glfloat(const MunitParameter params[], void *data)
+{
+  list_t list = make_list();
+  append_glfloat(&list, 2.5f);
+  munit_assert_int(list.size, ==, 1);
+  return MUNIT_OK;
+}
+
+static MunitResult test_get_glfloat(const MunitParameter params[], void *data)
+{
+  list_t list = make_list();
+  append_glfloat(&list, 7.5f);
+  munit_assert_float(get_glfloat(&list)[0], ==, 7.5f);
+  return MUNIT_OK;
+}
+
 MunitTest test_list[] = {
   {"/zero_size"      , test_zero_size      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/append_gluint"  , test_append_gluint  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
@@ -88,5 +104,7 @@ MunitTest test_list[] = {
   {"/allocation"     , test_allocation     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/reallocation"   , test_reallocation   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/double_size"    , test_double_size    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/append_glfloat" , test_append_glfloat , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/get_glfloat"    , test_get_glfloat    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL              , NULL                , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}
 };
