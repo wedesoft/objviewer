@@ -1,6 +1,7 @@
 # TODO
 
 * dynamic lists
+* simpler adding of vertex array data
 * test two vertex array objects
 * rename project and library, install header in package directory
 * bind more than one texture

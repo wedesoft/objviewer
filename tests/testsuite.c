@@ -13,6 +13,7 @@
 #include "test_texture.h"
 #include "test_texture_coordinate.h"
 #include "test_projection.h"
+#include "test_list.h"
 
 
 static MunitSuite test_fsim[] = {
@@ -28,6 +29,7 @@ static MunitSuite test_fsim[] = {
   {"/texture"   , test_texture   , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/texcoord"  , test_texcoord  , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/projection", test_projection, NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/list"      , test_list      , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {NULL         , NULL           , NULL, 0, MUNIT_SUITE_OPTION_NONE}
 };
 
