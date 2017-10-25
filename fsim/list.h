@@ -11,4 +11,7 @@ list_t make_list(void);
 
 void append_gluint(list_t *list, GLuint value);
 
-GLuint *get_gluint(list_t *list);
+inline GLuint *get_gluint(list_t *list)
+{
+  return &list->element[0];
+}

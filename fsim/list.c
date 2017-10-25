@@ -21,8 +21,3 @@ void append_gluint(list_t *list, GLuint value)
   };
   list->element[list->size++] = value;
 }
-
-GLuint *get_gluint(list_t *list)
-{
-  return &list->element[0];
-}
