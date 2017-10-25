@@ -12,7 +12,7 @@ typedef struct {
   list_t vertex_index;
 } surface_t;
 
-surface_t *make_surface(int max_array, int max_indices);
+surface_t *make_surface(int max_array);
 
 void add_vertex(surface_t *surface, vertex_t vertex);
 

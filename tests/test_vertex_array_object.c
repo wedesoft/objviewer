@@ -14,7 +14,7 @@ static MunitResult test_no_attribute_pointers(const MunitParameter params[], voi
 static MunitResult test_add_attribute_pointer(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  surface_t *surface = make_surface(9, 3);
+  surface_t *surface = make_surface(9);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
@@ -26,7 +26,7 @@ static MunitResult test_add_attribute_pointer(const MunitParameter params[], voi
 static MunitResult test_add_two_attribute_pointers(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  surface_t *surface = make_surface(9, 3);
+  surface_t *surface = make_surface(9);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
@@ -38,14 +38,14 @@ static MunitResult test_add_two_attribute_pointers(const MunitParameter params[]
 static MunitResult test_no_textures(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(9, 3), 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(9), 1);
   munit_assert_int(vertex_array_object->n_textures, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_add_texture(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface(9, 3);
+  surface_t *surface = make_surface(9);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
   texture_t *texture = make_texture("tex");

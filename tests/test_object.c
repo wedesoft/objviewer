@@ -30,7 +30,7 @@ static MunitResult test_add_vertex_array_object(const MunitParameter params[], v
 {
   object_t *object = make_object(make_rgb(0, 0, 0), 1);
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(9, 3), 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(9), 1);
   object_t *retval = add_vertex_array_object(object, vertex_array_object);
   munit_assert_int(object->n_vertex_array_objects, ==, 1);
   munit_assert_ptr(object->vertex_array_object[0], ==, vertex_array_object);
@@ -40,7 +40,7 @@ static MunitResult test_add_vertex_array_object(const MunitParameter params[], v
 
 static MunitResult test_draw_triangle(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface(9, 3);
+  surface_t *surface = make_surface(9);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
   add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
@@ -74,7 +74,7 @@ static MunitResult test_draw_two_surfaces(const MunitParameter params[], void *d
   object_t *object = make_object(make_rgb(0, 1, 0), 2);
   int i;
   for (i=0;i<2; i++) {
-    surface_t *surface = make_surface(9, 3);
+    surface_t *surface = make_surface(9);
     float c = coord[i];
     add_vertex(surface, make_vertex(    c,     c, 0.0f));
     add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
@@ -106,7 +106,7 @@ static MunitResult test_draw_two_surfaces(const MunitParameter params[], void *d
 
 static MunitResult test_use_normal(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface(18, 3);
+  surface_t *surface = make_surface(18);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
   add_normal(surface, make_normal( 0.0f,  0.0f, 1.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, 0.0f));
@@ -135,7 +135,7 @@ static MunitResult test_use_normal(const MunitParameter params[], void *data)
 
 static MunitResult test_draw_texturized_square(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface(20, 6);
+  surface_t *surface = make_surface(20);
   add_vertex(surface, make_vertex(-0.5f, -0.5f, 0.0f));
   add_texture_coordinate(surface, make_texture_coordinate(0.0f, 0.0f));
   add_vertex(surface, make_vertex( 0.5f, -0.5f, 0.0f));
@@ -171,7 +171,7 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
 
 static MunitResult test_perspective_triangle(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface(9, 3);
+  surface_t *surface = make_surface(9);
   add_vertex(surface, make_vertex( 0.5f,  0.5f, -1.0f));
   add_vertex(surface, make_vertex(-0.5f,  0.5f, -1.0f));
   add_vertex(surface, make_vertex(-0.5f, -0.5f, -1.0f));

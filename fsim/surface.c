@@ -2,7 +2,7 @@
 #include "surface.h"
 
 
-surface_t *make_surface(int max_array, int max_indices)
+surface_t *make_surface(int max_array)
 {
   surface_t *retval = GC_MALLOC(sizeof(surface_t));
   retval->n_array = 0;
