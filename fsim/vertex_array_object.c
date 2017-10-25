@@ -10,7 +10,7 @@ static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   int i;
   for (i=0; i<target->program->n_attributes; i++)
     glDisableVertexAttribArray(i);
-  if (target->n_textures > 0) {
+  if (target->texture.size) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
   };
@@ -23,14 +23,13 @@ static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glDeleteBuffers(1, &target->vertex_array_object);
 }
 
-vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface, int max_textures)
+vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
   retval->n_indices = surface->vertex_index.size;
   retval->program = program;
-  retval->n_textures = 0;
-  retval->texture = GC_MALLOC(max_textures * sizeof(texture_t *));
+  retval->texture = make_list();
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
   glGenBuffers(1, &retval->vertex_buffer_object);
@@ -55,7 +54,7 @@ void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, 
 
 void add_texture(vertex_array_object_t *vertex_array_object, program_t *program, texture_t *texture, image_t *image)
 {
-  vertex_array_object->texture[vertex_array_object->n_textures++] = texture;
+  append_pointer(&vertex_array_object->texture, texture);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture->texture);
   glUniform1i(glGetAttribLocation(program->program, texture->name), 0);

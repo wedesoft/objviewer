@@ -116,7 +116,7 @@ int main(int argc, char **argv)
   build_facet(surface, 0, 3); build_facet(surface, 1, 0); build_facet(surface, 2, 2);
   build_facet(surface, 0, 1); build_facet(surface, 1, 0); build_facet(surface, 2, 3);
   program = make_program("vertex.glsl", "fragment.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point"   , 3, 8);
   setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 8);
   setup_vertex_attribute_pointer(vertex_array_object, "vector"  , 3, 8);

@@ -30,7 +30,7 @@ static MunitResult test_add_vertex_array_object(const MunitParameter params[], v
 {
   object_t *object = make_object(make_rgb(0, 0, 0));
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(), 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface());
   object_t *retval = add_vertex_array_object(object, vertex_array_object);
   munit_assert_int(object->vertex_array_object.size, ==, 1);
   munit_assert_ptr(get_pointer(&object->vertex_array_object)[0], ==, vertex_array_object);
@@ -48,7 +48,7 @@ static MunitResult test_draw_triangle(const MunitParameter params[], void *data)
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   object_t *object = make_object(make_rgb(0, 1, 0));
   add_vertex_array_object(object, vertex_array_object);
@@ -83,7 +83,7 @@ static MunitResult test_draw_two_surfaces(const MunitParameter params[], void *d
     build_facet(surface, 1, 1);
     build_facet(surface, 2, 2);
     program_t *program = make_program("vertex-identity.glsl", fragment_shader_file_name[i]);
-    vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+    vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
     setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
     add_vertex_array_object(object, vertex_array_object);
   };
@@ -117,7 +117,7 @@ static MunitResult test_use_normal(const MunitParameter params[], void *data)
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
   program_t *program = make_program("vertex-normal-identity.glsl", "fragment-normal.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point" , 3, 6);
   setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, 6);
   object_t *object = make_object(make_rgb(0, 0, 0));
@@ -149,7 +149,7 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
   build_facet(surface, 2, 3);
   build_facet(surface, 3, 2);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
   add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
@@ -179,7 +179,7 @@ static MunitResult test_perspective_triangle(const MunitParameter params[], void
   build_facet(surface, 1, 1);
   build_facet(surface, 2, 2);
   program_t *program = make_program("vertex-projection.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface, 1);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   object_t *object = make_object(make_rgb(0, 0, 0));
   add_vertex_array_object(object, vertex_array_object);

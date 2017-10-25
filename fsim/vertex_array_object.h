@@ -4,6 +4,7 @@
 #include "surface.h"
 #include "texture.h"
 #include "image.h"
+#include "list.h"
 
 
 typedef struct {
@@ -12,11 +13,10 @@ typedef struct {
   GLuint vertex_buffer_object;
   GLuint element_buffer_object;
   int n_indices;
-  int n_textures;
-  texture_t **texture;
+  list_t texture;
 } vertex_array_object_t;
 
-vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface, int max_textures);
+vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface);
 
 void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride);
 
