@@ -1,6 +1,6 @@
 # TODO
 
-* use dynamic lists, do not require values for initial size
+* list of vertex array objects (object\_t), list of textures (vertex\_array\_object\_t)
 * simpler adding of vertex array data
 * test two vertex array objects
 * rename project and library, install header in package directory

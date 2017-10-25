@@ -98,7 +98,7 @@ int main(int argc, char **argv)
   glewInit();
   glEnable(GL_DEPTH_TEST);
 
-  surface_t *surface = make_surface(32);
+  surface_t *surface = make_surface();
   add_vertex(surface, make_vertex( 0.5f,  0.5f,  0.5f));
   add_texture_coordinate(surface, make_texture_coordinate(16.0f, 16.0f));
   add_normal(surface, make_normal(-0.577350269f,  0.577350269f,  0.577350269f));

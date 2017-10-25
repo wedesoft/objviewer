@@ -7,12 +7,11 @@
 
 
 typedef struct {
-  int n_array;
-  GLfloat *array;
+  list_t array;
   list_t vertex_index;
 } surface_t;
 
-surface_t *make_surface(int max_array);
+surface_t *make_surface(void);
 
 void add_vertex(surface_t *surface, vertex_t vertex);
 

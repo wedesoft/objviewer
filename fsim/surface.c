@@ -2,38 +2,37 @@
 #include "surface.h"
 
 
-surface_t *make_surface(int max_array)
+surface_t *make_surface(void)
 {
   surface_t *retval = GC_MALLOC(sizeof(surface_t));
-  retval->n_array = 0;
-  retval->array = GC_MALLOC_ATOMIC(max_array * sizeof(GLfloat));
+  retval->array = make_list();
   retval->vertex_index = make_list();
   return retval;
 }
 
 void add_vertex(surface_t *surface, vertex_t vertex)
 {
-  surface->array[surface->n_array++] = vertex.x;
-  surface->array[surface->n_array++] = vertex.y;
-  surface->array[surface->n_array++] = vertex.z;
+  append_glfloat(&surface->array, vertex.x);
+  append_glfloat(&surface->array, vertex.y);
+  append_glfloat(&surface->array, vertex.z);
 }
 
 void add_normal(surface_t *surface, normal_t normal)
 {
-  surface->array[surface->n_array++] = normal.x;
-  surface->array[surface->n_array++] = normal.y;
-  surface->array[surface->n_array++] = normal.z;
+  append_glfloat(&surface->array, normal.x);
+  append_glfloat(&surface->array, normal.y);
+  append_glfloat(&surface->array, normal.z);
 }
 
 void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coordinate)
 {
-  surface->array[surface->n_array++] = texture_coordinate.u;
-  surface->array[surface->n_array++] = texture_coordinate.v;
+  append_glfloat(&surface->array, texture_coordinate.u);
+  append_glfloat(&surface->array, texture_coordinate.v);
 }
 
 int size_of_array(surface_t *surface)
 {
-  return surface->n_array * sizeof(GLfloat);
+  return surface->array.size * sizeof(GLfloat);
 }
 
 void build_facet(surface_t *surface, int number, int index)
