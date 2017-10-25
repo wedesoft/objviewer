@@ -13,11 +13,8 @@ list_t make_list(void)
 
 void list_append_gluint(list_t *list, GLuint value)
 {
-  if (!list->buffer_size) {
-    list->buffer_size = sizeof(GLuint);
-    list->element = GC_MALLOC_ATOMIC(list->buffer_size);
-  } if (list->buffer_size < (list->size + 1) * sizeof(GLuint)) {
-    list->buffer_size = 2 * list->buffer_size;
+  if (list->buffer_size < (list->size + 1) * sizeof(GLuint)) {
+    list->buffer_size = list->buffer_size ? 2 * list->buffer_size : sizeof(GLuint);
     GLuint *space = GC_MALLOC_ATOMIC(list->buffer_size);
     memcpy(space, list->element, list->size * sizeof(GLuint));
     list->element = space;

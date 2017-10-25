@@ -8,7 +8,7 @@ surface_t *make_surface(int max_array, int max_indices)
   retval->n_array = 0;
   retval->array = GC_MALLOC_ATOMIC(max_array * sizeof(GLfloat));
   retval->n_indices = 0;
-  retval->vertex_index = GC_MALLOC_ATOMIC(max_indices * sizeof(int));
+  retval->vertex_index = GC_MALLOC_ATOMIC(max_indices * sizeof(GLuint));
   return retval;
 }
 
@@ -52,5 +52,5 @@ void build_facet(surface_t *surface, int number, int vertex_index)
 
 int size_of_indices(surface_t *surface)
 {
-  return surface->n_indices * sizeof(int);
+  return surface->n_indices * sizeof(GLuint);
 }
