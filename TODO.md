@@ -1,6 +1,6 @@
 # TODO
 
-* dynamic lists
+* use dynamic lists, do not require values for initial size
 * simpler adding of vertex array data
 * test two vertex array objects
 * rename project and library, install header in package directory

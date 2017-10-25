@@ -3,13 +3,13 @@
 #include "vertex.h"
 #include "normal.h"
 #include "texture_coordinate.h"
+#include "list.h"
 
 
 typedef struct {
   int n_array;
   GLfloat *array;
-  int n_indices;
-  GLuint *vertex_index;
+  list_t vertex_index;
 } surface_t;
 
 surface_t *make_surface(int max_array, int max_indices);
@@ -22,6 +22,6 @@ void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coo
 
 int size_of_array(surface_t *surface);
 
-void build_facet(surface_t *surface, int number, int vertex_index);
+void build_facet(surface_t *surface, int number, int index);
 
 int size_of_indices(surface_t *surface);

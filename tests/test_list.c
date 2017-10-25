@@ -13,7 +13,7 @@ static MunitResult test_zero_size(const MunitParameter params[], void *data)
 static MunitResult test_append_gluint(const MunitParameter params[], void *data)
 {
   list_t list = make_list();
-  list_append_gluint(&list, 123);
+  append_gluint(&list, 123);
   munit_assert_int(list.size, ==, 1);
   return MUNIT_OK;
 }
@@ -21,7 +21,7 @@ static MunitResult test_append_gluint(const MunitParameter params[], void *data)
 static MunitResult test_get_gluint(const MunitParameter params[], void *data)
 {
   list_t list = make_list();
-  list_append_gluint(&list, 123);
+  append_gluint(&list, 123);
   munit_assert_int(get_gluint(&list)[0], ==, 123);
   return MUNIT_OK;
 }
@@ -29,8 +29,8 @@ static MunitResult test_get_gluint(const MunitParameter params[], void *data)
 static MunitResult test_append_two(const MunitParameter params[], void *data)
 {
   list_t list = make_list();
-  list_append_gluint(&list, 235);
-  list_append_gluint(&list, 357);
+  append_gluint(&list, 235);
+  append_gluint(&list, 357);
   munit_assert_int(list.size, ==, 2);
   return MUNIT_OK;
 }
@@ -38,8 +38,8 @@ static MunitResult test_append_two(const MunitParameter params[], void *data)
 static MunitResult test_get_two(const MunitParameter params[], void *data)
 {
   list_t list = make_list();
-  list_append_gluint(&list, 235);
-  list_append_gluint(&list, 357);
+  append_gluint(&list, 235);
+  append_gluint(&list, 357);
   munit_assert_int(get_gluint(&list)[0], ==, 235);
   munit_assert_int(get_gluint(&list)[1], ==, 357);
   return MUNIT_OK;
@@ -54,7 +54,7 @@ static MunitResult test_initial_storage(const MunitParameter params[], void *dat
 static MunitResult test_allocation(const MunitParameter params[], void *data)
 {
   list_t list = make_list();
-  list_append_gluint(&list, 235);
+  append_gluint(&list, 235);
   munit_assert_int(list.buffer_size, ==, sizeof(GLuint));
   return MUNIT_OK;
 }
@@ -62,8 +62,8 @@ static MunitResult test_allocation(const MunitParameter params[], void *data)
 static MunitResult test_reallocation(const MunitParameter params[], void *data)
 {
   list_t list = make_list();
-  list_append_gluint(&list, 235);
-  list_append_gluint(&list, 357);
+  append_gluint(&list, 235);
+  append_gluint(&list, 357);
   munit_assert_int(list.buffer_size, ==, 2 * sizeof(GLuint));
   return MUNIT_OK;
 }
@@ -71,9 +71,9 @@ static MunitResult test_reallocation(const MunitParameter params[], void *data)
 static MunitResult test_double_size(const MunitParameter params[], void *data)
 {
   list_t list = make_list();
-  list_append_gluint(&list, 235);
-  list_append_gluint(&list, 357);
-  list_append_gluint(&list, 5711);
+  append_gluint(&list, 235);
+  append_gluint(&list, 357);
+  append_gluint(&list, 5711);
   munit_assert_int(list.buffer_size, ==, 4 * sizeof(GLuint));
   return MUNIT_OK;
 }

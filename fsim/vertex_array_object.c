@@ -27,7 +27,7 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
-  retval->n_indices = surface->n_indices;
+  retval->n_indices = surface->vertex_index.size;
   retval->program = program;
   retval->n_textures = 0;
   retval->texture = GC_MALLOC(max_textures * sizeof(texture_t *));
@@ -38,7 +38,7 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   glBufferData(GL_ARRAY_BUFFER, size_of_array(surface), surface->array, GL_STATIC_DRAW);
   glGenBuffers(1, &retval->element_buffer_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index.element, GL_STATIC_DRAW);
   return retval;
 }
 

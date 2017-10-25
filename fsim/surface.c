@@ -7,8 +7,7 @@ surface_t *make_surface(int max_array, int max_indices)
   surface_t *retval = GC_MALLOC(sizeof(surface_t));
   retval->n_array = 0;
   retval->array = GC_MALLOC_ATOMIC(max_array * sizeof(GLfloat));
-  retval->n_indices = 0;
-  retval->vertex_index = GC_MALLOC_ATOMIC(max_indices * sizeof(GLuint));
+  retval->vertex_index = make_list();
   return retval;
 }
 
@@ -37,20 +36,19 @@ int size_of_array(surface_t *surface)
   return surface->n_array * sizeof(GLfloat);
 }
 
-void build_facet(surface_t *surface, int number, int vertex_index)
+void build_facet(surface_t *surface, int number, int index)
 {
-  int n = surface->n_indices;
-  if (number < 3) {
-    surface->vertex_index[n] = vertex_index;
-    surface->n_indices = n + 1;
-  } else {
-    build_facet(surface, 0, surface->vertex_index[n - 3]);
-    build_facet(surface, 1, surface->vertex_index[n - 1]);
-    build_facet(surface, 2, vertex_index);
+  if (number < 3)
+    append_gluint(&surface->vertex_index, index);
+  else {
+    int n = surface->vertex_index.size;
+    build_facet(surface, 0, get_gluint(&surface->vertex_index)[n - 3]);
+    build_facet(surface, 1, get_gluint(&surface->vertex_index)[n - 1]);
+    build_facet(surface, 2, index);
   };
 }
 
 int size_of_indices(surface_t *surface)
 {
-  return surface->n_indices * sizeof(GLuint);
+  return surface->vertex_index.size * sizeof(GLuint);
 }
