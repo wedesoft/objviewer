@@ -10,37 +10,34 @@ static MunitResult test_empty_surface(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
-static MunitResult test_add_one_vertex(const MunitParameter params[], void *data)
+static MunitResult test_add_coordinate(const MunitParameter params[], void *data)
 {
   surface_t *surface = make_surface();
-  add_vertex(surface, 2.5f, 3.5f, 5.5f);
-  munit_assert_int(surface->array.size, ==, 3);
+  add_vertex_data(surface, 1, 2.5f);
+  munit_assert_int(surface->array.size, ==, 1);
+  munit_assert_float(get_glfloat(&surface->array)[0], ==, 2.5f);
+  return MUNIT_OK;
+}
+
+static MunitResult test_add_pair(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface();
+  add_vertex_data(surface, 2, 2.5f, 3.5f);
+  munit_assert_int(surface->array.size, ==, 2);
   munit_assert_float(get_glfloat(&surface->array)[0], ==, 2.5f);
   munit_assert_float(get_glfloat(&surface->array)[1], ==, 3.5f);
-  munit_assert_float(get_glfloat(&surface->array)[2], ==, 5.5f);
   return MUNIT_OK;
 }
 
-static MunitResult test_add_two_vertices(const MunitParameter params[], void *data)
+static MunitResult test_add_three(const MunitParameter params[], void *data)
 {
   surface_t *surface = make_surface();
-  add_vertex(surface, 2.5f, 3.5f, 5.5f);
-  add_vertex(surface, 1.5f, 4.5f, 7.5f);
-  munit_assert_float(get_glfloat(&surface->array)[3], ==, 1.5f);
-  munit_assert_float(get_glfloat(&surface->array)[4], ==, 4.5f);
-  munit_assert_float(get_glfloat(&surface->array)[5], ==, 7.5f);
-  return MUNIT_OK;
-}
-
-static MunitResult test_add_normal(const MunitParameter params[], void *data)
-{
-  surface_t *surface = make_surface();
-  add_vertex(surface,  2.5f,  3.5f, 5.5f);
-  add_normal(surface, 0.36f, 0.48f, 0.8f);
-  munit_assert_int(surface->array.size, ==, 6);
-  munit_assert_float(get_glfloat(&surface->array)[3], ==, 0.36f);
-  munit_assert_float(get_glfloat(&surface->array)[4], ==, 0.48f);
-  munit_assert_float(get_glfloat(&surface->array)[5], ==, 0.80f);
+  add_vertex_data(surface, 2, 0.36f, 0.48f);
+  add_vertex_data(surface, 1, 0.8f);
+  munit_assert_int(surface->array.size, ==, 3);
+  munit_assert_float(get_glfloat(&surface->array)[0], ==, 0.36f);
+  munit_assert_float(get_glfloat(&surface->array)[1], ==, 0.48f);
+  munit_assert_float(get_glfloat(&surface->array)[2], ==, 0.80f);
   return MUNIT_OK;
 }
 
@@ -140,9 +137,9 @@ static MunitResult test_add_pentagon(const MunitParameter params[], void *data)
 
 MunitTest test_surface[] = {
   {"/empty_surface"   , test_empty_surface   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_one_vertex"  , test_add_one_vertex  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_two_vertices", test_add_two_vertices, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_normal"      , test_add_normal      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_coordinate"  , test_add_coordinate  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_pair"        , test_add_pair        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_three"       , test_add_three       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/empty_array"     , test_empty_array     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/size_of_array"   , test_size_of_array   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_indices"      , test_no_indices      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

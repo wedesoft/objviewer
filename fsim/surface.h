@@ -11,11 +11,7 @@ typedef struct {
 
 surface_t *make_surface(void);
 
-void add_vertex(surface_t *surface, GLfloat x, GLfloat y, GLfloat z);
-
-void add_normal(surface_t *surface, GLfloat x, GLfloat y, GLfloat z);
-
-void add_texture_coordinate(surface_t *surface, GLfloat u, GLfloat v);
+void add_vertex_data(surface_t *surface, int n, ...);
 
 int size_of_array(surface_t *surface);
 
