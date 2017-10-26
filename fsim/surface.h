@@ -22,8 +22,6 @@ void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coo
 
 int size_of_array(surface_t *surface);
 
-void build_facet(surface_t *surface, int number, int index);
-
 int size_of_indices(surface_t *surface);
 
 void add_polygon(surface_t *surface, int n, ...);

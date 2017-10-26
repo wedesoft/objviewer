@@ -35,18 +35,6 @@ int size_of_array(surface_t *surface)
   return surface->array.size * sizeof(GLfloat);
 }
 
-void build_facet(surface_t *surface, int number, int index)
-{
-  if (number < 3)
-    append_gluint(&surface->vertex_index, index);
-  else {
-    int n = surface->vertex_index.size;
-    build_facet(surface, 0, get_gluint(&surface->vertex_index)[n - 3]);
-    build_facet(surface, 1, get_gluint(&surface->vertex_index)[n - 1]);
-    build_facet(surface, 2, index);
-  };
-}
-
 int size_of_indices(surface_t *surface)
 {
   return surface->vertex_index.size * sizeof(GLuint);
@@ -57,6 +45,12 @@ void add_polygon(surface_t *surface, int n, ...)
   va_list index;
   va_start(index, n);
   int i;
-  for (i=0; i<n; i++)
-    build_facet(surface, i, va_arg(index, int));
+  for (i=0; i<3; i++)
+    append_gluint(&surface->vertex_index, va_arg(index, int));
+  for (i=3; i<n; i++) {
+    int n = surface->vertex_index.size;
+    int index1 = get_gluint(&surface->vertex_index)[n - 3];
+    int index2 = get_gluint(&surface->vertex_index)[n - 1];
+    add_polygon(surface, 3, index1, index2, va_arg(index, int));
+  };
 }
