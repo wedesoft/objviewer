@@ -1,10 +1,9 @@
 # TODO
 
-* test two vertex array objects
-* rename project and library, install header in package directory
-* bind more than one texture
 * create and load Blender model
 * materials
+* rename project and library
+* bind more than one texture
 * objects with kinematic chain
 * shadows (mask color pipeline output)
 * blinking beacon lights
