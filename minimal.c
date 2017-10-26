@@ -1,3 +1,4 @@
+// Minimal OpenGL shader example using OpenGL directly
 #include <math.h>
 #include <stdio.h>
 #include <GL/glew.h>

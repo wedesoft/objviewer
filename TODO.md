@@ -1,6 +1,5 @@
 # TODO
 
-* rename mini to minimal
 * test two vertex array objects
 * rename project and library, install header in package directory
 * bind more than one texture

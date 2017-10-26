@@ -1,3 +1,4 @@
+// Small example drawing a tetraeder using this library
 #include <gc.h>
 #include <math.h>
 #include <GL/glew.h>
