@@ -111,10 +111,10 @@ int main(int argc, char **argv)
   add_vertex(surface, make_vertex( 0.5f, -0.5f, -0.5f));
   add_texture_coordinate(surface, make_texture_coordinate(16.0f,  0.0f));
   add_normal(surface, make_normal( 0.577350269f,  0.577350269f, -0.577350269f));
-  build_facet(surface, 0, 1); build_facet(surface, 1, 2); build_facet(surface, 2, 0);
-  build_facet(surface, 0, 3); build_facet(surface, 1, 2); build_facet(surface, 2, 1);
-  build_facet(surface, 0, 3); build_facet(surface, 1, 0); build_facet(surface, 2, 2);
-  build_facet(surface, 0, 1); build_facet(surface, 1, 0); build_facet(surface, 2, 3);
+  add_polygon(surface, 3, 1, 2, 0);
+  add_polygon(surface, 3, 3, 2, 1);
+  add_polygon(surface, 3, 3, 0, 2);
+  add_polygon(surface, 3, 1, 0, 3);
   program = make_program("vertex.glsl", "fragment.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point"   , 3, 8);

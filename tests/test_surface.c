@@ -151,11 +151,25 @@ static MunitResult test_add_triangle(const MunitParameter params[], void *data)
   int i;
   for (i=0; i<3; i++)
     add_vertex(surface, make_vertex(i % 2, 0, i / 2));
-  add_polygon(surface, 2, 0, 1);
+  add_polygon(surface, 3, 2, 0, 1);
   munit_assert_int(surface->vertex_index.size, ==, 3);
   munit_assert_int(get_gluint(&surface->vertex_index)[0], ==, 2);
   munit_assert_int(get_gluint(&surface->vertex_index)[1], ==, 0);
   munit_assert_int(get_gluint(&surface->vertex_index)[2], ==, 1);
+  return MUNIT_OK;
+}
+
+static MunitResult test_add_square(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface();
+  int i;
+  for (i=0; i<4; i++)
+    add_vertex(surface, make_vertex(i % 2, 0, i / 2));
+  add_polygon(surface, 4, 2, 0, 1, 3);
+  munit_assert_int(surface->vertex_index.size, ==, 6);
+  munit_assert_int(get_gluint(&surface->vertex_index)[3], ==, 2);
+  munit_assert_int(get_gluint(&surface->vertex_index)[4], ==, 1);
+  munit_assert_int(get_gluint(&surface->vertex_index)[5], ==, 3);
   return MUNIT_OK;
 }
 
@@ -174,5 +188,6 @@ MunitTest test_surface[] = {
   {"/size_of_indices" , test_size_of_indices , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_texcoord"    , test_add_texcoord    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_triangle"    , test_add_triangle    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_square"      , test_add_square      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL               , NULL                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL}
 };

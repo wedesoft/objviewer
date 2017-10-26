@@ -1,4 +1,5 @@
 #pragma once
+#include <stdarg.h>
 #include <GL/gl.h>
 #include "vertex.h"
 #include "normal.h"
@@ -25,4 +26,4 @@ void build_facet(surface_t *surface, int number, int index);
 
 int size_of_indices(surface_t *surface);
 
-void add_polygon(surface_t *surface, int index1, int index2, int index3);
+void add_polygon(surface_t *surface, int n, ...);
