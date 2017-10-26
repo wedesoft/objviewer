@@ -1,15 +1,13 @@
 #pragma once
-#include "rgb.h"
 #include "vertex_array_object.h"
 #include "list.h"
 
 
 typedef struct {
-  rgb_t background_color;
   list_t vertex_array_object;
 } object_t;
 
-object_t *make_object(rgb_t background_color);
+object_t *make_object(void);
 
 object_t *add_vertex_array_object(object_t *object, vertex_array_object_t *vertex_array_object);
 

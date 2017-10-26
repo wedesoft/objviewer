@@ -3,10 +3,9 @@
 #include "object.h"
 
 
-object_t *make_object(rgb_t background_color)
+object_t *make_object(void)
 {
   object_t *retval = GC_MALLOC(sizeof(object_t));
-  retval->background_color = background_color;
   retval->vertex_array_object = make_list();
   return retval;
 }
@@ -26,9 +25,6 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
 
 void render(object_t *object)
 {
-  rgb_t c = object->background_color;
-  glClearColor(c.red, c.green, c.blue, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   int i;
   for (i=0; i<object->vertex_array_object.size; i++)
     draw_elements(get_pointer(&object->vertex_array_object)[i]);

@@ -1,6 +1,6 @@
 # TODO
 
-* simpler adding of vertex array data, remove normal, vertex, rgb, and texture coordinate
+* rename testsuite to suite
 * test two vertex array objects
 * rename project and library, install header in package directory
 * bind more than one texture

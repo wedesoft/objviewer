@@ -51,7 +51,7 @@ static MunitResult test_empty_array(const MunitParameter params[], void *data)
 static MunitResult test_size_of_array(const MunitParameter params[], void *data)
 {
   surface_t *surface = make_surface();
-  add_vertex(surface, 2.5f, 3.5f, 5.5f);
+  add_vertex_data(surface, 3, 2.5f, 3.5f, 5.5f);
   munit_assert_int(size_of_array(surface), ==, sizeof(GLfloat) * 3);
   return MUNIT_OK;
 }
@@ -75,7 +75,7 @@ static MunitResult test_size_of_indices(const MunitParameter params[], void *dat
   surface_t *surface = make_surface();
   int i;
   for (i=0; i<3; i++)
-    add_vertex(surface, 0, 0, 0);
+    add_vertex_data(surface, 3, 0, 0, 0);
   add_polygon(surface, 3, 0, 1, 2);
   munit_assert_int(size_of_indices(surface), ==, 3 * sizeof(int));
   return MUNIT_OK;
@@ -84,8 +84,7 @@ static MunitResult test_size_of_indices(const MunitParameter params[], void *dat
 static MunitResult test_add_texcoord(const MunitParameter params[], void *data)
 {
   surface_t *surface = make_surface();
-  add_vertex(surface, 2.5f, 3.5f, 5.5f);
-  add_texture_coordinate(surface, 0.25f, 0.75f);
+  add_vertex_data(surface, 5, 2.5f, 3.5f, 5.5f, 0.25f, 0.75f);
   munit_assert_int(surface->array.size, ==, 5);
   munit_assert_float(get_glfloat(&surface->array)[3], ==, 0.25f);
   munit_assert_float(get_glfloat(&surface->array)[4], ==, 0.75f);
@@ -97,7 +96,7 @@ static MunitResult test_add_triangle(const MunitParameter params[], void *data)
   surface_t *surface = make_surface();
   int i;
   for (i=0; i<3; i++)
-    add_vertex(surface, i % 2, 0, i / 2);
+    add_vertex_data(surface, 3, i % 2, 0, i / 2);
   add_polygon(surface, 3, 2, 0, 1);
   munit_assert_int(surface->vertex_index.size, ==, 3);
   munit_assert_int(get_gluint(&surface->vertex_index)[0], ==, 2);
@@ -111,7 +110,7 @@ static MunitResult test_add_square(const MunitParameter params[], void *data)
   surface_t *surface = make_surface();
   int i;
   for (i=0; i<4; i++)
-    add_vertex(surface, i % 2, 0, i / 2);
+    add_vertex_data(surface, 3, i % 2, 0, i / 2);
   add_polygon(surface, 4, 2, 0, 1, 3);
   munit_assert_int(surface->vertex_index.size, ==, 6);
   munit_assert_int(get_gluint(&surface->vertex_index)[3], ==, 2);
@@ -125,8 +124,8 @@ static MunitResult test_add_pentagon(const MunitParameter params[], void *data)
   surface_t *surface = make_surface();
   int i;
   for (i=0; i<4; i++)
-    add_vertex(surface, i % 2, 0, i / 2);
-  add_vertex(surface, 0.5, 0, 1.5);
+    add_vertex_data(surface, 3, i % 2, 0, i / 2);
+  add_vertex_data(surface, 3, 0.5, 0, 1.5);
   add_polygon(surface, 5, 0, 1, 3, 4, 2);
   munit_assert_int(surface->vertex_index.size, ==, 9);
   munit_assert_int(get_gluint(&surface->vertex_index)[6], ==, 0);
