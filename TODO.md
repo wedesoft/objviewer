@@ -1,6 +1,5 @@
 # TODO
 
-* simpler way of adding triangles, quads, ...
 * simpler adding of vertex array data, remove normal, vertex, rgb, and texture coordinate
 * test two vertex array objects
 * rename project and library, install header in package directory
