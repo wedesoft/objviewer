@@ -15,7 +15,7 @@ static MunitResult test_add_attribute_pointer(const MunitParameter params[], voi
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface();
-  add_vertex(surface, make_vertex( 0.5f,  0.5f, 0.0f));
+  add_vertex(surface, 0.5f,  0.5f, 0.0f);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
   munit_assert_int(program->n_attributes, ==, 1);

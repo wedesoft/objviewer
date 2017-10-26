@@ -10,18 +10,18 @@ surface_t *make_surface(void)
   return retval;
 }
 
-void add_vertex(surface_t *surface, vertex_t vertex)
+void add_vertex(surface_t *surface, GLfloat x, GLfloat y, GLfloat z)
 {
-  append_glfloat(&surface->array, vertex.x);
-  append_glfloat(&surface->array, vertex.y);
-  append_glfloat(&surface->array, vertex.z);
+  append_glfloat(&surface->array, x);
+  append_glfloat(&surface->array, y);
+  append_glfloat(&surface->array, z);
 }
 
-void add_normal(surface_t *surface, normal_t normal)
+void add_normal(surface_t *surface, GLfloat x, GLfloat y, GLfloat z)
 {
-  append_glfloat(&surface->array, normal.x);
-  append_glfloat(&surface->array, normal.y);
-  append_glfloat(&surface->array, normal.z);
+  append_glfloat(&surface->array, x);
+  append_glfloat(&surface->array, y);
+  append_glfloat(&surface->array, z);
 }
 
 void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coordinate)

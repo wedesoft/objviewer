@@ -3,7 +3,6 @@
 #include "test_helper.h"
 #include "test_rgb.h"
 #include "test_vertex.h"
-#include "test_normal.h"
 #include "test_surface.h"
 #include "test_object.h"
 #include "test_shader.h"
@@ -19,7 +18,6 @@
 static MunitSuite test_fsim[] = {
   {"/rgb"       , test_rgb       , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/vertex"    , test_vertex    , NULL, 1, MUNIT_SUITE_OPTION_NONE},
-  {"/normal"    , test_normal    , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/surface"   , test_surface   , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/object"    , test_object    , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/shader"    , test_shader    , NULL, 1, MUNIT_SUITE_OPTION_NONE},

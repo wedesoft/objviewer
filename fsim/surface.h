@@ -2,7 +2,6 @@
 #include <stdarg.h>
 #include <GL/gl.h>
 #include "vertex.h"
-#include "normal.h"
 #include "texture_coordinate.h"
 #include "list.h"
 
@@ -14,9 +13,9 @@ typedef struct {
 
 surface_t *make_surface(void);
 
-void add_vertex(surface_t *surface, vertex_t vertex);
+void add_vertex(surface_t *surface, GLfloat x, GLfloat y, GLfloat z);
 
-void add_normal(surface_t *surface, normal_t normal);
+void add_normal(surface_t *surface, GLfloat x, GLfloat y, GLfloat z);
 
 void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coordinate);
 
