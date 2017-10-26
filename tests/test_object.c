@@ -131,13 +131,13 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
 {
   surface_t *surface = make_surface();
   add_vertex(surface, -0.5f, -0.5f, 0.0f);
-  add_texture_coordinate(surface, make_texture_coordinate(0.0f, 0.0f));
+  add_texture_coordinate(surface, 0.0f, 0.0f);
   add_vertex(surface,  0.5f, -0.5f, 0.0f);
-  add_texture_coordinate(surface, make_texture_coordinate(1.0f, 0.0f));
+  add_texture_coordinate(surface, 1.0f, 0.0f);
   add_vertex(surface, -0.5f,  0.5f, 0.0f);
-  add_texture_coordinate(surface, make_texture_coordinate(0.0f, 1.0f));
+  add_texture_coordinate(surface, 0.0f, 1.0f);
   add_vertex(surface,  0.5f,  0.5f, 0.0f);
-  add_texture_coordinate(surface, make_texture_coordinate(1.0f, 1.0f));
+  add_texture_coordinate(surface, 1.0f, 1.0f);
   add_polygon(surface, 4, 0, 1, 2, 3);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);

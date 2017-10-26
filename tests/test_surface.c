@@ -88,7 +88,7 @@ static MunitResult test_add_texcoord(const MunitParameter params[], void *data)
 {
   surface_t *surface = make_surface();
   add_vertex(surface, 2.5f, 3.5f, 5.5f);
-  add_texture_coordinate(surface, make_texture_coordinate(0.25f, 0.75f));
+  add_texture_coordinate(surface, 0.25f, 0.75f);
   munit_assert_int(surface->array.size, ==, 5);
   munit_assert_float(get_glfloat(&surface->array)[3], ==, 0.25f);
   munit_assert_float(get_glfloat(&surface->array)[4], ==, 0.75f);

@@ -24,10 +24,10 @@ void add_normal(surface_t *surface, GLfloat x, GLfloat y, GLfloat z)
   append_glfloat(&surface->array, z);
 }
 
-void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coordinate)
+void add_texture_coordinate(surface_t *surface, GLfloat u, GLfloat v)
 {
-  append_glfloat(&surface->array, texture_coordinate.u);
-  append_glfloat(&surface->array, texture_coordinate.v);
+  append_glfloat(&surface->array, u);
+  append_glfloat(&surface->array, v);
 }
 
 int size_of_array(surface_t *surface)

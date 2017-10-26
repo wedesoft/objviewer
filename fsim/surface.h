@@ -1,7 +1,6 @@
 #pragma once
 #include <stdarg.h>
 #include <GL/gl.h>
-#include "texture_coordinate.h"
 #include "list.h"
 
 
@@ -16,7 +15,7 @@ void add_vertex(surface_t *surface, GLfloat x, GLfloat y, GLfloat z);
 
 void add_normal(surface_t *surface, GLfloat x, GLfloat y, GLfloat z);
 
-void add_texture_coordinate(surface_t *surface, texture_coordinate_t texture_coordinate);
+void add_texture_coordinate(surface_t *surface, GLfloat u, GLfloat v);
 
 int size_of_array(surface_t *surface);
 
