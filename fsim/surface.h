@@ -24,3 +24,5 @@ int size_of_array(surface_t *surface);
 void build_facet(surface_t *surface, int number, int index);
 
 int size_of_indices(surface_t *surface);
+
+void add_polygon(surface_t *surface, int index1, int index2, int index3);

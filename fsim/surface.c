@@ -51,3 +51,10 @@ int size_of_indices(surface_t *surface)
 {
   return surface->vertex_index.size * sizeof(GLuint);
 }
+
+void add_polygon(surface_t *surface, int index1, int index2, int index3)
+{
+  build_facet(surface, 0, index1);
+  build_facet(surface, 1, index2);
+  build_facet(surface, 2, index3);
+}
