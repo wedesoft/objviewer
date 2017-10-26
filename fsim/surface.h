@@ -1,7 +1,6 @@
 #pragma once
 #include <stdarg.h>
 #include <GL/gl.h>
-#include "vertex.h"
 #include "texture_coordinate.h"
 #include "list.h"
 

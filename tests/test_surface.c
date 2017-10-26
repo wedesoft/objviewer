@@ -55,7 +55,7 @@ static MunitResult test_size_of_array(const MunitParameter params[], void *data)
 {
   surface_t *surface = make_surface();
   add_vertex(surface, 2.5f, 3.5f, 5.5f);
-  munit_assert_int(size_of_array(surface), ==, sizeof(vertex_t));
+  munit_assert_int(size_of_array(surface), ==, sizeof(GLfloat) * 3);
   return MUNIT_OK;
 }
 
