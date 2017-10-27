@@ -111,6 +111,17 @@ static MunitResult test_get_pointer(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_clear_list(const MunitParameter params[], void *data)
+{
+  list_t list = make_list();
+  append_gluint(&list, 235);
+  list_clear(&list);
+  munit_assert_int(list.size, ==, 0);
+  munit_assert_int(list.buffer_size, ==, 0);
+  munit_assert_ptr(list.element, ==, NULL);
+  return MUNIT_OK;
+}
+
 MunitTest test_list[] = {
   {"/zero_size"      , test_zero_size      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/append_gluint"  , test_append_gluint  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
@@ -125,5 +136,6 @@ MunitTest test_list[] = {
   {"/get_glfloat"    , test_get_glfloat    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/append_pointer" , test_append_pointer , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/get_pointer"    , test_get_pointer    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/clear"          , test_clear_list     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL              , NULL                , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}
 };

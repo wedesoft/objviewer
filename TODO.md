@@ -1,5 +1,6 @@
 # TODO
 
+* use list pointers, remove list\_clear
 * create and load Blender model
 * materials
 * rename project and library

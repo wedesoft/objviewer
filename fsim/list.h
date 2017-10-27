@@ -20,3 +20,5 @@ inline GLfloat *get_glfloat(list_t *list) { return (GLfloat *)list->element; }
 void append_pointer(list_t *list, void *value);
 
 inline void **get_pointer(list_t *list) { return (void **)list->element; }
+
+void list_clear(list_t *list);

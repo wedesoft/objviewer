@@ -38,3 +38,10 @@ void append_pointer(list_t *list, void *value)
   grow_list(list, sizeof(void *), 0);
   ((void **)list->element)[list->size++] = value;
 }
+
+void list_clear(list_t *list)
+{
+  list->size = 0;
+  list->buffer_size = 0;
+  list->element = NULL;
+}
