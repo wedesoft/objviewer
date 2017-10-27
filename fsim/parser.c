@@ -24,5 +24,6 @@ object_t *parse_string_core(const char *text)
 object_t *parse_string(const char *text)
 {
   object_t *result = parse_string_core(text);
+  parse_array = NULL;
   return result;
 }

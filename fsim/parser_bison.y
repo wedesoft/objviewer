@@ -31,6 +31,10 @@ start: OBJECT NAME { parse_result = make_object($2); } vertices
      | /* NULL */
      ;
 
-vertices: VERTEX NUMBER NUMBER NUMBER { append_glfloat(parse_array, $2); append_glfloat(parse_array, $3); append_glfloat(parse_array, $4); }
+vertices: VERTEX NUMBER NUMBER NUMBER {
+            append_glfloat(parse_array, $2);
+            append_glfloat(parse_array, $3);
+            append_glfloat(parse_array, $4);
+          } vertices
         | /* NULL */
         ;

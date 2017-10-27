@@ -5,19 +5,20 @@
 
 %option noyywrap
 
-%x name vertex
+%x name
 
 %%
 
-"o "                      { BEGIN(name); return OBJECT; }
+"o "              { BEGIN(name); return OBJECT; }
 
-"v "                      { BEGIN(vertex); return VERTEX; }
+"v "              return VERTEX;
 
-<name>.*                  { yylval.text = yytext; return NAME; }
-<name>\n                  BEGIN(INITIAL);
-<vertex>[0-9]*(\.[0-9]*)? { yylval.number = atof(yytext); return NUMBER; }
-<vertex>[ ]               ;
+<name>.*          { yylval.text = yytext; return NAME; }
+<name>\n          BEGIN(INITIAL);
 
-.                         return *yytext;
+[0-9]*(\.[0-9]*)? { yylval.number = atof(yytext); return NUMBER; }
+[\n ]             ;
+
+.                 return *yytext;
 
 %%
