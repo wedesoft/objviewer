@@ -15,7 +15,7 @@ object_t *make_object(const char *name)
 
 object_t *add_vertex_array_object(object_t *object, vertex_array_object_t *vertex_array_object)
 {
-  append_pointer(&object->vertex_array_object, vertex_array_object);
+  append_pointer(object->vertex_array_object, vertex_array_object);
   return object;
 }
 
@@ -29,6 +29,6 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
 void render(object_t *object)
 {
   int i;
-  for (i=0; i<object->vertex_array_object.size; i++)
-    draw_elements(get_pointer(&object->vertex_array_object)[i]);
+  for (i=0; i<object->vertex_array_object->size; i++)
+    draw_elements(get_pointer(object->vertex_array_object)[i]);
 }

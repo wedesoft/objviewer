@@ -5,8 +5,8 @@
 
 
 typedef struct {
-  list_t array;
-  list_t vertex_index;
+  list_t *array;
+  list_t *vertex_index;
 } surface_t;
 
 surface_t *make_surface(void);

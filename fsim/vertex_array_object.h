@@ -13,7 +13,7 @@ typedef struct {
   GLuint vertex_buffer_object;
   GLuint element_buffer_object;
   int n_indices;
-  list_t texture;
+  list_t *texture;
 } vertex_array_object_t;
 
 vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface);

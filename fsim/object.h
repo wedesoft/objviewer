@@ -5,7 +5,7 @@
 
 typedef struct {
   char *name;
-  list_t vertex_array_object;
+  list_t *vertex_array_object;
 } object_t;
 
 object_t *make_object(const char *name);

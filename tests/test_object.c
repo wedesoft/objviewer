@@ -9,7 +9,7 @@
 static MunitResult test_empty_object(const MunitParameter params[], void *data)
 {
   object_t *object = make_object("test");
-  munit_assert_int(object->vertex_array_object.size, ==, 0);
+  munit_assert_int(object->vertex_array_object->size, ==, 0);
   return MUNIT_OK;
 }
 
@@ -35,8 +35,8 @@ static MunitResult test_add_vertex_array_object(const MunitParameter params[], v
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface());
   object_t *retval = add_vertex_array_object(object, vertex_array_object);
-  munit_assert_int(object->vertex_array_object.size, ==, 1);
-  munit_assert_ptr(get_pointer(&object->vertex_array_object)[0], ==, vertex_array_object);
+  munit_assert_int(object->vertex_array_object->size, ==, 1);
+  munit_assert_ptr(get_pointer(object->vertex_array_object)[0], ==, vertex_array_object);
   munit_assert_ptr(retval, ==, object);
   return MUNIT_OK;
 }

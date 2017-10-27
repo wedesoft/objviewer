@@ -2,12 +2,12 @@
 #include <gc.h>
 #include "list.h"
 
-list_t make_list(void)
+list_t *make_list(void)
 {
-  list_t result;
-  result.size = 0;
-  result.buffer_size = 0;
-  result.element = NULL;
+  list_t *result = GC_MALLOC(sizeof(list_t));
+  result->size = 0;
+  result->buffer_size = 0;
+  result->element = NULL;
   return result;
 }
 
@@ -37,11 +37,4 @@ void append_pointer(list_t *list, void *value)
 {
   grow_list(list, sizeof(void *), 0);
   ((void **)list->element)[list->size++] = value;
-}
-
-void list_clear(list_t *list)
-{
-  list->size = 0;
-  list->buffer_size = 0;
-  list->element = NULL;
 }

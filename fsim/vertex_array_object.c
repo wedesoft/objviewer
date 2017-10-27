@@ -10,7 +10,7 @@ static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   int i;
   for (i=0; i<target->program->n_attributes; i++)
     glDisableVertexAttribArray(i);
-  if (target->texture.size) {
+  if (target->texture->size) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
   };
@@ -27,17 +27,17 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
-  retval->n_indices = surface->vertex_index.size;
+  retval->n_indices = surface->vertex_index->size;
   retval->program = program;
   retval->texture = make_list();
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
   glGenBuffers(1, &retval->vertex_buffer_object);
   glBindBuffer(GL_ARRAY_BUFFER, retval->vertex_buffer_object);
-  glBufferData(GL_ARRAY_BUFFER, size_of_array(surface), surface->array.element, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, size_of_array(surface), surface->array->element, GL_STATIC_DRAW);
   glGenBuffers(1, &retval->element_buffer_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index.element, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index->element, GL_STATIC_DRAW);
   return retval;
 }
 
@@ -54,7 +54,7 @@ void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, 
 
 void add_texture(vertex_array_object_t *vertex_array_object, program_t *program, texture_t *texture, image_t *image)
 {
-  append_pointer(&vertex_array_object->texture, texture);
+  append_pointer(vertex_array_object->texture, texture);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture->texture);
   glUniform1i(glGetAttribLocation(program->program, texture->name), 0);

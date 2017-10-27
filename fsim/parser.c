@@ -7,7 +7,7 @@ extern YY_BUFFER_STATE yy_scan_string(const char * str);
 extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
 
 object_t *parse_result = NULL;
-list_t parse_array;
+list_t *parse_array;
 
 
 object_t *parse_string_core(const char *text)
