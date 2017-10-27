@@ -5,6 +5,8 @@
 
 extern object_t *parse_result;
 
+extern int yylex(void);
+
 void yyerror(const char *message)
 {
   fprintf(stderr, "%s\n", message);
@@ -13,14 +15,14 @@ void yyerror(const char *message)
 %}
 
 %union {
-  object_t *object;
+  char *text;
 }
 
-%type <object> start
 %token OBJECT
+%token <text> NAME
 
 %%
 
-start: OBJECT { parse_result = make_object(); }
+start: OBJECT NAME { parse_result = make_object($2); }
      | /* NULL */
      ;

@@ -1,11 +1,14 @@
+#include <string.h>
 #include <GL/glew.h>
 #include <gc.h>
 #include "object.h"
 
 
-object_t *make_object(void)
+object_t *make_object(const char *name)
 {
   object_t *retval = GC_MALLOC(sizeof(object_t));
+  retval->name = GC_MALLOC_ATOMIC(strlen(name) + 1);
+  strcpy(retval->name, name);
   retval->vertex_array_object = make_list();
   return retval;
 }

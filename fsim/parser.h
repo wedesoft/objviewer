@@ -2,4 +2,4 @@
 #include "object.h"
 
 
-void *parse_string(const char *text);
+object_t *parse_string(const char *text);
