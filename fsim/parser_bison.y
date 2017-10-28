@@ -6,6 +6,7 @@
 
 extern object_t *parse_result;
 extern list_t *parse_array;
+extern list_t *parse_surface;
 
 extern int yylex(void);
 
@@ -21,13 +22,13 @@ void yyerror(const char *message)
   float number;
 }
 
-%token OBJECT VERTEX
+%token OBJECT VERTEX SURFACE
 %token <text> NAME
 %token <number> NUMBER
 
 %%
 
-start: OBJECT NAME { parse_result = make_object($2); } vertices
+start: OBJECT NAME { parse_result = make_object($2); } vertices surfaces
      | /* NULL */
      ;
 
@@ -38,3 +39,9 @@ vertices: VERTEX NUMBER NUMBER NUMBER {
           } vertices
         | /* NULL */
         ;
+
+surfaces: SURFACE {
+            append_pointer(parse_surface, make_surface());
+          } surfaces
+          | /* NULL */
+          ;

@@ -13,6 +13,8 @@
 
 "v "              return VERTEX;
 
+"s off"           return SURFACE;
+
 <name>.*          { yylval.text = yytext; return NAME; }
 <name>\n          BEGIN(INITIAL);
 

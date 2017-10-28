@@ -1,6 +1,7 @@
 # TODO
 
 * use list pointers, remove list\_clear
+* link to German wikipage and use Wavefront OBJ sample from there
 * create and load Blender model
 * materials
 * rename project and library

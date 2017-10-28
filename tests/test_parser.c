@@ -5,6 +5,7 @@
 
 extern object_t *parse_string_core(const char *text);
 extern list_t *parse_array;
+extern list_t *parse_surface;
 
 
 static MunitResult test_empty(const MunitParameter params[], void *data)
@@ -39,7 +40,7 @@ static MunitResult test_no_newline_in_name(const MunitParameter params[], void *
 
 static MunitResult test_no_vertices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test");
+  parse_string_core("");
   munit_assert_int(parse_array->size, ==, 0);
   return MUNIT_OK;
 }
@@ -68,6 +69,34 @@ static MunitResult test_cleanup_vertices(const MunitParameter params[], void *da
   return MUNIT_OK;
 }
 
+static MunitResult test_no_surfaces(const MunitParameter params[], void *data)
+{
+  parse_string_core("");
+  munit_assert_int(parse_surface->size, ==, 0);
+  return MUNIT_OK;
+}
+
+static MunitResult test_start_surface(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\ns off");
+  munit_assert_int(parse_surface->size, ==, 1);
+  return MUNIT_OK;
+}
+
+static MunitResult test_two_surfaces(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\ns off\ns off");
+  munit_assert_int(parse_surface->size, ==, 2);
+  return MUNIT_OK;
+}
+
+static MunitResult test_cleanup_surfaces(const MunitParameter params[], void *data)
+{
+  parse_string("o test");
+  munit_assert_ptr(parse_surface, ==, 0);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -78,5 +107,9 @@ MunitTest test_parser[] = {
   {"/read_vertex"       , test_read_vertex       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_vertices"      , test_two_vertices      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/cleanup_vertices"  , test_cleanup_vertices  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_surfaces"       , test_no_surfaces       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/start_surface"     , test_start_surface     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_surfaces"      , test_two_surfaces      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/cleanup_surfaces"  , test_cleanup_surfaces  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
