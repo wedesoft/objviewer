@@ -10,6 +10,7 @@
 #include "test_texture.h"
 #include "test_projection.h"
 #include "test_list.h"
+#include "test_hash.h"
 #include "test_parser.h"
 
 
@@ -23,6 +24,7 @@ static MunitSuite test_fsim[] = {
   {"/texture"   , test_texture   , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/projection", test_projection, NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/list"      , test_list      , NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/hash"      , test_hash      , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/parser"    , test_parser    , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {NULL         , NULL           , NULL, 0, MUNIT_SUITE_OPTION_NONE}
 };
