@@ -47,18 +47,21 @@ static MunitResult test_no_vertices(const MunitParameter params[], void *data)
 
 static MunitResult test_read_vertex(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 10 2.5 3.25");
+  parse_string_core("o test\nv 10 2.5 -3.25");
   munit_assert_int(parse_array->size, ==, 3);
   munit_assert_float(get_glfloat(parse_array)[0], ==, 10.0f);
-  munit_assert_float(get_glfloat(parse_array)[1], ==, 2.5f);
-  munit_assert_float(get_glfloat(parse_array)[2], ==, 3.25f);
+  munit_assert_float(get_glfloat(parse_array)[1], ==,  2.5f);
+  munit_assert_float(get_glfloat(parse_array)[2], ==, -3.25f);
   return MUNIT_OK;
 }
 
 static MunitResult test_two_vertices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 1 10 1.\nv .5 1 1");
+  parse_string_core("o test\nv 10 2.5 -3.25\nv .5 +1 -.25");
   munit_assert_int(parse_array->size, ==, 6);
+  munit_assert_float(get_glfloat(parse_array)[3], ==,  0.5f);
+  munit_assert_float(get_glfloat(parse_array)[4], ==,  1.0f);
+  munit_assert_float(get_glfloat(parse_array)[5], ==, -0.25f);
   return MUNIT_OK;
 }
 

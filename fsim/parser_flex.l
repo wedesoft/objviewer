@@ -9,18 +9,18 @@
 
 %%
 
-"o "              { BEGIN(name); return OBJECT; }
+"o "                   { BEGIN(name); return OBJECT; }
 
-"v "              return VERTEX;
+"v "                   return VERTEX;
 
-"s off"           return SURFACE;
+"s off"                return SURFACE;
 
-<name>.*          { yylval.text = yytext; return NAME; }
-<name>\n          BEGIN(INITIAL);
+<name>.*               { yylval.text = yytext; return NAME; }
+<name>\n               BEGIN(INITIAL);
 
-[0-9]*(\.[0-9]*)? { yylval.number = atof(yytext); return NUMBER; }
-[\n ]             ;
+[+-]?[0-9]*(\.[0-9]*)? { yylval.number = atof(yytext); return NUMBER; }
+[\n ]                  ;
 
-.                 return *yytext;
+.                      return *yytext;
 
 %%
