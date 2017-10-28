@@ -9,20 +9,12 @@ void hash_create(void)
   hcreate(65536);
 }
 
-void hash_enter(int key, int value)
+int hash_find(int key, int value_if_not_found)
 {
-  long int lvalue = value;
-  ENTRY item = {GC_MALLOC_ATOMIC(6), (void *)lvalue};
+  long int value = value_if_not_found;
+  ENTRY item = {GC_MALLOC_ATOMIC(6), (void *)value};
   snprintf(item.key, 6, "%d", key);
-  hsearch(item, ENTER);
-}
-
-int hash_find(int key)
-{
-  ENTRY item = {GC_MALLOC_ATOMIC(6), NULL};
-  snprintf(item.key, 6, "%d", key);
-  ENTRY *result = hsearch(item, FIND);
-  return result ? (long int)result->data : -1;
+  return (long int)hsearch(item, ENTER)->data;
 }
 
 void hash_destroy(void)
