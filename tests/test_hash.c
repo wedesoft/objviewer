@@ -5,7 +5,7 @@
 
 static MunitResult test_empty(const MunitParameter params[], void *data)
 {
-  hash_create(16);
+  hash_create();
   munit_assert_int(hash_find(25), ==, -1);
   hash_destroy();
   return MUNIT_OK;
@@ -13,7 +13,7 @@ static MunitResult test_empty(const MunitParameter params[], void *data)
 
 static MunitResult test_add_entry(const MunitParameter params[], void *data)
 {
-  hash_create(16);
+  hash_create();
   hash_enter(25, 37);
   munit_assert_int(hash_find(25), ==, 37);
   hash_destroy();
@@ -22,7 +22,7 @@ static MunitResult test_add_entry(const MunitParameter params[], void *data)
 
 static MunitResult test_add_two_entries(const MunitParameter params[], void *data)
 {
-  hash_create(16);
+  hash_create();
   hash_enter(25, 37);
   hash_enter(12, 2);
   munit_assert_int(hash_find(25), ==, 37);

@@ -4,23 +4,23 @@
 #include "hash.h"
 
 
-void hash_create(int size)
+void hash_create(void)
 {
-  hcreate(size);
+  hcreate(65536);
 }
 
 void hash_enter(int key, int value)
 {
   long int lvalue = value;
-  ENTRY item = {GC_MALLOC_ATOMIC(10), (void *)lvalue};
-  snprintf(item.key, 10, "%d", key);
+  ENTRY item = {GC_MALLOC_ATOMIC(6), (void *)lvalue};
+  snprintf(item.key, 6, "%d", key);
   hsearch(item, ENTER);
 }
 
 int hash_find(int key)
 {
-  ENTRY item = {GC_MALLOC_ATOMIC(10), NULL};
-  snprintf(item.key, 10, "%d", key);
+  ENTRY item = {GC_MALLOC_ATOMIC(6), NULL};
+  snprintf(item.key, 6, "%d", key);
   ENTRY *result = hsearch(item, FIND);
   return result ? (long int)result->data : -1;
 }
