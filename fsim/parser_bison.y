@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include "object.h"
+#include "surface.h"
 #include "list.h"
 
 
@@ -15,16 +16,23 @@ void yyerror(const char *message)
   fprintf(stderr, "%s\n", message);
 }
 
+static surface_t *last_surface(void)
+{
+  return get_pointer(parse_surface)[parse_surface->size - 1];
+}
+
 %}
 
 %union {
   char *text;
   float number;
+  int index;
 }
 
-%token OBJECT VERTEX SURFACE
+%token OBJECT VERTEX SURFACE FACET
 %token <text> NAME
 %token <number> NUMBER
+%token <index> INDEX
 
 %%
 
@@ -42,6 +50,15 @@ vertices: VERTEX NUMBER NUMBER NUMBER {
 
 surfaces: SURFACE {
             append_pointer(parse_surface, make_surface());
-          } surfaces
+          } facets surfaces
           | /* NULL */
           ;
+
+facets: FACET indices
+      | /* NULL */
+      ;
+
+indices: INDEX INDEX INDEX {
+         add_polygon(last_surface(), 3, $1, $2, $3);
+       }
+       ;
