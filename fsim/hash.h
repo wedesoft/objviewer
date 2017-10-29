@@ -1,7 +1,13 @@
 #pragma once
+#define _GNU_SOURCE
+#define __USE_GNU
+#include <search.h>
 
-void hash_create(void);
 
-int hash_find(int key, int value_if_not_found);
+typedef struct {
+  struct hsearch_data table;
+} hash_t;
 
-void hash_destroy(void);
+hash_t *make_hash(void);
+
+int hash_find(hash_t *hash, int key, int value_if_not_found);

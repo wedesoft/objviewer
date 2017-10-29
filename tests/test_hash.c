@@ -5,29 +5,26 @@
 
 static MunitResult test_empty(const MunitParameter params[], void *data)
 {
-  hash_create();
-  munit_assert_int(hash_find(25, 37), ==, 37);
-  hash_destroy();
+  hash_t *hash = make_hash();
+  munit_assert_int(hash_find(hash, 25, 37), ==, 37);
   return MUNIT_OK;
 }
 
 static MunitResult test_add_entry(const MunitParameter params[], void *data)
 {
-  hash_create();
-  hash_find(25, 37);
-  munit_assert_int(hash_find(25, 12), ==, 37);
-  hash_destroy();
+  hash_t *hash = make_hash();
+  hash_find(hash, 25, 37);
+  munit_assert_int(hash_find(hash, 25, 12), ==, 37);
   return MUNIT_OK;
 }
 
 static MunitResult test_add_two_entries(const MunitParameter params[], void *data)
 {
-  hash_create();
-  hash_find(25, 37);
-  hash_find(12,  2);
-  munit_assert_int(hash_find(25, 14), ==, 37);
-  munit_assert_int(hash_find(12, 15), ==,  2);
-  hash_destroy();
+  hash_t *hash = make_hash();
+  hash_find(hash, 25, 37);
+  hash_find(hash, 12,  2);
+  munit_assert_int(hash_find(hash, 25, 14), ==, 37);
+  munit_assert_int(hash_find(hash, 12, 15), ==,  2);
   return MUNIT_OK;
 }
 
