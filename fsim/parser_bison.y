@@ -59,6 +59,6 @@ facets: FACET indices
       ;
 
 indices: INDEX INDEX INDEX {
-         add_polygon(last_surface(), 3, $1, $2, $3);
+         add_polygon(last_surface(), 3, $1 - 1, $2 - 1, $3 - 1);
        }
        ;

@@ -100,11 +100,21 @@ static MunitResult test_cleanup_surfaces(const MunitParameter params[], void *da
   return MUNIT_OK;
 }
 
-static MunitResult test_surface_point(const MunitParameter params[], void *data)
+static MunitResult test_facet(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\nv 1 2 3\nv 4 5 6\ns off\nf 1 2 3");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(surface->vertex_index->size, ==, 3);
+  return MUNIT_OK;
+}
+
+static MunitResult test_indices(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 1 2 3\nv 4 5 6\ns off\nf 1 2 3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
   return MUNIT_OK;
 }
 
@@ -122,6 +132,7 @@ MunitTest test_parser[] = {
   {"/start_surface"     , test_start_surface     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_surfaces"      , test_two_surfaces      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/cleanup_surfaces"  , test_cleanup_surfaces  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/surface_point"     , test_surface_point     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/facet"             , test_facet             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/indices"           , test_indices           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
