@@ -21,6 +21,14 @@ static surface_t *last_surface(void)
   return get_pointer(parse_surface)[parse_surface->size - 1];
 }
 
+static void copy_vertex(int index)
+{
+  surface_t *surface = last_surface();
+  int i;
+  for (i=index * 3; i<index * 3 + 3; i++)
+    append_glfloat(surface->array, get_glfloat(parse_array)[i]);
+}
+
 %}
 
 %union {
@@ -59,6 +67,9 @@ facets: FACET indices
       ;
 
 indices: INDEX INDEX INDEX {
+         copy_vertex(0);
+         copy_vertex(1);
+         copy_vertex(2);
          add_polygon(last_surface(), 3, $1 - 1, $2 - 1, $3 - 1);
        }
        ;

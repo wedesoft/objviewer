@@ -102,7 +102,7 @@ static MunitResult test_cleanup_surfaces(const MunitParameter params[], void *da
 
 static MunitResult test_facet(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 1 2 3\nv 4 5 6\ns off\nf 1 2 3");
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(surface->vertex_index->size, ==, 3);
   return MUNIT_OK;
@@ -110,11 +110,27 @@ static MunitResult test_facet(const MunitParameter params[], void *data)
 
 static MunitResult test_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 1 2 3\nv 4 5 6\ns off\nf 1 2 3");
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
   munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
   munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  return MUNIT_OK;
+}
+
+static MunitResult test_copy_coords(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[2], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[3], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[4], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[5], ==, 7.0f);
+  munit_assert_float(get_glfloat(surface->array)[6], ==, 7.0f);
+  munit_assert_float(get_glfloat(surface->array)[7], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[8], ==, 3.0f);
   return MUNIT_OK;
 }
 
@@ -134,5 +150,6 @@ MunitTest test_parser[] = {
   {"/cleanup_surfaces"  , test_cleanup_surfaces  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/facet"             , test_facet             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/indices"           , test_indices           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/copy_coords"       , test_copy_coords       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
