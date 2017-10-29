@@ -62,7 +62,7 @@ surfaces: SURFACE {
           | /* NULL */
           ;
 
-facets: FACET indices
+facets: FACET indices facets
       | /* NULL */
       ;
 

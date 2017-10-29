@@ -160,6 +160,14 @@ static MunitResult test_generate_indices(const MunitParameter params[], void *da
   return MUNIT_OK;
 }
 
+static MunitResult test_two_facets(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 1 4 3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->vertex_index->size, ==, 6);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -179,5 +187,6 @@ MunitTest test_parser[] = {
   {"/copy_coords"       , test_copy_coords       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/shuffle_coords"    , test_shuffle_coords    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/generate_indices"  , test_generate_indices  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_facets"        , test_two_facets        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
