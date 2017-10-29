@@ -67,9 +67,9 @@ facets: FACET indices
       ;
 
 indices: INDEX INDEX INDEX {
-         copy_vertex(0);
-         copy_vertex(1);
-         copy_vertex(2);
-         add_polygon(last_surface(), 3, $1 - 1, $2 - 1, $3 - 1);
+         copy_vertex($1 - 1);
+         copy_vertex($2 - 1);
+         copy_vertex($3 - 1);
+         add_polygon(last_surface(), 3, 0, 1, 2);
        }
        ;

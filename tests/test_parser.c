@@ -134,6 +134,32 @@ static MunitResult test_copy_coords(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_shuffle_coords(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[2], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[3], ==, 7.0f);
+  munit_assert_float(get_glfloat(surface->array)[4], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[5], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[6], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[7], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[8], ==, 7.0f);
+  return MUNIT_OK;
+}
+
+static MunitResult test_generate_indices(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -151,5 +177,7 @@ MunitTest test_parser[] = {
   {"/facet"             , test_facet             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/indices"           , test_indices           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/copy_coords"       , test_copy_coords       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/shuffle_coords"    , test_shuffle_coords    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/generate_indices"  , test_generate_indices  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
