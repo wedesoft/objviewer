@@ -3,51 +3,51 @@
 #include "test_helper.h"
 
 
-extern object_t *parse_string_core(const char *text);
+extern object_t *parse_string_core(program_t *program, const char *text);
 extern list_t *parse_array;
 extern list_t *parse_surface;
 
 
 static MunitResult test_empty(const MunitParameter params[], void *data)
 {
-  munit_assert_ptr(parse_string(""), ==, NULL);
+  munit_assert_ptr(parse_string(NULL, ""), ==, NULL);
   return MUNIT_OK;
 }
 
 static MunitResult test_object(const MunitParameter params[], void *data)
 {
-  munit_assert_ptr(parse_string("o test"), !=, NULL);
+  munit_assert_ptr(parse_string(NULL, "o test"), !=, NULL);
   return MUNIT_OK;
 }
 
 static MunitResult test_object_name(const MunitParameter params[], void *data)
 {
-  munit_assert_string_equal(parse_string("o test")->name, "test");
+  munit_assert_string_equal(parse_string(NULL, "o test")->name, "test");
   return MUNIT_OK;
 }
 
 static MunitResult test_error(const MunitParameter params[], void *data)
 {
-  munit_assert_ptr(parse_string("o test\n?"), ==, NULL);
+  munit_assert_ptr(parse_string(NULL, "o test\n?"), ==, NULL);
   return MUNIT_OK;
 }
 
 static MunitResult test_no_newline_in_name(const MunitParameter params[], void *data)
 {
-  munit_assert_string_equal(parse_string("o test\n")->name, "test");
+  munit_assert_string_equal(parse_string(NULL, "o test\n")->name, "test");
   return MUNIT_OK;
 }
 
 static MunitResult test_no_vertices(const MunitParameter params[], void *data)
 {
-  parse_string_core("");
+  parse_string_core(NULL, "");
   munit_assert_int(parse_array->size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_read_vertex(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 10 2.5 -3.25");
+  parse_string_core(NULL, "o test\nv 10 2.5 -3.25");
   munit_assert_int(parse_array->size, ==, 3);
   munit_assert_float(get_glfloat(parse_array)[0], ==, 10.0f);
   munit_assert_float(get_glfloat(parse_array)[1], ==,  2.5f);
@@ -57,7 +57,7 @@ static MunitResult test_read_vertex(const MunitParameter params[], void *data)
 
 static MunitResult test_two_vertices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 10 2.5 -3.25\nv .5 +1 -.25");
+  parse_string_core(NULL, "o test\nv 10 2.5 -3.25\nv .5 +1 -.25");
   munit_assert_int(parse_array->size, ==, 6);
   munit_assert_float(get_glfloat(parse_array)[3], ==,  0.5f);
   munit_assert_float(get_glfloat(parse_array)[4], ==,  1.0f);
@@ -67,42 +67,42 @@ static MunitResult test_two_vertices(const MunitParameter params[], void *data)
 
 static MunitResult test_cleanup_vertices(const MunitParameter params[], void *data)
 {
-  parse_string("o test\nv 10 2.5 3.25");
+  parse_string(NULL, "o test\nv 10 2.5 3.25");
   munit_assert_ptr(parse_array, ==, NULL);
   return MUNIT_OK;
 }
 
 static MunitResult test_no_surfaces(const MunitParameter params[], void *data)
 {
-  parse_string_core("");
+  parse_string_core(NULL, "");
   munit_assert_int(parse_surface->size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_start_surface(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\ns off");
+  parse_string_core(NULL, "o test\ns off");
   munit_assert_int(parse_surface->size, ==, 1);
   return MUNIT_OK;
 }
 
 static MunitResult test_two_surfaces(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\ns off\ns off");
+  parse_string_core(NULL, "o test\ns off\ns off");
   munit_assert_int(parse_surface->size, ==, 2);
   return MUNIT_OK;
 }
 
 static MunitResult test_cleanup_surfaces(const MunitParameter params[], void *data)
 {
-  parse_string("o test");
+  parse_string(NULL, "o test");
   munit_assert_ptr(parse_surface, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_facet(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
+  parse_string_core(NULL,"o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(surface->vertex_index->size, ==, 3);
   return MUNIT_OK;
@@ -110,7 +110,7 @@ static MunitResult test_facet(const MunitParameter params[], void *data)
 
 static MunitResult test_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
+  parse_string_core(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
   munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
@@ -120,7 +120,7 @@ static MunitResult test_indices(const MunitParameter params[], void *data)
 
 static MunitResult test_copy_coords(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
+  parse_string_core(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
   munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
@@ -136,7 +136,7 @@ static MunitResult test_copy_coords(const MunitParameter params[], void *data)
 
 static MunitResult test_shuffle_coords(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
+  parse_string_core(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
   munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
@@ -152,7 +152,7 @@ static MunitResult test_shuffle_coords(const MunitParameter params[], void *data
 
 static MunitResult test_generate_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
+  parse_string_core(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
   munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
@@ -162,7 +162,7 @@ static MunitResult test_generate_indices(const MunitParameter params[], void *da
 
 static MunitResult test_two_facets(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 1 4 3");
+  parse_string_core(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 1 4 3");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(surface->vertex_index->size, ==, 6);
   return MUNIT_OK;
@@ -170,7 +170,7 @@ static MunitResult test_two_facets(const MunitParameter params[], void *data)
 
 static MunitResult test_reuse_vertices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 4 3 1");
+  parse_string_core(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 4 3 1");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
   munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
@@ -183,7 +183,7 @@ static MunitResult test_reuse_vertices(const MunitParameter params[], void *data
 
 static MunitResult test_square_facet(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3 4");
+  parse_string_core(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3 4");
   surface_t *surface = get_pointer(parse_surface)[0];
   munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
   munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
@@ -196,15 +196,24 @@ static MunitResult test_square_facet(const MunitParameter params[], void *data)
 
 static MunitResult test_no_vao(const MunitParameter params[], void *data)
 {
-  object_t *object = parse_string("o test");
+  object_t *object = parse_string(NULL, "o test");
   munit_assert_int(object->vertex_array_object->size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_convert_to_vao(const MunitParameter params[], void *data)
 {
-  object_t *object = parse_string("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
+  object_t *object = parse_string(NULL, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
   munit_assert_int(object->vertex_array_object->size, ==, 1);
+  return MUNIT_OK;
+}
+
+static MunitResult test_set_program(const MunitParameter params[], void *data)
+{
+  program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
+  object_t *object = parse_string(program, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
+  vertex_array_object_t *vao = get_pointer(object->vertex_array_object)[0];
+  munit_assert_ptr(vao->program, ==, program);
   return MUNIT_OK;
 }
 
@@ -232,5 +241,6 @@ MunitTest test_parser[] = {
   {"/square_facet"      , test_square_facet      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_vao"            , test_no_vao            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/convert_to_vao"    , test_convert_to_vao    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_program"       , test_set_program       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

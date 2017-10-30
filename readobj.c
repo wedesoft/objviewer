@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include "fsim/object.h"
 #include "fsim/projection.h"
+#include "fsim/parser.h"
 
 
 #ifndef M_PI
@@ -44,16 +45,10 @@ int main(int argc, char **argv)
   glewInit();
   glEnable(GL_DEPTH_TEST);
 
-  surface_t *surface = make_surface();
-  add_vertex_data(surface, 3,  0.5f,  0.5f, -1.5f);
-  add_vertex_data(surface, 3, -0.5f,  0.5f, -2.5f);
-  add_vertex_data(surface, 3, -0.5f, -0.5f, -1.5f);
-  add_triangle(surface, 1, 2, 0);
   program = make_program("projection.glsl", "white.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
-  object = make_object("triangle");
-  add_vertex_array_object(object, vertex_array_object);
+  object = parse_string(program, "o triangle\nv 0.5 0.5 -1.5\nv -0.5 0.5 -2.5\nv -0.5 -0.5 -1.5\ns off\nf 2 3 1\n");
+  vertex_array_object_t *vao = get_pointer(object->vertex_array_object)[0];
+  setup_vertex_attribute_pointer(vao, "point", 3, 3);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);

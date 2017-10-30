@@ -14,7 +14,7 @@ list_t *parse_surface = NULL;
 hash_t *parse_hash =  NULL;
 
 
-object_t *parse_string_core(const char *text)
+object_t *parse_string_core(program_t *program, const char *text)
 {
   parse_result = NULL;
   parse_array = make_list();
@@ -25,15 +25,15 @@ object_t *parse_string_core(const char *text)
   if (parse_result) {
     int i;
     for (i=0; i<parse_surface->size; i++)
-      add_vertex_array_object(parse_result, make_vertex_array_object(NULL, get_pointer(parse_surface)[i]));
+      add_vertex_array_object(parse_result, make_vertex_array_object(program, get_pointer(parse_surface)[i]));
   };
   yy_delete_buffer(buffer);
   return parse_result;
 }
 
-object_t *parse_string(const char *text)
+object_t *parse_string(program_t *program, const char *text)
 {
-  object_t *result = parse_string_core(text);
+  object_t *result = parse_string_core(program, text);
   parse_result = NULL;
   parse_array = NULL;
   parse_surface = NULL;
