@@ -145,7 +145,7 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
-  add_texture(vertex_array_object, program, make_texture("tex"), read_image("colors.png"));
+  add_texture(vertex_array_object, make_texture("tex"), read_image("colors.png"));
   object_t *object = make_object("test");
   add_vertex_array_object(object, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
