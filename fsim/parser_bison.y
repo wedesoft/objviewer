@@ -3,11 +3,13 @@
 #include "object.h"
 #include "surface.h"
 #include "list.h"
+#include "hash.h"
 
 
 extern object_t *parse_result;
 extern list_t *parse_array;
 extern list_t *parse_surface;
+extern hash_t *parse_hash;
 
 extern int yylex(void);
 
@@ -27,6 +29,15 @@ static void copy_vertex(int index)
   int i;
   for (i=index * 3; i<index * 3 + 3; i++)
     append_glfloat(surface->array, get_glfloat(parse_array)[i]);
+}
+
+static int vertex_index(int wavefront_index)
+{
+  int n_indices = last_surface()->array->size / 3;
+  int result = hash_find(parse_hash, wavefront_index, n_indices);
+  if (result == n_indices)
+    copy_vertex(wavefront_index - 1);
+  return result;
 }
 
 %}
@@ -58,6 +69,7 @@ vertices: VERTEX NUMBER NUMBER NUMBER {
 
 surfaces: SURFACE {
             append_pointer(parse_surface, make_surface());
+            parse_hash = make_hash();
           } facets surfaces
           | /* NULL */
           ;
@@ -67,9 +79,9 @@ facets: FACET indices facets
       ;
 
 indices: INDEX INDEX INDEX {
-         copy_vertex($1 - 1);
-         copy_vertex($2 - 1);
-         copy_vertex($3 - 1);
-         add_polygon(last_surface(), 3, 0, 1, 2);
+         int index1 = vertex_index($1);
+         int index2 = vertex_index($2);
+         int index3 = vertex_index($3);
+         add_polygon(last_surface(), 3, index1, index2, index3);
        }
        ;

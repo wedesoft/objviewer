@@ -168,6 +168,19 @@ static MunitResult test_two_facets(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_reuse_vertices(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 4 3 1");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  munit_assert_int(get_gluint(surface->vertex_index)[3], ==, 3);
+  munit_assert_int(get_gluint(surface->vertex_index)[4], ==, 2);
+  munit_assert_int(get_gluint(surface->vertex_index)[5], ==, 0);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -188,5 +201,6 @@ MunitTest test_parser[] = {
   {"/shuffle_coords"    , test_shuffle_coords    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/generate_indices"  , test_generate_indices  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_facets"        , test_two_facets        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/reuse_vertices"    , test_reuse_vertices    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
