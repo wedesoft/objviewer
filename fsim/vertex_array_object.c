@@ -7,9 +7,6 @@ static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
 {
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
   glBindVertexArray(target->vertex_array_object);
-  int i;
-  for (i=0; i<target->program->n_attributes; i++)
-    glDisableVertexAttribArray(i);
   if (target->texture->size) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -22,6 +22,11 @@ object_t *parse_string_core(const char *text)
   YY_BUFFER_STATE buffer = yy_scan_string(text);
   if (yyparse())
     parse_result = NULL;
+  if (parse_result) {
+    int i;
+    for (i=0; i<parse_surface->size; i++)
+      add_vertex_array_object(parse_result, make_vertex_array_object(NULL, get_pointer(parse_surface)[i]));
+  };
   yy_delete_buffer(buffer);
   return parse_result;
 }
