@@ -71,17 +71,24 @@ surfaces: SURFACE {
             append_pointer(parse_surface, make_surface());
             parse_hash = make_hash();
           } facets surfaces
-          | /* NULL */
-          ;
+        | /* NULL */
+        ;
 
 facets: FACET indices facets
       | /* NULL */
       ;
 
 indices: INDEX INDEX INDEX {
-         int index1 = vertex_index($1);
-         int index2 = vertex_index($2);
-         int index3 = vertex_index($3);
-         add_triangle(last_surface(), index1, index2, index3);
-       }
+           int index1 = vertex_index($1);
+           int index2 = vertex_index($2);
+           int index3 = vertex_index($3);
+           add_triangle(last_surface(), index1, index2, index3);
+         } more_indices
        ;
+
+more_indices: INDEX {
+                int index = vertex_index($1);
+                extend_triangle(last_surface(), index);
+              } more_indices
+            | /* NULL */
+            ;

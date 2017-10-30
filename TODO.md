@@ -1,5 +1,6 @@
 # TODO
 
+* create vertex array object from surfaces, example
 * look at NASA 3D models
 * link to German wikipage and use Wavefront OBJ sample from there
 * create and load Blender model
