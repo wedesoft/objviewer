@@ -2,13 +2,13 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = fsim tests
 
-noinst_PROGRAMS = minimal tetraeder
+noinst_PROGRAMS = raw tetraeder
 
 EXTRA_DIST = vertex.glsl fragment.glsl
 
-minimal_SOURCES = minimal.c
-minimal_CFLAGS = $(GLEW_CFLAGS) $(GL_CFLAGS)
-minimal_LDADD = $(GLEW_LIBS) $(GL_LIBS)
+raw_SOURCES = raw.c
+raw_CFLAGS = $(GLEW_CFLAGS) $(GL_CFLAGS)
+raw_LDADD = $(GLEW_LIBS) $(GL_LIBS)
 
 tetraeder_SOURCES = tetraeder.c
 tetraeder_CFLAGS = $(MAGICK_CFLAGS) $(GLEW_CFLAGS) $(GL_CFLAGS) $(BOEHM_CFLAGS)

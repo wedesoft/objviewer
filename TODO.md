@@ -1,6 +1,8 @@
 # TODO
 
-* create vertex array object from surfaces, example
+* create vertex array object from surfaces
+* read Wavefront data from file
+* Wavefront parsing example
 * look at NASA 3D models
 * link to German wikipage and use Wavefront OBJ sample from there
 * create and load Blender model
