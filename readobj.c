@@ -40,13 +40,13 @@ int main(int argc, char **argv)
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(width, height);
-  glutCreateWindow("triangle");
+  glutCreateWindow("square");
   glewExperimental = GL_TRUE;
   glewInit();
   glEnable(GL_DEPTH_TEST);
 
   program = make_program("projection.glsl", "white.glsl");
-  object = parse_string(program, "o triangle\nv 0.5 0.5 -1.5\nv -0.5 0.5 -2.5\nv -0.5 -0.5 -1.5\ns off\nf 2 3 1\n");
+  object = parse_string(program, "o square\nv 0.5 0.5 -1.5\nv -0.5 0.5 -1.5\nv -0.5 -0.5 -1.5\nv 0.5 -0.5 -1.5\ns off\nf 1 2 3 4\n");
   vertex_array_object_t *vao = get_pointer(object->vertex_array_object)[0];
   setup_vertex_attribute_pointer(vao, "point", 3, 3);
 
