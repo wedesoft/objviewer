@@ -82,6 +82,6 @@ indices: INDEX INDEX INDEX {
          int index1 = vertex_index($1);
          int index2 = vertex_index($2);
          int index3 = vertex_index($3);
-         add_polygon(last_surface(), 3, index1, index2, index3);
+         add_triangle(last_surface(), index1, index2, index3);
        }
        ;

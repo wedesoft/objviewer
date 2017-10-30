@@ -106,10 +106,10 @@ int main(int argc, char **argv)
   add_vertex_data(surface, 8, -0.5f,  0.5f, -0.5f,  0.0f, 16.0f, -0.577350269f, -0.577350269f, -0.577350269f);
   add_vertex_data(surface, 8, -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  0.577350269f, -0.577350269f,  0.577350269f);
   add_vertex_data(surface, 8,  0.5f, -0.5f, -0.5f, 16.0f,  0.0f,  0.577350269f,  0.577350269f, -0.577350269f);
-  add_polygon(surface, 3, 1, 2, 0);
-  add_polygon(surface, 3, 3, 2, 1);
-  add_polygon(surface, 3, 3, 0, 2);
-  add_polygon(surface, 3, 1, 0, 3);
+  add_triangle(surface, 1, 2, 0);
+  add_triangle(surface, 3, 2, 1);
+  add_triangle(surface, 3, 0, 2);
+  add_triangle(surface, 1, 0, 3);
   program = make_program("vertex.glsl", "fragment.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point"   , 3, 8);

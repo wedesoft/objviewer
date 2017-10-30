@@ -29,17 +29,17 @@ int size_of_indices(surface_t *surface)
   return surface->vertex_index->size * sizeof(GLuint);
 }
 
-void add_polygon(surface_t *surface, int n, ...)
+void add_triangle(surface_t *surface, int index1, int index2, int index3)
 {
-  va_list index;
-  va_start(index, n);
-  int i;
-  for (i=0; i<3; i++)
-    append_gluint(surface->vertex_index, va_arg(index, int));
-  for (i=3; i<n; i++) {
-    int n = surface->vertex_index->size;
-    int index1 = get_gluint(surface->vertex_index)[n - 3];
-    int index2 = get_gluint(surface->vertex_index)[n - 1];
-    add_polygon(surface, 3, index1, index2, va_arg(index, int));
-  };
+  append_gluint(surface->vertex_index, index1);
+  append_gluint(surface->vertex_index, index2);
+  append_gluint(surface->vertex_index, index3);
+}
+
+void extend_triangle(surface_t *surface, int index)
+{
+  int n = surface->vertex_index->size;
+  int index1 = get_gluint(surface->vertex_index)[n - 3];
+  int index2 = get_gluint(surface->vertex_index)[n - 1];
+  add_triangle(surface, index1, index2, index);
 }

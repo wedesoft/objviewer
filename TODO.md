@@ -1,6 +1,5 @@
 # TODO
 
-* add triangle and then extend it
 * look at NASA 3D models
 * link to German wikipage and use Wavefront OBJ sample from there
 * create and load Blender model

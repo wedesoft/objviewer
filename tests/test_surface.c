@@ -76,7 +76,7 @@ static MunitResult test_size_of_indices(const MunitParameter params[], void *dat
   int i;
   for (i=0; i<3; i++)
     add_vertex_data(surface, 3, 0, 0, 0);
-  add_polygon(surface, 3, 0, 1, 2);
+  add_triangle(surface, 0, 1, 2);
   munit_assert_int(size_of_indices(surface), ==, 3 * sizeof(int));
   return MUNIT_OK;
 }
@@ -97,7 +97,7 @@ static MunitResult test_add_triangle(const MunitParameter params[], void *data)
   int i;
   for (i=0; i<3; i++)
     add_vertex_data(surface, 3, i % 2, 0, i / 2);
-  add_polygon(surface, 3, 2, 0, 1);
+  add_triangle(surface, 2, 0, 1);
   munit_assert_int(surface->vertex_index->size, ==, 3);
   munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 2);
   munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 0);
@@ -111,7 +111,7 @@ static MunitResult test_add_square(const MunitParameter params[], void *data)
   int i;
   for (i=0; i<4; i++)
     add_vertex_data(surface, 3, i % 2, 0, i / 2);
-  add_polygon(surface, 4, 2, 0, 1, 3);
+  add_triangle(surface, 2, 0, 1); extend_triangle(surface, 3);
   munit_assert_int(surface->vertex_index->size, ==, 6);
   munit_assert_int(get_gluint(surface->vertex_index)[3], ==, 2);
   munit_assert_int(get_gluint(surface->vertex_index)[4], ==, 1);
@@ -126,7 +126,7 @@ static MunitResult test_add_pentagon(const MunitParameter params[], void *data)
   for (i=0; i<4; i++)
     add_vertex_data(surface, 3, i % 2, 0, i / 2);
   add_vertex_data(surface, 3, 0.5, 0, 1.5);
-  add_polygon(surface, 5, 0, 1, 3, 4, 2);
+  add_triangle(surface, 0, 1, 3); extend_triangle(surface, 4); extend_triangle(surface, 2);
   munit_assert_int(surface->vertex_index->size, ==, 9);
   munit_assert_int(get_gluint(surface->vertex_index)[6], ==, 0);
   munit_assert_int(get_gluint(surface->vertex_index)[7], ==, 4);
