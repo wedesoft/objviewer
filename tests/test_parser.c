@@ -213,8 +213,28 @@ static MunitResult test_set_program(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   object_t *object = parse_string(program, "o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
-  vertex_array_object_t *vao = get_pointer(object->vertex_array_object)[0];
-  munit_assert_ptr(vao->program, ==, program);
+  vertex_array_object_t *vertex_array_object = get_pointer(object->vertex_array_object)[0];
+  munit_assert_ptr(vertex_array_object->program, ==, program);
+  return MUNIT_OK;
+}
+
+static MunitResult test_draw_object(const MunitParameter params[], void *data)
+{
+  program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
+  object_t *object =
+    parse_string(program, "o square\nv 0.5 0.5 0.0\nv -0.5 0.5 0.0\nv -0.5 -0.5 0.0\nv 0.5 -0.5 0.0\ns off\nf 1 2 3 4\n");
+  vertex_array_object_t *vertex_array_object = get_pointer(object->vertex_array_object)[0];
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glClearColor(0, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT);
+  render(object);
+  glFinish();
+  unsigned char *pixels = read_pixels();
+  write_ppm("draw_object.ppm", width, height, pixels);
+  munit_assert_int(pixels[(10 * 32 + 16) * 4 + 0], ==,   0);
+  munit_assert_int(pixels[(10 * 32 + 16) * 4 + 1], ==,   0);
+  munit_assert_int(pixels[(10 * 32 + 16) * 4 + 2], ==, 255);
   return MUNIT_OK;
 }
 
@@ -257,6 +277,7 @@ MunitTest test_parser[] = {
   {"/no_vao"            , test_no_vao            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/convert_to_vao"    , test_convert_to_vao    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_program"       , test_set_program       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/draw_object"       , test_draw_object       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_texcoord"       , test_no_texcoord       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/cleanup_texcoords" , test_cleanup_texcoords , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
