@@ -49,14 +49,14 @@ static int vertex_index(int wavefront_index)
   int index;
 }
 
-%token OBJECT VERTEX SURFACE FACET
+%token OBJECT VERTEX SURFACE FACET UV
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
 
 %%
 
-start: OBJECT NAME { parse_result = make_object($2); } vertices surfaces
+start: OBJECT NAME { parse_result = make_object($2); } vertices texture_coordinates surfaces
      | /* NULL */
      ;
 
@@ -67,6 +67,13 @@ vertices: VERTEX NUMBER NUMBER NUMBER {
           } vertices
         | /* NULL */
         ;
+
+texture_coordinates: UV NUMBER NUMBER {
+                     append_glfloat(parse_texture_coordinate, $2);
+                     append_glfloat(parse_texture_coordinate, $3);
+                   } texture_coordinates
+                   | /* NULL */
+                   ;
 
 surfaces: SURFACE {
             append_pointer(parse_surface, make_surface());

@@ -252,6 +252,24 @@ static MunitResult test_cleanup_texcoords(const MunitParameter params[], void *d
   return MUNIT_OK;
 }
 
+static MunitResult test_read_texcoord(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL, "o test\nvt 0.5 0.25");
+  munit_assert_int(parse_texture_coordinate->size, ==, 2);
+  munit_assert_float(get_glfloat(parse_texture_coordinate)[0], ==, 0.50f);
+  munit_assert_float(get_glfloat(parse_texture_coordinate)[1], ==, 0.25f);
+  return MUNIT_OK;
+}
+
+static MunitResult test_two_texcoords(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL, "o test\nvt 0.5 0.25\nvt 0.75 1.0");
+  munit_assert_int(parse_texture_coordinate->size, ==, 4);
+  munit_assert_float(get_glfloat(parse_texture_coordinate)[2], ==, 0.75f);
+  munit_assert_float(get_glfloat(parse_texture_coordinate)[3], ==, 1.00f);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -280,5 +298,7 @@ MunitTest test_parser[] = {
   {"/draw_object"       , test_draw_object       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_texcoord"       , test_no_texcoord       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/cleanup_texcoords" , test_cleanup_texcoords , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/read_texcoord"     , test_read_texcoord     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_texcoords"     , test_two_texcoords     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
