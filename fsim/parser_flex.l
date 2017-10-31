@@ -27,6 +27,7 @@ f                           { BEGIN(idx); return FACET; }
 <nmb>\n                     BEGIN(INITIAL);
 
 <idx>[0-9]*                 { yylval.index = atoi(yytext); return INDEX; }
+<idx>"/"                    return SLASH;
 <idx>" "                    ;
 <idx>\n                     BEGIN(INITIAL);
 

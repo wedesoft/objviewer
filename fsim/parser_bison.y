@@ -8,7 +8,7 @@
 
 extern object_t *parse_result;
 extern list_t *parse_vertex;
-extern list_t *parse_texture_coordinate;
+extern list_t *parse_uv;
 extern hash_t *parse_hash;
 extern list_t *parse_surface;
 
@@ -32,12 +32,31 @@ static void copy_vertex(int index)
     append_glfloat(surface->array, get_glfloat(parse_vertex)[i]);
 }
 
-static int vertex_index(int wavefront_index)
+static void copy_uv(int index)
+{
+  surface_t *surface = last_surface();
+  int i;
+  for (i=index * 2; i<index * 2 + 2; i++)
+    append_glfloat(surface->array, get_glfloat(parse_uv)[i]);
+}
+
+static int index_vertex(int vertex_index)
 {
   int n_indices = last_surface()->array->size / 3;
-  int result = hash_find(parse_hash, wavefront_index, n_indices);
+  int result = hash_find(parse_hash, vertex_index, n_indices);
   if (result == n_indices)
-    copy_vertex(wavefront_index - 1);
+    copy_vertex(vertex_index - 1);
+  return result;
+}
+
+static int index_vertex_uv(int vertex_index, int uv_index)
+{
+  int n_indices = last_surface()->array->size / 5;
+  int result = hash_find_pair(parse_hash, vertex_index, uv_index, n_indices);
+  if (result == n_indices) {
+    copy_vertex(vertex_index - 1);
+    copy_uv(uv_index - 1);
+  };
   return result;
 }
 
@@ -49,7 +68,8 @@ static int vertex_index(int wavefront_index)
   int index;
 }
 
-%token OBJECT VERTEX SURFACE FACET UV
+%type<index> index
+%token OBJECT VERTEX SURFACE FACET UV SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
@@ -69,8 +89,8 @@ vertices: VERTEX NUMBER NUMBER NUMBER {
         ;
 
 texture_coordinates: UV NUMBER NUMBER {
-                     append_glfloat(parse_texture_coordinate, $2);
-                     append_glfloat(parse_texture_coordinate, $3);
+                     append_glfloat(parse_uv, $2);
+                     append_glfloat(parse_uv, $3);
                    } texture_coordinates
                    | /* NULL */
                    ;
@@ -86,17 +106,21 @@ facets: FACET indices facets
       | /* NULL */
       ;
 
-indices: INDEX INDEX INDEX {
-           int index1 = vertex_index($1);
-           int index2 = vertex_index($2);
-           int index3 = vertex_index($3);
-           add_triangle(last_surface(), index1, index2, index3);
+indices: index index index {
+           add_triangle(last_surface(), $1, $2, $3);
          } more_indices
        ;
 
-more_indices: INDEX {
-                int index = vertex_index($1);
-                extend_triangle(last_surface(), index);
+more_indices: index {
+                extend_triangle(last_surface(), $1);
               } more_indices
             | /* NULL */
             ;
+
+index: INDEX {
+         $$ = index_vertex($1);
+       }
+       | INDEX SLASH INDEX {
+         $$ = index_vertex_uv($1, $3);
+       }
+       ;

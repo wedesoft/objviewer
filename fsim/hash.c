@@ -19,12 +19,25 @@ hash_t *make_hash(void)
   return result;
 }
 
-int hash_find(hash_t *hash, int key, int value_if_not_found)
+static int hash_find_str(hash_t *hash, char *key, int value_if_not_found)
 {
   long int value = value_if_not_found;
-  ENTRY item = {GC_MALLOC_ATOMIC(6), (void *)value};
-  snprintf(item.key, 6, "%d", key);
+  ENTRY item = {key, (void *)value};
   ENTRY *result;
   hsearch_r(item, ENTER, &result, &hash->table);
   return (long int)result->data;
+}
+
+int hash_find(hash_t *hash, int key, int value_if_not_found)
+{
+  char *str = GC_MALLOC_ATOMIC(6);
+  snprintf(str, 6, "%d", key);
+  return hash_find_str(hash, str, value_if_not_found);
+}
+
+int hash_find_pair(hash_t *hash, int key1, int key2, int value_if_not_found)
+{
+  char *str = GC_MALLOC_ATOMIC(13);
+  snprintf(str, 13, "%d/%d", key1, key2);
+  return hash_find_str(hash, str, value_if_not_found);
 }
