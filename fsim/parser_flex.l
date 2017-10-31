@@ -11,11 +11,11 @@
 
 "o "                        { BEGIN(name); return OBJECT; }
 
-"v "                        { BEGIN(nmb); return VERTEX; }
+v                           { BEGIN(nmb); return VERTEX; }
 
 "s off"                     return SURFACE;
 
-"f "                        { BEGIN(idx); return FACET; }
+f                           { BEGIN(idx); return FACET; }
 
 <name>.*                    { yylval.text = yytext; return NAME; }
 <name>\n                    BEGIN(INITIAL);

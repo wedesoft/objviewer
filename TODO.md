@@ -1,8 +1,9 @@
 # TODO
 
+* read texture coordinates
 * read normal vectors
 * read textures
-* read texture coordinates
+* more parse error information
 * read Wavefront data from file
 * look at NASA 3D models
 * link to German wikipage and use Wavefront OBJ sample from there
