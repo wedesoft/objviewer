@@ -3,6 +3,7 @@
 * read texture coordinates
 * read normal vectors
 * read textures
+* check vertex index not zero
 * more parse error information
 * read Wavefront data from file
 * look at NASA 3D models

@@ -7,9 +7,10 @@
 
 
 extern object_t *parse_result;
-extern list_t *parse_array;
-extern list_t *parse_surface;
+extern list_t *parse_vertex;
+extern list_t *parse_texture_coordinate;
 extern hash_t *parse_hash;
+extern list_t *parse_surface;
 
 extern int yylex(void);
 
@@ -28,7 +29,7 @@ static void copy_vertex(int index)
   surface_t *surface = last_surface();
   int i;
   for (i=index * 3; i<index * 3 + 3; i++)
-    append_glfloat(surface->array, get_glfloat(parse_array)[i]);
+    append_glfloat(surface->array, get_glfloat(parse_vertex)[i]);
 }
 
 static int vertex_index(int wavefront_index)
@@ -60,9 +61,9 @@ start: OBJECT NAME { parse_result = make_object($2); } vertices surfaces
      ;
 
 vertices: VERTEX NUMBER NUMBER NUMBER {
-            append_glfloat(parse_array, $2);
-            append_glfloat(parse_array, $3);
-            append_glfloat(parse_array, $4);
+            append_glfloat(parse_vertex, $2);
+            append_glfloat(parse_vertex, $3);
+            append_glfloat(parse_vertex, $4);
           } vertices
         | /* NULL */
         ;
