@@ -4,7 +4,7 @@ SUBDIRS = fsim tests
 
 noinst_PROGRAMS = raw tetraeder
 
-EXTRA_DIST = vertex.glsl fragment.glsl projection.glsl white.glsl
+EXTRA_DIST = vertex.glsl fragment.glsl
 
 raw_SOURCES = raw.c
 raw_CFLAGS = $(GLEW_CFLAGS) $(GL_CFLAGS)
