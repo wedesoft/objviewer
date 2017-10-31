@@ -1,6 +1,6 @@
 # TODO
 
-* read texture coordinates
+* texture coordinate indices (e.g. "1/1")
 * read normal vectors
 * read textures
 * check vertex index not zero
