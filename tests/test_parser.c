@@ -349,6 +349,31 @@ static MunitResult test_vertex_in_hash_key(const MunitParameter params[], void *
   return MUNIT_OK;
 }
 
+static MunitResult test_draw_with_uv(const MunitParameter params[], void *data)
+{
+  program_t *program = make_program("vertex-uv.glsl", "fragment-uv.glsl");
+  object_t *object =
+    parse_string(program,"o test\nv -0.5 -0.5 -1\nv -0.5 0.5 -1\nv 0.5 -0.5 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
+  vertex_array_object_t *vertex_array_object = get_pointer(object->vertex_array_object)[0];
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 5);
+  add_texture(vertex_array_object, make_texture("tex"), read_image("colors.png"));
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glClearColor(0, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT);
+  render(object);
+  glFinish();
+  unsigned char *pixels = read_pixels();
+  write_ppm("draw_with_uv.ppm", width, height, pixels);
+  munit_assert_int(pixels[( 8 * 32 + 10 ) * 4 + 0], ==, 255);
+  munit_assert_int(pixels[( 8 * 32 + 10 ) * 4 + 1], ==,   0);
+  munit_assert_int(pixels[( 8 * 32 + 10 ) * 4 + 2], ==,   0);
+  munit_assert_int(pixels[(12 * 32 + 10 ) * 4 + 0], ==,   0);
+  munit_assert_int(pixels[(12 * 32 + 10 ) * 4 + 1], ==,   0);
+  munit_assert_int(pixels[(12 * 32 + 10 ) * 4 + 2], ==, 255);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -387,5 +412,6 @@ MunitTest test_parser[] = {
   {"/different_uv_index", test_different_uv_index, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/uv_in_hash_key"    , test_uv_in_hash_key    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_in_hash_key", test_vertex_in_hash_key, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/draw_with_uv"      , test_draw_with_uv      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
