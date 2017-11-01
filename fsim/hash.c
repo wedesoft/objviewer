@@ -28,16 +28,9 @@ static int hash_find_str(hash_t *hash, char *key, int value_if_not_found)
   return (long int)result->data;
 }
 
-int hash_find(hash_t *hash, int key, int value_if_not_found)
-{
-  char *str = GC_MALLOC_ATOMIC(6);
-  snprintf(str, 6, "%d", key);
-  return hash_find_str(hash, str, value_if_not_found);
-}
-
-int hash_find_pair(hash_t *hash, int key1, int key2, int value_if_not_found)
+int hash_find(hash_t *hash, int key1, int key2, int key3, int value_if_not_found)
 {
   char *str = GC_MALLOC_ATOMIC(13);
-  snprintf(str, 13, "%d,%d", key1, key2);
+  snprintf(str, 20, "%d,%d,%d", key1, key2, key3);
   return hash_find_str(hash, str, value_if_not_found);
 }

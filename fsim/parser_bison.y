@@ -25,57 +25,22 @@ static surface_t *last_surface(void)
   return get_pointer(parse_surface)[parse_surface->size - 1];
 }
 
-static void copy_vertex(int index)
+static void copy_vertex_data(int index, int stride, list_t *source)
 {
   surface_t *surface = last_surface();
   int i;
-  for (i=index * 3; i<index * 3 + 3; i++)
-    append_glfloat(surface->array, get_glfloat(parse_vertex)[i]);
+  for (i=index * stride; i<index * stride + stride; i++)
+    append_glfloat(surface->array, get_glfloat(source)[i]);
 }
 
-static void copy_uv(int index)
+static int index_vertex(int stride, int vertex_index, int uv_index, int normal_index)
 {
-  surface_t *surface = last_surface();
-  int i;
-  for (i=index * 2; i<index * 2 + 2; i++)
-    append_glfloat(surface->array, get_glfloat(parse_uv)[i]);
-}
-
-static void copy_normal(int index)
-{
-  surface_t *surface = last_surface();
-  int i;
-  for (i=index * 3; i<index * 3 + 3; i++)
-    append_glfloat(surface->array, get_glfloat(parse_normal)[i]);
-}
-
-static int index_vertex(int vertex_index)
-{
-  int n_indices = last_surface()->array->size / 3;
-  int result = hash_find(parse_hash, vertex_index, n_indices);
-  if (result == n_indices)
-    copy_vertex(vertex_index - 1);
-  return result;
-}
-
-static int index_vertex_uv(int vertex_index, int uv_index)
-{
-  int n_indices = last_surface()->array->size / 5;
-  int result = hash_find_pair(parse_hash, vertex_index, uv_index, n_indices);
+  int n_indices = last_surface()->array->size / stride;
+  int result = hash_find(parse_hash, vertex_index, uv_index, normal_index, n_indices);
   if (result == n_indices) {
-    copy_vertex(vertex_index - 1);
-    copy_uv(uv_index - 1);
-  };
-  return result;
-}
-
-static int index_vertex_normal(int vertex_index, int normal_index)
-{
-  int n_indices = last_surface()->array->size / 6;
-  int result = hash_find_pair(parse_hash, vertex_index, normal_index, n_indices);
-  if (result == n_indices) {
-    copy_vertex(vertex_index - 1);
-    copy_normal(normal_index - 1);
+    copy_vertex_data(vertex_index - 1, 3, parse_vertex);
+    if (uv_index) copy_vertex_data(uv_index - 1, 2, parse_uv);
+    if (normal_index) copy_vertex_data(normal_index - 1, 3, parse_normal);
   };
   return result;
 }
@@ -151,11 +116,14 @@ more_indices: index {
             ;
 
 index: INDEX {
-         $$ = index_vertex($1);
+         $$ = index_vertex(3, $1, 0, 0);
        }
        | INDEX SLASH INDEX {
-         $$ = index_vertex_uv($1, $3);
+         $$ = index_vertex(5, $1, $3, 0);
        }
        | INDEX SLASH SLASH INDEX {
-         $$ = index_vertex_normal($1, $4);
+         $$ = index_vertex(6, $1, 0, $4);
+       }
+       | INDEX SLASH INDEX SLASH INDEX {
+         $$ = index_vertex(3, $1, 0, 0);
        }
