@@ -334,6 +334,14 @@ static MunitResult test_different_uv_index(const MunitParameter params[], void *
   return MUNIT_OK;
 }
 
+static MunitResult test_reuse_uv(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 1/1 2/2");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->array->size, ==, 10);
+  return MUNIT_OK;
+}
+
 static MunitResult test_uv_in_hash_key(const MunitParameter params[], void *data)
 {
   parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 1/2 1/3");
@@ -342,7 +350,7 @@ static MunitResult test_uv_in_hash_key(const MunitParameter params[], void *data
   return MUNIT_OK;
 }
 
-static MunitResult test_vertex_in_hash_key(const MunitParameter params[], void *data)
+static MunitResult test_vertex_and_uv_key(const MunitParameter params[], void *data)
 {
   parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/1 3/1");
   surface_t *surface = get_pointer(parse_surface)[0];
@@ -399,47 +407,138 @@ static MunitResult test_read_normal(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_normal_facet(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->vertex_index->size, ==, 3);
+  return MUNIT_OK;
+}
+
+static MunitResult test_normal_indices(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  return MUNIT_OK;
+}
+
+static MunitResult test_normals_added(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->array->size, ==, 18);
+  return MUNIT_OK;
+}
+
+static MunitResult test_copy_normal(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[ 0], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 1], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 2], ==,-1.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 3], ==, 1.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 4], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 5], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 6], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 7], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 8], ==,-1.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 9], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[10], ==, 1.0f);
+  munit_assert_float(get_glfloat(surface->array)[11], ==, 0.0f);
+  return MUNIT_OK;
+}
+
+static MunitResult test_different_normal_index(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//2 2//3 3//1");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[1], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[2], ==,-1.0f);
+  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[4], ==, 1.0f);
+  munit_assert_float(get_glfloat(surface->array)[5], ==, 0.0f);
+  return MUNIT_OK;
+}
+
+static MunitResult test_reuse_normal(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 1//1 2//2");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->array->size, ==, 12);
+  return MUNIT_OK;
+}
+
+static MunitResult test_normal_in_hash_key(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 1//2 1//3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->array->size, ==, 18);
+  return MUNIT_OK;
+}
+
+static MunitResult test_vertex_and_normal_key(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,"o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//1 3//1");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->array->size, ==, 18);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
-  {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/object_name"       , test_object_name       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/error"             , test_error             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_newline_in_name", test_no_newline_in_name, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_vertices"       , test_no_vertices       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/read_vertex"       , test_read_vertex       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/two_vertices"      , test_two_vertices      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/cleanup_vertices"  , test_cleanup_vertices  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_surfaces"       , test_no_surfaces       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/start_surface"     , test_start_surface     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/two_surfaces"      , test_two_surfaces      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/cleanup_surfaces"  , test_cleanup_surfaces  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/facet"             , test_facet             , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/indices"           , test_indices           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/coord_count"       , test_coord_count       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/copy_coords"       , test_copy_coords       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/shuffle_coords"    , test_shuffle_coords    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/generate_indices"  , test_generate_indices  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/two_facets"        , test_two_facets        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/reuse_vertices"    , test_reuse_vertices    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/square_facet"      , test_square_facet      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_vao"            , test_no_vao            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/convert_to_vao"    , test_convert_to_vao    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_program"       , test_set_program       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/draw_object"       , test_draw_object       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_texcoord"       , test_no_texcoord       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/cleanup_texcoords" , test_cleanup_texcoords , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/read_texcoord"     , test_read_texcoord     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/two_texcoords"     , test_two_texcoords     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/uv_facet"          , test_uv_facet          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/uv_indices"        , test_uv_indices        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/uv_added"          , test_uv_added          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/copy_uv"           , test_copy_uv           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/different_uv_index", test_different_uv_index, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/uv_in_hash_key"    , test_uv_in_hash_key    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/vertex_in_hash_key", test_vertex_in_hash_key, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/draw_with_uv"      , test_draw_with_uv      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_normal  "       , test_no_normal         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/cleanup_normals"   , test_cleanup_normals   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/read_normal"       , test_read_normal       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
+  {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/object_name"           , test_object_name           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/error"                 , test_error                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_newline_in_name"    , test_no_newline_in_name    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_vertices"           , test_no_vertices           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/read_vertex"           , test_read_vertex           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_vertices"          , test_two_vertices          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/cleanup_vertices"      , test_cleanup_vertices      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_surfaces"           , test_no_surfaces           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/start_surface"         , test_start_surface         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_surfaces"          , test_two_surfaces          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/cleanup_surfaces"      , test_cleanup_surfaces      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/facet"                 , test_facet                 , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/indices"               , test_indices               , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/coord_count"           , test_coord_count           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/copy_coords"           , test_copy_coords           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/shuffle_coords"        , test_shuffle_coords        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/generate_indices"      , test_generate_indices      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_facets"            , test_two_facets            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/reuse_vertices"        , test_reuse_vertices        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/square_facet"          , test_square_facet          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_vao"                , test_no_vao                , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/convert_to_vao"        , test_convert_to_vao        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_program"           , test_set_program           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/draw_object"           , test_draw_object           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_texcoord"           , test_no_texcoord           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/cleanup_texcoords"     , test_cleanup_texcoords     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/read_texcoord"         , test_read_texcoord         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_texcoords"         , test_two_texcoords         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/uv_facet"              , test_uv_facet              , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/reuse_uv"              , test_reuse_uv              , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/uv_indices"            , test_uv_indices            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/uv_added"              , test_uv_added              , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/copy_uv"               , test_copy_uv               , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/different_uv_index"    , test_different_uv_index    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/uv_in_hash_key"        , test_uv_in_hash_key        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_and_uv_key"     , test_vertex_and_uv_key     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/draw_with_uv"          , test_draw_with_uv          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_normal  "           , test_no_normal             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/cleanup_normals"       , test_cleanup_normals       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/read_normal"           , test_read_normal           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/normal_facet"          , test_normal_facet          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/normal_indices"        , test_normal_indices        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/normals_added"         , test_normals_added         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/copy_normal"           , test_copy_normal           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/different_normal_index", test_different_normal_index, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/reuse_normal"          , test_reuse_normal          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/normal_in_hash_key"    , test_normal_in_hash_key    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_and_normal_key" , test_vertex_and_normal_key , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

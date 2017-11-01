@@ -41,6 +41,14 @@ static void copy_uv(int index)
     append_glfloat(surface->array, get_glfloat(parse_uv)[i]);
 }
 
+static void copy_normal(int index)
+{
+  surface_t *surface = last_surface();
+  int i;
+  for (i=index * 3; i<index * 3 + 3; i++)
+    append_glfloat(surface->array, get_glfloat(parse_normal)[i]);
+}
+
 static int index_vertex(int vertex_index)
 {
   int n_indices = last_surface()->array->size / 3;
@@ -57,6 +65,17 @@ static int index_vertex_uv(int vertex_index, int uv_index)
   if (result == n_indices) {
     copy_vertex(vertex_index - 1);
     copy_uv(uv_index - 1);
+  };
+  return result;
+}
+
+static int index_vertex_normal(int vertex_index, int normal_index)
+{
+  int n_indices = last_surface()->array->size / 6;
+  int result = hash_find_pair(parse_hash, vertex_index, normal_index, n_indices);
+  if (result == n_indices) {
+    copy_vertex(vertex_index - 1);
+    copy_normal(normal_index - 1);
   };
   return result;
 }
@@ -136,4 +155,7 @@ index: INDEX {
        }
        | INDEX SLASH INDEX {
          $$ = index_vertex_uv($1, $3);
+       }
+       | INDEX SLASH SLASH INDEX {
+         $$ = index_vertex_normal($1, $4);
        }
