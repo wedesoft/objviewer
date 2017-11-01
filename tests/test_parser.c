@@ -67,6 +67,16 @@ static MunitResult test_two_vertices(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_exponent(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL, "o test\nv 1e+1 2.5e-1 -3.0e2");
+  munit_assert_int(parse_vertex->size, ==, 3);
+  munit_assert_float(get_glfloat(parse_vertex)[0], ==,  10.0f);
+  munit_assert_float(get_glfloat(parse_vertex)[1], ==,   0.25f);
+  munit_assert_float(get_glfloat(parse_vertex)[2], ==, -300.0f);
+  return MUNIT_OK;
+}
+
 static MunitResult test_cleanup_vertices(const MunitParameter params[], void *data)
 {
   parse_string(NULL, "o test\nv 10 2.5 3.25");
@@ -568,6 +578,7 @@ MunitTest test_parser[] = {
   {"/no_vertices"           , test_no_vertices           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/read_vertex"           , test_read_vertex           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_vertices"          , test_two_vertices          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/exponent"              , test_exponent              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/cleanup_vertices"      , test_cleanup_vertices      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_surfaces"           , test_no_surfaces           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/start_surface"         , test_start_surface         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},

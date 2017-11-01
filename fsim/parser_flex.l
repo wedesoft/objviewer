@@ -9,32 +9,32 @@
 
 %%
 
-"o "                        { BEGIN(name); return OBJECT; }
+"o "                                       { BEGIN(name); return OBJECT; }
 
-v                           { BEGIN(nmb); return VERTEX; }
+v                                          { BEGIN(nmb); return VERTEX; }
 
-vt                          { BEGIN(nmb); return UV; }
+vt                                         { BEGIN(nmb); return UV; }
 
-vn                          { BEGIN(nmb); return NORMAL; }
+vn                                         { BEGIN(nmb); return NORMAL; }
 
-"s off"                     return SURFACE;
+"s off"                                    return SURFACE;
 
-f                           { BEGIN(idx); return FACET; }
+f                                          { BEGIN(idx); return FACET; }
 
-<name>.*                    { yylval.text = yytext; return NAME; }
-<name>\n                    BEGIN(INITIAL);
+<name>.*                                   { yylval.text = yytext; return NAME; }
+<name>\n                                   BEGIN(INITIAL);
 
-<nmb>[+-]?[0-9]*(\.[0-9]*)? { yylval.number = atof(yytext); return NUMBER; }
-<nmb>" "                    ;
-<nmb>\n                     BEGIN(INITIAL);
+<nmb>[+-]?[0-9]*(\.[0-9]*)?(e[+-]?[0-9]+)? { yylval.number = atof(yytext); return NUMBER; }
+<nmb>" "                                   ;
+<nmb>\n                                    BEGIN(INITIAL);
 
-<idx>[0-9]*                 { yylval.index = atoi(yytext); return INDEX; }
-<idx>"/"                    return SLASH;
-<idx>" "                    ;
-<idx>\n                     BEGIN(INITIAL);
+<idx>[0-9]*                                { yylval.index = atoi(yytext); return INDEX; }
+<idx>"/"                                   return SLASH;
+<idx>" "                                   ;
+<idx>\n                                    BEGIN(INITIAL);
 
-[\n ]                       ;
+[\n ]                                      ;
 
-.                           return *yytext;
+.                                          return *yytext;
 
 %%

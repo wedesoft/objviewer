@@ -1,10 +1,11 @@
 # TODO
 
+* negative indices
+* separate conversion to VAO from parser, setup attribute pointers when converting, separate integration tests
+* ignore surfaces (use groups instead)
 * read textures
-* check vertex index not zero
 * more parse error information
 * read Wavefront data from file
-* separate conversion to VAO from parser, setup attribute pointers when converting, separate integration tests
 * look at NASA 3D models
 * link to German wikipage and use Wavefront OBJ sample from there
 * create and load Blender model
