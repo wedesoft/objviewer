@@ -11,6 +11,7 @@ extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
 object_t *parse_result = NULL;
 list_t *parse_vertex = NULL;
 list_t *parse_uv = NULL;
+list_t *parse_normal = NULL;
 hash_t *parse_hash =  NULL;
 list_t *parse_surface = NULL;
 
@@ -20,6 +21,7 @@ object_t *parse_string_core(program_t *program, const char *text)
   parse_result = NULL;
   parse_vertex = make_list();
   parse_uv = make_list();
+  parse_normal = make_list();
   parse_surface = make_list();
   YY_BUFFER_STATE buffer = yy_scan_string(text);
   if (yyparse())
@@ -39,6 +41,7 @@ object_t *parse_string(program_t *program, const char *text)
   parse_result = NULL;
   parse_vertex = NULL;
   parse_uv = NULL;
+  parse_normal = NULL;
   parse_hash = NULL;
   parse_surface = NULL;
   return result;

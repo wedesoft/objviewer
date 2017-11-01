@@ -15,6 +15,8 @@ v                           { BEGIN(nmb); return VERTEX; }
 
 vt                          { BEGIN(nmb); return UV; }
 
+vn                          { BEGIN(nmb); return NORMAL; }
+
 "s off"                     return SURFACE;
 
 f                           { BEGIN(idx); return FACET; }

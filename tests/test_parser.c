@@ -6,6 +6,7 @@
 extern object_t *parse_string_core(program_t *program, const char *text);
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
+extern list_t *parse_normal;
 extern list_t *parse_surface;
 
 
@@ -374,6 +375,30 @@ static MunitResult test_draw_with_uv(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_no_normal(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL, "");
+  munit_assert_int(parse_normal->size, ==, 0);
+  return MUNIT_OK;
+}
+
+static MunitResult test_cleanup_normals(const MunitParameter params[], void *data)
+{
+  parse_string(NULL, "");
+  munit_assert_ptr(parse_normal, ==, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_read_normal(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL, "o test\nvn 0.36 0.48 0.8");
+  munit_assert_int(parse_normal->size, ==, 3);
+  munit_assert_float(get_glfloat(parse_normal)[0], ==, 0.36f);
+  munit_assert_float(get_glfloat(parse_normal)[1], ==, 0.48f);
+  munit_assert_float(get_glfloat(parse_normal)[2], ==, 0.80f);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"             , test_empty             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"            , test_object            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -401,8 +426,8 @@ MunitTest test_parser[] = {
   {"/convert_to_vao"    , test_convert_to_vao    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_program"       , test_set_program       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/draw_object"       , test_draw_object       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_texcoord"       , test_no_texcoord       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/cleanup_texcoords" , test_cleanup_texcoords , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_texcoord"       , test_no_texcoord       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/cleanup_texcoords" , test_cleanup_texcoords , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/read_texcoord"     , test_read_texcoord     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_texcoords"     , test_two_texcoords     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/uv_facet"          , test_uv_facet          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
@@ -413,5 +438,8 @@ MunitTest test_parser[] = {
   {"/uv_in_hash_key"    , test_uv_in_hash_key    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_in_hash_key", test_vertex_in_hash_key, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/draw_with_uv"      , test_draw_with_uv      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_normal  "       , test_no_normal         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/cleanup_normals"   , test_cleanup_normals   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/read_normal"       , test_read_normal       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                 , NULL                   , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

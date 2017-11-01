@@ -9,6 +9,7 @@
 extern object_t *parse_result;
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
+extern list_t *parse_normal;
 extern hash_t *parse_hash;
 extern list_t *parse_surface;
 
@@ -69,14 +70,14 @@ static int index_vertex_uv(int vertex_index, int uv_index)
 }
 
 %type<index> index
-%token OBJECT VERTEX SURFACE FACET UV SLASH
+%token OBJECT VERTEX UV NORMAL SURFACE FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
 
 %%
 
-start: OBJECT NAME { parse_result = make_object($2); } vertices texture_coordinates surfaces
+start: OBJECT NAME { parse_result = make_object($2); } vertices texture_coordinates normals surfaces
      | /* NULL */
      ;
 
@@ -94,6 +95,16 @@ texture_coordinates: UV NUMBER NUMBER {
                    } texture_coordinates
                    | /* NULL */
                    ;
+
+normals: NORMAL NUMBER NUMBER NUMBER {
+           append_glfloat(parse_normal, $2);
+           append_glfloat(parse_normal, $3);
+           append_glfloat(parse_normal, $4);
+         }
+         | /* NULL */
+         ;
+
+
 
 surfaces: SURFACE {
             append_pointer(parse_surface, make_surface());
