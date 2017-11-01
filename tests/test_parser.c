@@ -532,6 +532,33 @@ static MunitResult test_full_indices(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_all_added(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,
+      "o test\nv 2 2 0\nv 2 3 0\nv 3 2 0\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\nvt 0 0\nvt 0 1\nvt 1 0\n"
+      "s off\nf 1/1/1 2/2/2 3/3/3");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_int(surface->array->size, ==, 24);
+  return MUNIT_OK;
+}
+
+static MunitResult test_different_indices(const MunitParameter params[], void *data)
+{
+  parse_string_core(NULL,
+      "o test\nv 2 2 0\nv 2 3 0\nv 3 2 0\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\nvt 0 0\nvt 0 1\nvt 1 0\n"
+      "s off\nf 1/2/3 2/3/1 3/1/2");
+  surface_t *surface = get_pointer(parse_surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[1], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[2], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[4], ==, 1.0f);
+  munit_assert_float(get_glfloat(surface->array)[5], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[6], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[7], ==, 1.0f);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -586,5 +613,7 @@ MunitTest test_parser[] = {
   {"/draw_with_normal"      , test_draw_with_normal      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/full_facet"            , test_full_facet            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/full_indices"          , test_full_indices          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/all_added"             , test_all_added             , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/different_indices"     , test_different_indices     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

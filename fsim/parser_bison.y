@@ -125,5 +125,5 @@ index: INDEX {
          $$ = index_vertex(6, $1, 0, $4);
        }
        | INDEX SLASH INDEX SLASH INDEX {
-         $$ = index_vertex(3, $1, 0, 0);
+         $$ = index_vertex(8, $1, $3, $5);
        }
