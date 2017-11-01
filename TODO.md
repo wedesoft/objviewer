@@ -1,12 +1,10 @@
 # TODO
 
-* texture coordinate indices (e.g. "1/1")
-* read normal vectors
 * read textures
 * check vertex index not zero
 * more parse error information
 * read Wavefront data from file
-* separate conversion to VAO from parser
+* separate conversion to VAO from parser, setup attribute pointers when converting, separate integration tests
 * look at NASA 3D models
 * link to German wikipage and use Wavefront OBJ sample from there
 * create and load Blender model

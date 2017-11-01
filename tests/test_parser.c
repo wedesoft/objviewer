@@ -489,6 +489,27 @@ static MunitResult test_vertex_and_normal_key(const MunitParameter params[], voi
   return MUNIT_OK;
 }
 
+static MunitResult test_draw_with_normal(const MunitParameter params[], void *data)
+{
+  program_t *program = make_program("vertex-normal-identity.glsl", "fragment-normal.glsl");
+  object_t *object =
+    parse_string(program,"o test\nv 0.5 0.5 0\nv -0.5 0.5 0\nv -0.5 -0.5 0\nvn 0 0 1\nvn 0 1 0\nvn 1 0 0\ns off\nf 1//1 2//2 3//3");
+  vertex_array_object_t *vertex_array_object = get_pointer(object->vertex_array_object)[0];
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 6);
+  setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, 6);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glClearColor(0, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT);
+  render(object);
+  glFinish();
+  unsigned char *pixels = read_pixels();
+  write_ppm("draw_normal.ppm", width, height, pixels);
+  munit_assert_int(pixels[( 5 * 32 + 8 ) * 4 + 0], >=, 192);
+  munit_assert_int(pixels[(14 * 32 + 8 ) * 4 + 0], < ,  64);
+  munit_assert_int(pixels[(14 * 32 + 8 ) * 4 + 1], >=, 192);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -540,5 +561,6 @@ MunitTest test_parser[] = {
   {"/reuse_normal"          , test_reuse_normal          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/normal_in_hash_key"    , test_normal_in_hash_key    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_and_normal_key" , test_vertex_and_normal_key , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/draw_with_normal"      , test_draw_with_normal      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
