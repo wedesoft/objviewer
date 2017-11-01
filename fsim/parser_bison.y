@@ -77,50 +77,53 @@ static int index_vertex_uv(int vertex_index, int uv_index)
 
 %%
 
-start: OBJECT NAME { parse_result = make_object($2); } vertices texture_coordinates normals surfaces
+start: OBJECT NAME { parse_result = make_object($2); } vectors surfaces
      | /* NULL */
      ;
 
-vertices: VERTEX NUMBER NUMBER NUMBER {
-            append_glfloat(parse_vertex, $2);
-            append_glfloat(parse_vertex, $3);
-            append_glfloat(parse_vertex, $4);
-          } vertices
+vectors: vector vectors
+       | /* NULL */
+       ;
+
+vector: vertex
+      | texture_coordinate
+      | normal
+
+vertex: VERTEX NUMBER NUMBER NUMBER {
+          append_glfloat(parse_vertex, $2);
+          append_glfloat(parse_vertex, $3);
+          append_glfloat(parse_vertex, $4);
+        }
+
+texture_coordinate: UV NUMBER NUMBER {
+                      append_glfloat(parse_uv, $2);
+                      append_glfloat(parse_uv, $3);
+                    }
+
+normal: NORMAL NUMBER NUMBER NUMBER {
+          append_glfloat(parse_normal, $2);
+          append_glfloat(parse_normal, $3);
+          append_glfloat(parse_normal, $4);
+        }
+
+surfaces: surface surfaces
         | /* NULL */
         ;
 
-texture_coordinates: UV NUMBER NUMBER {
-                     append_glfloat(parse_uv, $2);
-                     append_glfloat(parse_uv, $3);
-                   } texture_coordinates
-                   | /* NULL */
-                   ;
+surface: SURFACE {
+           append_pointer(parse_surface, make_surface());
+           parse_hash = make_hash();
+         } facets
 
-normals: NORMAL NUMBER NUMBER NUMBER {
-           append_glfloat(parse_normal, $2);
-           append_glfloat(parse_normal, $3);
-           append_glfloat(parse_normal, $4);
-         }
-         | /* NULL */
-         ;
-
-
-
-surfaces: SURFACE {
-            append_pointer(parse_surface, make_surface());
-            parse_hash = make_hash();
-          } facets surfaces
-        | /* NULL */
-        ;
-
-facets: FACET indices facets
+facets: facet facets
       | /* NULL */
       ;
 
+facet: FACET indices more_indices
+
 indices: index index index {
            add_triangle(last_surface(), $1, $2, $3);
-         } more_indices
-       ;
+         }
 
 more_indices: index {
                 extend_triangle(last_surface(), $1);
@@ -134,4 +137,3 @@ index: INDEX {
        | INDEX SLASH INDEX {
          $$ = index_vertex_uv($1, $3);
        }
-       ;
