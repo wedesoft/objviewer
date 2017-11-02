@@ -11,7 +11,6 @@ extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
 extern hash_t *parse_hash;
-extern list_t *parse_surface;
 
 extern int yylex(void);
 
@@ -22,7 +21,8 @@ void yyerror(const char *message)
 
 static surface_t *last_surface(void)
 {
-  return get_pointer(parse_surface)[parse_surface->size - 1];
+  list_t *surface = parse_result->surface;
+  return get_pointer(surface)[surface->size - 1];
 }
 
 static void copy_vertex_data(int index, int stride, list_t *source)
@@ -95,7 +95,7 @@ surfaces: surface surfaces
         ;
 
 surface: SURFACE {
-           append_pointer(parse_surface, make_surface());
+           add_surface(parse_result, make_surface());
            parse_hash = make_hash();
          } facets
 

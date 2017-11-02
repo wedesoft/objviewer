@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "fsim/object.h"
+#include "fsim/program.h"
+#include "fsim/vertex_array_object.h"
 #include "fsim/projection.h"
 
 
@@ -20,6 +22,7 @@ float distance = 2;
 
 object_t *object;
 program_t *program;
+list_t *list;
 
 void transform(void)
 {
@@ -54,7 +57,7 @@ void onDisplay(void)
   light();
   glClearColor(0, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  render(object);
+  render(list);
   glutSwapBuffers();
 }
 
@@ -117,7 +120,9 @@ int main(int argc, char **argv)
   setup_vertex_attribute_pointer(vertex_array_object, "vector"  , 3, 8);
   add_texture(vertex_array_object, make_texture("tex"), read_image("colors.png"));
   object = make_object("tetraeder");
-  add_vertex_array_object(object, vertex_array_object);
+  add_surface(object, surface);
+  list = make_list();
+  append_pointer(list, vertex_array_object);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);

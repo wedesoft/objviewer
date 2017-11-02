@@ -1,6 +1,8 @@
 # TODO
 
 * separate conversion to VAO from parser, setup attribute pointers when converting, separate integration tests
+* surface -> group
+* group: nested object
 * negative indices
 * ignore surfaces (use groups instead)
 * material files, read textures

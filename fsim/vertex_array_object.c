@@ -60,3 +60,17 @@ void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture,
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
+
+void draw_elements(vertex_array_object_t *vertex_array_object)
+{
+  glUseProgram(vertex_array_object->program->program);
+  glBindVertexArray(vertex_array_object->vertex_array_object);
+  glDrawElements(GL_TRIANGLES, vertex_array_object->n_indices, GL_UNSIGNED_INT, (void *)0);
+}
+
+void render(list_t *vertex_array_object)
+{
+  int i;
+  for (i=0; i<vertex_array_object->size; i++)
+    draw_elements(get_pointer(vertex_array_object)[i]);
+}
