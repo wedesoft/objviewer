@@ -30,7 +30,8 @@ static int hash_find_str(hash_t *hash, char *key, int value_if_not_found)
 
 int hash_find(hash_t *hash, int key1, int key2, int key3, int value_if_not_found)
 {
-  char *str = GC_MALLOC_ATOMIC(13);
-  snprintf(str, 20, "%d,%d,%d", key1, key2, key3);
+  const int keysize = 20;
+  char *str = GC_MALLOC_ATOMIC(keysize);
+  snprintf(str, keysize, "%d,%d,%d", key1, key2, key3);
   return hash_find_str(hash, str, value_if_not_found);
 }
