@@ -29,8 +29,8 @@ static MunitResult test_perspective(const MunitParameter params[], void *data)
 }
 
 MunitTest test_projection[] = {
-  {"/horizontal_fov", test_horizontal_fov, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/vertical_fov"  , test_vertical_fov  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/perspective"   , test_perspective   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/horizontal_fov", test_horizontal_fov, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertical_fov"  , test_vertical_fov  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/perspective"   , test_perspective   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL             , NULL               , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

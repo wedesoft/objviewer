@@ -112,18 +112,18 @@ static MunitResult test_get_pointer(const MunitParameter params[], void *data)
 }
 
 MunitTest test_list[] = {
-  {"/zero_size"      , test_zero_size      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/append_gluint"  , test_append_gluint  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/get_gluint"     , test_get_gluint     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/append_two"     , test_append_two     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/get_two"        , test_get_two        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/initial_storage", test_initial_storage, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/allocation"     , test_allocation     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/reallocation"   , test_reallocation   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/double_size"    , test_double_size    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/append_glfloat" , test_append_glfloat , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/get_glfloat"    , test_get_glfloat    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/append_pointer" , test_append_pointer , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/get_pointer"    , test_get_pointer    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/zero_size"      , test_zero_size      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/append_gluint"  , test_append_gluint  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/get_gluint"     , test_get_gluint     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/append_two"     , test_append_two     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/get_two"        , test_get_two        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/initial_storage", test_initial_storage, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/allocation"     , test_allocation     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/reallocation"   , test_reallocation   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/double_size"    , test_double_size    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/append_glfloat" , test_append_glfloat , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/get_glfloat"    , test_get_glfloat    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/append_pointer" , test_append_pointer , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/get_pointer"    , test_get_pointer    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL              , NULL                , NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}
 };
