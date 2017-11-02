@@ -113,16 +113,15 @@ int main(int argc, char **argv)
   add_triangle(surface, 3, 2, 1);
   add_triangle(surface, 3, 0, 2);
   add_triangle(surface, 1, 0, 3);
+  object = make_object("tetraeder");
+  add_surface(object, surface);
   program = make_program("vertex.glsl", "fragment.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  list = make_vertex_array_object_list(program, object);
+  vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
   setup_vertex_attribute_pointer(vertex_array_object, "point"   , 3, 8);
   setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, 8);
   setup_vertex_attribute_pointer(vertex_array_object, "vector"  , 3, 8);
   add_texture(vertex_array_object, make_texture("tex"), read_image("colors.png"));
-  object = make_object("tetraeder");
-  add_surface(object, surface);
-  list = make_list();
-  append_pointer(list, vertex_array_object);
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);

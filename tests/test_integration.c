@@ -16,12 +16,10 @@ static MunitResult test_draw_triangle(const MunitParameter params[], void *data)
                  "v -0.5 -0.5 0\n"
                  "s off\n"
                  "f 1 2 3");
-  surface_t *surface = get_pointer(object->surface)[0];
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  list_t *list = make_vertex_array_object_list(program, object);
+  vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
-  list_t *list = make_list();
-  append_pointer(list, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0, 1, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -53,11 +51,10 @@ static MunitResult test_use_normal(const MunitParameter params[], void *data)
                  "f 1//1 2//2 3//3");
   surface_t *surface = get_pointer(object->surface)[0];
   program_t *program = make_program("vertex-normal-identity.glsl", "fragment-normal.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  list_t *list = make_vertex_array_object_list(program, object);
+  vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
   setup_vertex_attribute_pointer(vertex_array_object, "point" , 3, 6);
   setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, 6);
-  list_t *list = make_list();
-  append_pointer(list, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -87,12 +84,11 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
                  "f 1/1 2/2 4/4 3/3");
   surface_t *surface = get_pointer(object->surface)[0];
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  list_t *list = make_vertex_array_object_list(program, object);
+  vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
   add_texture(vertex_array_object, make_texture("tex"), read_image("colors.png"));
-  list_t *list = make_list();
-  append_pointer(list, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -120,10 +116,9 @@ static MunitResult test_perspective_triangle(const MunitParameter params[], void
                  "f 1 2 3");
   surface_t *surface = get_pointer(object->surface)[0];
   program_t *program = make_program("vertex-projection.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  list_t *list = make_vertex_array_object_list(program, object);
+  vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
   setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
-  list_t *list = make_list();
-  append_pointer(list, vertex_array_object);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   uniform_matrix(program, "projection", projection(width, height, 0.1, 2.0, 90.0));
   glClearColor(0, 0, 0, 1);

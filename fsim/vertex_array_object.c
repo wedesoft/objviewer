@@ -38,6 +38,15 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   return retval;
 }
 
+list_t *make_vertex_array_object_list(program_t *program, object_t *object)
+{
+  list_t *result = make_list();
+  int i;
+  for (i=0; i<object->surface->size; i++)
+    append_pointer(result, make_vertex_array_object(program, get_pointer(object->surface)[i]));
+  return result;
+}
+
 void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride)
 {
   glBindVertexArray(vertex_array_object->vertex_array_object);

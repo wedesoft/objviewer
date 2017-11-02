@@ -1,6 +1,6 @@
 # TODO
 
-* separate conversion to VAO from parser, setup attribute pointers when converting, separate integration tests
+* setup attribute pointers when converting
 * surface -> group
 * group: nested object
 * negative indices

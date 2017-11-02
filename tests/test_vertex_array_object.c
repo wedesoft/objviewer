@@ -55,11 +55,41 @@ static MunitResult test_add_texture(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_make_empty_vao_list(const MunitParameter params[], void *data)
+{
+  munit_assert_int(make_vertex_array_object_list(NULL, make_object("test"))->size, ==, 0);
+  return MUNIT_OK;
+}
+
+static MunitResult test_vao_list_entry(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface();
+  object_t *object = make_object("test");
+  add_surface(object, surface);
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
+  munit_assert_int(make_vertex_array_object_list(program, object)->size, ==, 1);
+  return MUNIT_OK;
+}
+
+static MunitResult test_vao_list_program(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface();
+  object_t *object = make_object("test");
+  add_surface(object, surface);
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
+  list_t *list = make_vertex_array_object_list(program, object);
+  munit_assert_ptr(((vertex_array_object_t *)get_pointer(list)[0])->program, ==, program);
+  return MUNIT_OK;
+}
+
 MunitTest test_vao[] = {
   {"/no_attribute_pointers"     , test_no_attribute_pointers     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_attribute_pointer"     , test_add_attribute_pointer     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_two_attribute_pointers", test_add_two_attribute_pointers, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_textures"               , test_no_textures               , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_texture"               , test_add_texture               , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/make_empty_vao_list"       , test_make_empty_vao_list       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vao_list_entry"            , test_vao_list_entry            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vao_list_program"          , test_vao_list_program          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                         , NULL                           , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
