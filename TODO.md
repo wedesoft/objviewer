@@ -1,13 +1,12 @@
 # TODO
 
-* negative indices
 * separate conversion to VAO from parser, setup attribute pointers when converting, separate integration tests
+* negative indices
 * ignore surfaces (use groups instead)
-* read textures
+* material files, read textures
 * more parse error information
 * read Wavefront data from file
 * look at NASA 3D models
-* link to German wikipage and use Wavefront OBJ sample from there
 * create and load Blender model
 * materials
 * rename project and library
