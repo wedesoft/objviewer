@@ -11,27 +11,43 @@ static MunitResult test_no_attribute_pointers(const MunitParameter params[], voi
   return MUNIT_OK;
 }
 
-static MunitResult test_add_attribute_pointer(const MunitParameter params[], void *data)
+static MunitResult test_vertex_attribute(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface(3);
-  add_vertex_data(surface, 3, 0.5f,  0.5f, 0.0f);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   munit_assert_int(program->n_attributes, ==, 1);
   munit_assert_int(program->attribute_pointer, ==, 3 * sizeof(float));
   return MUNIT_OK;
 }
 
-static MunitResult test_add_two_attribute_pointers(const MunitParameter params[], void *data)
+static MunitResult test_vertex_and_uv(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface(5);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
-  setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
   munit_assert_int( program->n_attributes, ==, 2);
   munit_assert_int(program->attribute_pointer, ==, 5 * sizeof(float));
+  return MUNIT_OK;
+}
+
+static MunitResult test_vertex_uv_and_normal(const MunitParameter params[], void *data)
+{
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
+  surface_t *surface = make_surface(8);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  munit_assert_int( program->n_attributes, ==, 3);
+  munit_assert_int(program->attribute_pointer, ==, 8 * sizeof(float));
+  return MUNIT_OK;
+}
+
+static MunitResult test_vertex_and_normal(const MunitParameter params[], void *data)
+{
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
+  surface_t *surface = make_surface(6);
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
+  munit_assert_int( program->n_attributes, ==, 2);
+  munit_assert_int(program->attribute_pointer, ==, 6 * sizeof(float));
   return MUNIT_OK;
 }
 
@@ -83,13 +99,15 @@ static MunitResult test_vao_list_program(const MunitParameter params[], void *da
 }
 
 MunitTest test_vao[] = {
-  {"/no_attribute_pointers"     , test_no_attribute_pointers     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_attribute_pointer"     , test_add_attribute_pointer     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_two_attribute_pointers", test_add_two_attribute_pointers, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_textures"               , test_no_textures               , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_texture"               , test_add_texture               , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/make_empty_vao_list"       , test_make_empty_vao_list       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/vao_list_entry"            , test_vao_list_entry            , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/vao_list_program"          , test_vao_list_program          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {NULL                         , NULL                           , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
+  {"/no_attribute_pointers", test_no_attribute_pointers, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_attribute"     , test_vertex_attribute     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_and_uv"        , test_vertex_and_uv        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_and_normal"    , test_vertex_and_normal    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_uv_and_normal" , test_vertex_uv_and_normal , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_textures"          , test_no_textures          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_texture"          , test_add_texture          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/make_empty_vao_list"  , test_make_empty_vao_list  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vao_list_entry"       , test_vao_list_entry       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vao_list_program"     , test_vao_list_program     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {NULL                    , NULL                      , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

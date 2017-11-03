@@ -113,6 +113,14 @@ static MunitResult test_facet(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_vertex_stride(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
+  surface_t *surface = get_pointer(parse_result->surface)[0];
+  munit_assert_int(surface->stride, ==, 3);
+  return MUNIT_OK;
+}
+
 static MunitResult test_indices(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
@@ -258,6 +266,14 @@ static MunitResult test_uv_facet(const MunitParameter params[], void *data)
   parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
   surface_t *surface = get_pointer(parse_result->surface)[0];
   munit_assert_int(surface->vertex_index->size, ==, 3);
+  return MUNIT_OK;
+}
+
+static MunitResult test_vertex_and_uv_stride(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
+  surface_t *surface = get_pointer(parse_result->surface)[0];
+  munit_assert_int(surface->stride, ==, 5);
   return MUNIT_OK;
 }
 
@@ -502,6 +518,7 @@ MunitTest test_parser[] = {
   {"/start_surface"         , test_start_surface         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_surfaces"          , test_two_surfaces          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/facet"                 , test_facet                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_stride"         , test_vertex_stride         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/indices"               , test_indices               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/coord_count"           , test_coord_count           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/copy_coords"           , test_copy_coords           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -517,6 +534,7 @@ MunitTest test_parser[] = {
   {"/read_texcoord"         , test_read_texcoord         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_texcoords"         , test_two_texcoords         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/uv_facet"              , test_uv_facet              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/vertex_and_uv_stride"  , test_vertex_and_uv_stride  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/reuse_uv"              , test_reuse_uv              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/uv_indices"            , test_uv_indices            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/uv_added"              , test_uv_added              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

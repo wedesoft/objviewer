@@ -35,6 +35,11 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   glGenBuffers(1, &retval->element_buffer_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index->element, GL_STATIC_DRAW);
+  setup_vertex_attribute_pointer(retval, "point", 3, surface->stride);
+  if (surface->stride == 5 || surface->stride == 8)
+    setup_vertex_attribute_pointer(retval, "texcoord", 2, surface->stride);
+  if (surface->stride == 6 || surface->stride == 8)
+    setup_vertex_attribute_pointer(retval, "vector", 3, surface->stride);
   return retval;
 }
 

@@ -35,7 +35,9 @@ static void copy_vertex_data(int index, int stride, list_t *source)
 
 static int index_vertex(int stride, int vertex_index, int uv_index, int normal_index)
 {
-  int n_indices = last_surface()->array->size / stride;
+  surface_t *surface = last_surface();
+  surface->stride = stride;
+  int n_indices = surface->array->size / stride;
   int result = hash_find(parse_hash, vertex_index, uv_index, normal_index, n_indices);
   if (result == n_indices) {
     copy_vertex_data(vertex_index - 1, 3, parse_vertex);

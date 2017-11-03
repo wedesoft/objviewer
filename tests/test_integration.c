@@ -19,7 +19,6 @@ static MunitResult test_draw_triangle(const MunitParameter params[], void *data)
   program_t *program = make_program("vertex-identity.glsl", "fragment-blue.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
   vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
-  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0, 1, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -53,8 +52,6 @@ static MunitResult test_use_normal(const MunitParameter params[], void *data)
   program_t *program = make_program("vertex-normal-identity.glsl", "fragment-normal.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
   vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
-  setup_vertex_attribute_pointer(vertex_array_object, "point" , 3, 6);
-  setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, 6);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -86,8 +83,6 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
   vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
-  setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
-  setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
   add_texture(vertex_array_object, make_texture("tex"), read_image("colors.png"));
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   glClearColor(0, 0, 0, 1);
@@ -118,7 +113,6 @@ static MunitResult test_perspective_triangle(const MunitParameter params[], void
   program_t *program = make_program("vertex-projection.glsl", "fragment-blue.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
   vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
-  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
   uniform_matrix(program, "projection", projection(width, height, 0.1, 2.0, 90.0));
   glClearColor(0, 0, 0, 1);

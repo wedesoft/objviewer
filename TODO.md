@@ -2,6 +2,7 @@
 
 * setup attribute pointers when converting
 * surface -> group
+* render to VAOs with one program (setup of vertex array pointers)
 * group: nested object
 * negative indices
 * ignore surfaces (use groups instead)
@@ -16,6 +17,8 @@
 * objects with kinematic chain
 * shadows (mask color pipeline output)
 * blinking beacon lights
+* EF2000 like cockpit controls (quick access views)
+* EF2000 like gear suspension
 * HDR bloom (separable convolution)
 * multisampling
 * windows (blending, reflections), greyscale cameras, MFDs
