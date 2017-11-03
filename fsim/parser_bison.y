@@ -6,7 +6,10 @@
 #include "hash.h"
 
 
+#define YYERROR_VERBOSE 1
+
 extern object_t *parse_result;
+extern hash_t *parse_material;
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
@@ -56,22 +59,22 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT MTLLIB VERTEX UV NORMAL SURFACE FACET SLASH
+%token OBJECT MATERIAL VERTEX UV NORMAL SURFACE FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
 
 %%
 
-start: object mtllib vectors surfaces
+start: object materials vectors surfaces
      | /* NULL */
      ;
 
 object: OBJECT NAME { parse_result = make_object($2); }
 
-mtllib: MTLLIB NAME
-      | /* NULL */
-      ;
+materials: MATERIAL NAME { hash_find_material(parse_material, $2, make_material()); }
+         | /* NULL */
+         ;
 
 vectors: vector vectors
        | /* NULL */

@@ -48,6 +48,7 @@ make check -j
 * [Prepar3D][22]
 * [Project Apollo NASSP add-on for Orbiter][25]
 * [NASA 3D models][26]
+* [Handling multiple input buffers with Flex][27]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -74,3 +75,4 @@ make check -j
 [23]: https://nemequ.github.io/munit/
 [25]: https://github.com/dseagrav/NASSP/
 [26]: https://nasa3d.arc.nasa.gov/models
+[27]: http://sector7.xray.aps.anl.gov/~dohnarms/programming/flex/html/Multiple-Input-Buffers.html

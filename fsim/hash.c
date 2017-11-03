@@ -43,4 +43,3 @@ material_t *hash_find_material(hash_t *hash, const char *key, material_t *materi
   strcpy(str, key);
   return hash_find_str(hash, str, material);
 }
-

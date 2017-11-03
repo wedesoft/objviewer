@@ -1,13 +1,15 @@
 #include "fsim/parser.h"
 #include "fsim/list.h"
+#include "fsim/hash.h"
 #include "test_helper.h"
 
 
 extern object_t *parse_string_core(const char *text);
+extern object_t *parse_result;
+extern hash_t *parse_material;
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
-extern object_t *parse_result;
 
 
 static MunitResult test_empty(const MunitParameter params[], void *data)
@@ -511,7 +513,21 @@ static MunitResult test_material_filename(const MunitParameter params[], void *d
 
 static MunitResult test_material_name(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\ntllib test.mtl");
+  parse_string_core("o test\nmtllib test.mtl");
+  munit_assert_ptr(hash_find_material(parse_material, "testmaterial", NULL), !=, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_file_not_found(const MunitParameter params[], void *data)
+{
+  munit_assert_ptr(parse_string("o test\nmtllib nosuchfile.mtl"), !=, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_continue_after_include(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nmtllib test.mtl\nv 1 2 3");
+  munit_assert_int(parse_vertex->size, ==, 3);
   return MUNIT_OK;
 }
 
@@ -571,5 +587,7 @@ MunitTest test_parser[] = {
   {"/different_indices"     , test_different_indices     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/material_filename"     , test_material_filename     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/material_name"         , test_material_name         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/file_not_found"        , test_file_not_found        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/continue_after_include", test_continue_after_include, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

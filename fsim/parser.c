@@ -9,7 +9,7 @@ extern YY_BUFFER_STATE yy_scan_string(const char * str);
 extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
 
 object_t *parse_result = NULL;
-char *parse_mtl_lib = NULL;
+hash_t *parse_material = NULL;
 list_t *parse_vertex = NULL;
 list_t *parse_uv = NULL;
 list_t *parse_normal = NULL;
@@ -19,13 +19,13 @@ hash_t *parse_hash =  NULL;
 object_t *parse_string_core(const char *text)
 {
   parse_result = NULL;
+  parse_material = make_hash();
   parse_vertex = make_list();
   parse_uv = make_list();
   parse_normal = make_list();
   YY_BUFFER_STATE buffer = yy_scan_string(text);
   if (yyparse())
     parse_result = NULL;
-  yy_delete_buffer(buffer);
   return parse_result;
 }
 

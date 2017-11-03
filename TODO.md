@@ -1,5 +1,6 @@
 # TODO
 
+* skip leading whitespace
 * ignore comments
 * parse material file
 * setup attribute pointers when converting

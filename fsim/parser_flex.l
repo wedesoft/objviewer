@@ -5,13 +5,15 @@
 
 %option noyywrap
 
-%x name nmb idx
+%x name nmb idx mtllib
 
 %%
 
 "o "                                       { BEGIN(name); return OBJECT; }
 
-"mtllib "                                  { BEGIN(name); return MTLLIB; }
+"mtllib "                                  BEGIN(mtllib);
+
+"newmtl "                                  { BEGIN(name); return MATERIAL; }
 
 v                                          { BEGIN(nmb); return VERTEX; }
 
@@ -35,7 +37,22 @@ f                                          { BEGIN(idx); return FACET; }
 <idx>" "                                   ;
 <idx>\n                                    BEGIN(INITIAL);
 
+<mtllib>.*                                 {
+                                             yyin = fopen(yytext, "r");
+                                             if (yyin)
+                                               yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+                                             BEGIN(INITIAL);
+                                           }
+
 [\n ]                                      ;
+
+<<EOF>>                                    {
+                                             if (yy_buffer_stack_top > 0)
+                                               fclose(yyin);
+                                             yypop_buffer_state();
+                                             if (!YY_CURRENT_BUFFER)
+                                               yyterminate();
+                                           }
 
 .                                          return *yytext;
 
