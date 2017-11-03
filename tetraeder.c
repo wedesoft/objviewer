@@ -7,6 +7,7 @@
 #include "fsim/program.h"
 #include "fsim/vertex_array_object.h"
 #include "fsim/projection.h"
+#include "fsim/parser.h"
 
 
 #ifndef M_PI
@@ -104,17 +105,25 @@ int main(int argc, char **argv)
   glewInit();
   glEnable(GL_DEPTH_TEST);
 
-  surface_t *surface = make_surface();
-  add_vertex_data(surface, 8,  0.5f,  0.5f,  0.5f, 16.0f, 16.0f, -0.577350269f,  0.577350269f,  0.577350269f);
-  add_vertex_data(surface, 8, -0.5f,  0.5f, -0.5f,  0.0f, 16.0f, -0.577350269f, -0.577350269f, -0.577350269f);
-  add_vertex_data(surface, 8, -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  0.577350269f, -0.577350269f,  0.577350269f);
-  add_vertex_data(surface, 8,  0.5f, -0.5f, -0.5f, 16.0f,  0.0f,  0.577350269f,  0.577350269f, -0.577350269f);
-  add_triangle(surface, 1, 2, 0);
-  add_triangle(surface, 3, 2, 1);
-  add_triangle(surface, 3, 0, 2);
-  add_triangle(surface, 1, 0, 3);
-  object = make_object("tetraeder");
-  add_surface(object, surface);
+  object =
+    parse_string("o tetraeder\n"
+                 "v  0.5  0.5  0.5\n"
+                 "v -0.5  0.5 -0.5\n"
+                 "v -0.5 -0.5  0.5\n"
+                 "v  0.5 -0.5 -0.5\n"
+                 "vt 16 16\n"
+                 "vt  0 16\n"
+                 "vt  0  0\n"
+                 "vt 16  0\n"
+                 "vn -0.577350269  0.577350269  0.577350269\n"
+                 "vn -0.577350269 -0.577350269 -0.577350269\n"
+                 "vn  0.577350269 -0.577350269  0.577350269\n"
+                 "vn  0.577350269  0.577350269 -0.577350269\n"
+                 "s off\n"
+                 "f 2/2/2 3/3/3 1/1/1\n"
+                 "f 4/4/4 3/3/3 2/2/2\n"
+                 "f 4/4/4 1/1/1 3/3/3\n"
+                 "f 2/2/2 1/1/1 4/4/4");
   program = make_program("vertex.glsl", "fragment.glsl");
   list = make_vertex_array_object_list(program, object);
   vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
