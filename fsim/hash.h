@@ -2,6 +2,7 @@
 #define _GNU_SOURCE
 #define __USE_GNU
 #include <search.h>
+#include "material.h"
 
 
 typedef struct {
@@ -10,4 +11,6 @@ typedef struct {
 
 hash_t *make_hash(void);
 
-int hash_find(hash_t *hash, int key1, int key2, int key3, int value_if_not_found);
+int hash_find_index(hash_t *hash, int key1, int key2, int key3, int value_if_not_found);
+
+material_t *hash_find_material(hash_t *hash, const char *key, material_t *material);

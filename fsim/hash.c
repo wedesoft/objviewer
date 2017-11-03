@@ -19,19 +19,28 @@ hash_t *make_hash(void)
   return result;
 }
 
-static int hash_find_str(hash_t *hash, char *key, int value_if_not_found)
+static void *hash_find_str(hash_t *hash, char *key, void *value_if_not_found)
 {
-  long int value = value_if_not_found;
-  ENTRY item = {key, (void *)value};
+  ENTRY item = {key, value_if_not_found};
   ENTRY *result;
   hsearch_r(item, ENTER, &result, &hash->table);
-  return (long int)result->data;
+  return result->data;
 }
 
-int hash_find(hash_t *hash, int key1, int key2, int key3, int value_if_not_found)
+int hash_find_index(hash_t *hash, int key1, int key2, int key3, int value_if_not_found)
 {
   const int keysize = 20;
   char *str = GC_MALLOC_ATOMIC(keysize);
   snprintf(str, keysize, "%d,%d,%d", key1, key2, key3);
-  return hash_find_str(hash, str, value_if_not_found);
+  long int result = value_if_not_found;
+  result = (long int)hash_find_str(hash, str, (void *)result);
+  return (int)result;
 }
+
+material_t *hash_find_material(hash_t *hash, const char *key, material_t *material)
+{
+  char *str = GC_MALLOC_ATOMIC(strlen(key));
+  strcpy(str, key);
+  return hash_find_str(hash, str, material);
+}
+

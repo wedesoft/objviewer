@@ -11,6 +11,8 @@
 
 "o "                                       { BEGIN(name); return OBJECT; }
 
+"mtllib "                                  { BEGIN(name); return MTLLIB; }
+
 v                                          { BEGIN(nmb); return VERTEX; }
 
 vt                                         { BEGIN(nmb); return UV; }

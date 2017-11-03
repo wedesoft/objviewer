@@ -38,7 +38,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
   surface_t *surface = last_surface();
   surface->stride = stride;
   int n_indices = surface->array->size / stride;
-  int result = hash_find(parse_hash, vertex_index, uv_index, normal_index, n_indices);
+  int result = hash_find_index(parse_hash, vertex_index, uv_index, normal_index, n_indices);
   if (result == n_indices) {
     copy_vertex_data(vertex_index - 1, 3, parse_vertex);
     if (uv_index) copy_vertex_data(uv_index - 1, 2, parse_uv);
@@ -56,16 +56,22 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT VERTEX UV NORMAL SURFACE FACET SLASH
+%token OBJECT MTLLIB VERTEX UV NORMAL SURFACE FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
 
 %%
 
-start: OBJECT NAME { parse_result = make_object($2); } vectors surfaces
+start: object mtllib vectors surfaces
      | /* NULL */
      ;
+
+object: OBJECT NAME { parse_result = make_object($2); }
+
+mtllib: MTLLIB NAME
+      | /* NULL */
+      ;
 
 vectors: vector vectors
        | /* NULL */

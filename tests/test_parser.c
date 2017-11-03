@@ -7,7 +7,7 @@ extern object_t *parse_string_core(const char *text);
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
-object_t *parse_result = NULL;
+extern object_t *parse_result;
 
 
 static MunitResult test_empty(const MunitParameter params[], void *data)
@@ -503,6 +503,18 @@ static MunitResult test_different_indices(const MunitParameter params[], void *d
   return MUNIT_OK;
 }
 
+static MunitResult test_material_filename(const MunitParameter params[], void *data)
+{
+  munit_assert_ptr(parse_string("o test\nmtllib empty.mtl"), !=, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_material_name(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\ntllib test.mtl");
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -557,5 +569,7 @@ MunitTest test_parser[] = {
   {"/full_indices"          , test_full_indices          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/all_added"             , test_all_added             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/different_indices"     , test_different_indices     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/material_filename"     , test_material_filename     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/material_name"         , test_material_name         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

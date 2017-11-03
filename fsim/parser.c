@@ -9,6 +9,7 @@ extern YY_BUFFER_STATE yy_scan_string(const char * str);
 extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
 
 object_t *parse_result = NULL;
+char *parse_mtl_lib = NULL;
 list_t *parse_vertex = NULL;
 list_t *parse_uv = NULL;
 list_t *parse_normal = NULL;

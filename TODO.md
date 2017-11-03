@@ -1,13 +1,15 @@
 # TODO
 
+* ignore comments
+* parse material file
 * setup attribute pointers when converting
 * surface -> group
+* more parse error information, reset lexer and parser
 * render to VAOs with one program (setup of vertex array pointers)
 * group: nested object
 * negative indices
 * ignore surfaces (use groups instead)
 * material files, read textures
-* more parse error information
 * read Wavefront data from file
 * look at NASA 3D models
 * create and load Blender model
