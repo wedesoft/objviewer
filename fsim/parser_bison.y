@@ -95,7 +95,7 @@ surfaces: surface surfaces
         ;
 
 surface: SURFACE {
-           add_surface(parse_result, make_surface());
+           add_surface(parse_result, make_surface(0));
            parse_hash = make_hash();
          } facets
 

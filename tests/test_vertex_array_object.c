@@ -14,10 +14,10 @@ static MunitResult test_no_attribute_pointers(const MunitParameter params[], voi
 static MunitResult test_add_attribute_pointer(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  surface_t *surface = make_surface();
+  surface_t *surface = make_surface(3);
   add_vertex_data(surface, 3, 0.5f,  0.5f, 0.0f);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 5);
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, 3);
   munit_assert_int(program->n_attributes, ==, 1);
   munit_assert_int(program->attribute_pointer, ==, 3 * sizeof(float));
   return MUNIT_OK;
@@ -26,7 +26,7 @@ static MunitResult test_add_attribute_pointer(const MunitParameter params[], voi
 static MunitResult test_add_two_attribute_pointers(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  surface_t *surface = make_surface();
+  surface_t *surface = make_surface(5);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   setup_vertex_attribute_pointer(vertex_array_object, "point"             , 3, 5);
   setup_vertex_attribute_pointer(vertex_array_object, "texture_coordinate", 2, 5);
@@ -38,14 +38,14 @@ static MunitResult test_add_two_attribute_pointers(const MunitParameter params[]
 static MunitResult test_no_textures(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface());
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_surface(5));
   munit_assert_int(vertex_array_object->texture->size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_add_texture(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface();
+  surface_t *surface = make_surface(5);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
   texture_t *texture = make_texture("tex");
@@ -63,7 +63,7 @@ static MunitResult test_make_empty_vao_list(const MunitParameter params[], void 
 
 static MunitResult test_vao_list_entry(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface();
+  surface_t *surface = make_surface(5);
   object_t *object = make_object("test");
   add_surface(object, surface);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
@@ -73,7 +73,7 @@ static MunitResult test_vao_list_entry(const MunitParameter params[], void *data
 
 static MunitResult test_vao_list_program(const MunitParameter params[], void *data)
 {
-  surface_t *surface = make_surface();
+  surface_t *surface = make_surface(5);
   object_t *object = make_object("test");
   add_surface(object, surface);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");

@@ -2,11 +2,12 @@
 #include "surface.h"
 
 
-surface_t *make_surface(void)
+surface_t *make_surface(int stride)
 {
   surface_t *retval = GC_MALLOC(sizeof(surface_t));
   retval->array = make_list();
   retval->vertex_index = make_list();
+  retval->stride = stride;
   return retval;
 }
 
