@@ -10,8 +10,8 @@ EXTRA_DIST = fragment-blue.glsl fragment-normal.glsl fragment-red.glsl fragment-
 							vertex-texcoord.glsl vertex-uv.glsl fragment-uv.glsl empty.mtl test.mtl colors.png
 
 suite_SOURCES = suite.c munit.c \
-								test_hash.c test_helper.c test_image.c test_integration.c test_list.c test_object.c \
-								test_parser.c test_program.c test_projection.c test_shader.c test_surface.c \
+								test_hash.c test_helper.c test_image.c test_integration.c test_list.c test_material.c \
+								test_object.c test_parser.c test_program.c test_projection.c test_shader.c test_surface.c \
 								test_texture.c test_vertex_array_object.c
 suite_CFLAGS = -I.. $(MAGICK_CFLAGS) $(GLEW_CFLAGS) $(GL_CFLAGS) $(BOEHM_CFLAGS)
 suite_LDADD = ../fsim/librender.la $(GLEW_LIBS) $(GL_LIBS) $(BOEHM_LIBS)

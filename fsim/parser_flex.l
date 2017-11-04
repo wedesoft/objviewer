@@ -5,57 +5,55 @@
 
 %option noyywrap
 
-%x name nmb idx mtllib
+%x name idx mtllib
 
 %%
 
-"o "                                       { BEGIN(name); return OBJECT; }
+"o "                                  { BEGIN(name); return OBJECT; }
 
-"mtllib "                                  BEGIN(mtllib);
+"mtllib "                             BEGIN(mtllib);
 
-"newmtl "                                  { BEGIN(name); return MATERIAL; }
+"newmtl "                             { BEGIN(name); return MATERIAL; }
 
-Ka                                         { BEGIN(nmb); return KA; }
+Ka                                    return KA;
 
-v                                          { BEGIN(nmb); return VERTEX; }
+v                                     return VERTEX;
 
-vt                                         { BEGIN(nmb); return UV; }
+vt                                    return UV;
 
-vn                                         { BEGIN(nmb); return NORMAL; }
+vn                                    return NORMAL;
 
-"s off"                                    return SURFACE;
+"s off"                               return SURFACE;
 
-f                                          { BEGIN(idx); return FACET; }
+f                                     { BEGIN(idx); return FACET; }
 
-<name>.*                                   { yylval.text = yytext; return NAME; }
-<name>\n                                   BEGIN(INITIAL);
+<name>.*                              { yylval.text = yytext; return NAME; }
+<name>\n                              BEGIN(INITIAL);
 
-<nmb>[+-]?[0-9]*(\.[0-9]*)?(e[+-]?[0-9]+)? { yylval.number = atof(yytext); return NUMBER; }
-<nmb>" "                                   ;
-<nmb>\n                                    BEGIN(INITIAL);
+[+-]?[0-9]*(\.[0-9]*)?(e[+-]?[0-9]+)? { yylval.number = atof(yytext); return NUMBER; }
 
-<idx>[0-9]*                                { yylval.index = atoi(yytext); return INDEX; }
-<idx>"/"                                   return SLASH;
-<idx>" "                                   ;
-<idx>\n                                    BEGIN(INITIAL);
+<idx>[0-9]*                           { yylval.index = atoi(yytext); return INDEX; }
+<idx>"/"                              return SLASH;
+<idx>" "                              ;
+<idx>\n                               BEGIN(INITIAL);
 
-<mtllib>.*                                 {
-                                             yyin = fopen(yytext, "r");
-                                             if (yyin)
-                                               yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-                                             BEGIN(INITIAL);
-                                           }
+<mtllib>.*                            {
+                                        yyin = fopen(yytext, "r");
+                                        if (yyin)
+                                          yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+                                        BEGIN(INITIAL);
+                                      }
 
-[\n ]                                      ;
+[\n ]                                 ;
 
-<<EOF>>                                    {
-                                             if (yy_buffer_stack_top > 0)
-                                               fclose(yyin);
-                                             yypop_buffer_state();
-                                             if (!YY_CURRENT_BUFFER)
-                                               yyterminate();
-                                           }
+<<EOF>>                               {
+                                        if (yy_buffer_stack_top > 0)
+                                          fclose(yyin);
+                                        yypop_buffer_state();
+                                        if (!YY_CURRENT_BUFFER)
+                                          yyterminate();
+                                      }
 
-.                                          return *yytext;
+.                                     return *yytext;
 
 %%
