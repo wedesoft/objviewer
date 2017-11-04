@@ -15,6 +15,8 @@
 
 "newmtl "                                  { BEGIN(name); return MATERIAL; }
 
+Ka                                         { BEGIN(nmb); return KA; }
+
 v                                          { BEGIN(nmb); return VERTEX; }
 
 vt                                         { BEGIN(nmb); return UV; }

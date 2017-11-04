@@ -9,7 +9,8 @@
 #define YYERROR_VERBOSE 1
 
 extern object_t *parse_result;
-extern hash_t *parse_material;
+extern hash_t *parse_materials;
+extern material_t *parse_material;
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
@@ -59,7 +60,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT MATERIAL VERTEX UV NORMAL SURFACE FACET SLASH
+%token OBJECT MATERIAL KA VERTEX UV NORMAL SURFACE FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
@@ -72,9 +73,22 @@ start: object materials vectors surfaces
 
 object: OBJECT NAME { parse_result = make_object($2); }
 
-materials: MATERIAL NAME { hash_find_material(parse_material, $2, make_material()); }
+materials: material
          | /* NULL */
          ;
+
+material: MATERIAL NAME {
+            parse_material = make_material();
+            hash_find_material(parse_materials, $2, parse_material);
+          } properties
+
+properties: KA NUMBER NUMBER NUMBER {
+              parse_material->ambient[0] = $2;
+              parse_material->ambient[1] = $3;
+              parse_material->ambient[2] = $4;
+            }
+          | /* NULL */
+
 
 vectors: vector vectors
        | /* NULL */

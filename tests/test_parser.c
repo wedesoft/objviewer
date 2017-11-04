@@ -6,7 +6,7 @@
 
 extern object_t *parse_string_core(const char *text);
 extern object_t *parse_result;
-extern hash_t *parse_material;
+extern hash_t *parse_materials;
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
@@ -514,7 +514,7 @@ static MunitResult test_material_filename(const MunitParameter params[], void *d
 static MunitResult test_material_name(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\nmtllib test.mtl");
-  munit_assert_ptr(hash_find_material(parse_material, "testmaterial", NULL), !=, NULL);
+  munit_assert_ptr(hash_find_material(parse_materials, "testmaterial", NULL), !=, NULL);
   return MUNIT_OK;
 }
 
@@ -528,6 +528,16 @@ static MunitResult test_continue_after_include(const MunitParameter params[], vo
 {
   parse_string_core("o test\nmtllib test.mtl\nv 1 2 3");
   munit_assert_int(parse_vertex->size, ==, 3);
+  return MUNIT_OK;
+}
+
+static MunitResult test_ambient(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nnewmtl test\nKa 0.25 0.5 0.75");
+  material_t *material = hash_find_material(parse_materials, "test", NULL);
+  munit_assert_float(material->ambient[0], ==, 0.25f);
+  munit_assert_float(material->ambient[1], ==, 0.5f);
+  munit_assert_float(material->ambient[2], ==, 0.75f);
   return MUNIT_OK;
 }
 
@@ -589,5 +599,6 @@ MunitTest test_parser[] = {
   {"/material_name"         , test_material_name         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/file_not_found"        , test_file_not_found        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/continue_after_include", test_continue_after_include, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/ambient"               , test_ambient               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

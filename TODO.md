@@ -1,13 +1,13 @@
 # TODO
 
-* skip leading whitespace
-* ignore comments
 * parse material file
+* ignore comments
 * setup attribute pointers when converting
-* surface -> group
+* optional object name
+* surface -> (named) group, top-level default group
+* skip leading whitespace
 * more parse error information, reset lexer and parser
 * render to VAOs with one program (setup of vertex array pointers)
-* group: nested object
 * negative indices
 * ignore surfaces (use groups instead)
 * material files, read textures

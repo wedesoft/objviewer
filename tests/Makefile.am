@@ -1,8 +1,8 @@
 check_PROGRAMS = suite
 
 check_HEADERS = munit.h \
-								test_hash.h test_helper.h test_image.h test_integration.h test_list.h test_object.h \
-								test_parser.h test_program.h test_projection.h test_shader.h test_surface.h \
+								test_hash.h test_helper.h test_image.h test_integration.h test_list.h test_material.h \
+								test_object.h test_parser.h test_program.h test_projection.h test_shader.h test_surface.h \
 								test_texture.h test_vertex_array_object.h
 
 EXTRA_DIST = fragment-blue.glsl fragment-normal.glsl fragment-red.glsl fragment-texture.glsl \

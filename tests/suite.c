@@ -12,6 +12,7 @@
 #include "test_list.h"
 #include "test_hash.h"
 #include "test_parser.h"
+#include "test_material.h"
 #include "test_integration.h"
 
 
@@ -27,6 +28,7 @@ static MunitSuite test_fsim[] = {
   {"/list"       , test_list       , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/hash"       , test_hash       , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/parser"     , test_parser     , NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/material"   , test_material   , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/integration", test_integration, NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {NULL          , NULL            , NULL, 0, MUNIT_SUITE_OPTION_NONE}
 };
