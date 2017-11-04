@@ -17,6 +17,8 @@
 
 Ka                                    return KA;
 
+"usemtl "                             { BEGIN(name); return USE; }
+
 v                                     return VERTEX;
 
 vt                                    return UV;

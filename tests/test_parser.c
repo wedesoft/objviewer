@@ -541,6 +541,14 @@ static MunitResult test_ambient(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_use_material(const MunitParameter params[], void *data)
+{
+  object_t *object = parse_string("o test\nnewmtl mat\ns off\nusemtl mat");
+  surface_t *surface = get_pointer(object->surface)[0];
+  munit_assert_ptr(surface->material, !=, NULL);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -600,5 +608,6 @@ MunitTest test_parser[] = {
   {"/file_not_found"        , test_file_not_found        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/continue_after_include", test_continue_after_include, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient"               , test_ambient               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/use_material"          , test_use_material          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

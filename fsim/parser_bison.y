@@ -60,7 +60,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT MATERIAL KA VERTEX UV NORMAL SURFACE FACET SLASH
+%token OBJECT MATERIAL KA USE VERTEX UV NORMAL SURFACE FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
@@ -122,7 +122,13 @@ surfaces: surface surfaces
 surface: SURFACE {
            add_surface(parse_result, make_surface(0));
            parse_hash = make_hash();
-         } facets
+         } use_material facets
+
+use_material: USE NAME {
+              last_surface()->material = hash_find_material(parse_materials, $2, NULL);
+            }
+            | /* NULL */
+            ;
 
 facets: facet facets
       | /* NULL */

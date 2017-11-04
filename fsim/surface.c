@@ -8,6 +8,7 @@ surface_t *make_surface(int stride)
   retval->array = make_list();
   retval->vertex_index = make_list();
   retval->stride = stride;
+  retval->material = NULL;
   return retval;
 }
 

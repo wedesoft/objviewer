@@ -2,12 +2,14 @@
 #include <stdarg.h>
 #include <GL/gl.h>
 #include "list.h"
+#include "material.h"
 
 
 typedef struct {
   list_t *array;
   list_t *vertex_index;
   int stride;
+  material_t *material;
 } surface_t;
 
 surface_t *make_surface(int stride);

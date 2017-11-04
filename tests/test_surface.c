@@ -8,6 +8,7 @@ static MunitResult test_empty_surface(const MunitParameter params[], void *data)
   surface_t *surface = make_surface(8);
   munit_assert_int(surface->array->size, ==, 0);
   munit_assert_int(surface->stride, ==, 8);
+  munit_assert_ptr(surface->material, ==, NULL);
   return MUNIT_OK;
 }
 
