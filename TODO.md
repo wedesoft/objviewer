@@ -1,7 +1,8 @@
 # TODO
 
-* set ambient reflection of shader
-* Ka, Ns, Ks, Kd
+* load from file
+* read Ka, Ns, Ks, Kd from file
+* set material constants in shader
 * optional object name
 * surface -> (named) group, top-level default group
 * more parse error information, reset lexer and parser
