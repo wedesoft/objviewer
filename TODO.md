@@ -1,7 +1,6 @@
 # TODO
 
 * set ambient reflection of shader
-* ignore comments
 * setup attribute pointers when converting
 * optional object name
 * surface -> (named) group, top-level default group

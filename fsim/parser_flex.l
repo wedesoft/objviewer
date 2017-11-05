@@ -9,6 +9,8 @@
 
 %%
 
+#.*\n                                 ;
+
 "o "                                  { BEGIN(name); return OBJECT; }
 
 "mtllib "                             BEGIN(mtllib);
