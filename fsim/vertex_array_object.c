@@ -20,12 +20,23 @@ static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   glDeleteBuffers(1, &target->vertex_array_object);
 }
 
+void setup_vertex_attribute_pointers(vertex_array_object_t *vertex_array_object, int stride)
+{
+  setup_vertex_attribute_pointer(vertex_array_object, "point", 3, stride);
+  if (stride == 5 || stride == 8)
+    setup_vertex_attribute_pointer(vertex_array_object, "texcoord", 2, stride);
+  if (stride == 6 || stride == 8)
+    setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, stride);
+}
+
 vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
   retval->n_indices = surface->vertex_index->size;
   retval->program = program;
+  retval->n_attributes = 0;
+  retval->attribute_pointer = 0;
   retval->texture = make_list();
   glGenVertexArrays(1, &retval->vertex_array_object);
   glBindVertexArray(retval->vertex_array_object);
@@ -35,11 +46,7 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   glGenBuffers(1, &retval->element_buffer_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index->element, GL_STATIC_DRAW);
-  setup_vertex_attribute_pointer(retval, "point", 3, surface->stride);
-  if (surface->stride == 5 || surface->stride == 8)
-    setup_vertex_attribute_pointer(retval, "texcoord", 2, surface->stride);
-  if (surface->stride == 6 || surface->stride == 8)
-    setup_vertex_attribute_pointer(retval, "vector", 3, surface->stride);
+  setup_vertex_attribute_pointers(retval, surface->stride);
   return retval;
 }
 
@@ -57,10 +64,10 @@ void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, 
   glBindVertexArray(vertex_array_object->vertex_array_object);
   program_t *program = vertex_array_object->program;
   GLuint index = glGetAttribLocation(program->program, attribute);
-  glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void *)program->attribute_pointer);
-  glEnableVertexAttribArray(program->n_attributes);
-  program->n_attributes += 1;
-  program->attribute_pointer += sizeof(float) * size;
+  glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void *)vertex_array_object->attribute_pointer);
+  glEnableVertexAttribArray(vertex_array_object->n_attributes);
+  vertex_array_object->n_attributes += 1;
+  vertex_array_object->attribute_pointer += sizeof(float) * size;
 }
 
 void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture, image_t *image)

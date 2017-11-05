@@ -10,6 +10,8 @@
 
 typedef struct {
   program_t *program;
+  int n_attributes;
+  long attribute_pointer;
   GLuint vertex_array_object;
   GLuint vertex_buffer_object;
   GLuint element_buffer_object;

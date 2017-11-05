@@ -24,8 +24,6 @@ program_t *make_program(const char *vertex_shader_file_name, const char *fragmen
   retval->vertex_shader = make_shader(GL_VERTEX_SHADER, vertex_shader_file_name);
   retval->fragment_shader = make_shader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
   retval->program = glCreateProgram();
-  retval->n_attributes = 0;
-  retval->attribute_pointer = 0;
   if (retval->vertex_shader && retval->fragment_shader) {
     glAttachShader(retval->program, retval->vertex_shader->shader);
     glAttachShader(retval->program, retval->fragment_shader->shader);

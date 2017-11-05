@@ -3,21 +3,13 @@
 #include "test_helper.h"
 
 
-static MunitResult test_no_attribute_pointers(const MunitParameter params[], void *data)
-{
-  program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  munit_assert_int(program->n_attributes, ==, 0);
-  munit_assert_int(program->attribute_pointer, ==, 0);
-  return MUNIT_OK;
-}
-
 static MunitResult test_vertex_attribute(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface(3);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  munit_assert_int(program->n_attributes, ==, 1);
-  munit_assert_int(program->attribute_pointer, ==, 3 * sizeof(float));
+  munit_assert_int(vertex_array_object->n_attributes, ==, 1);
+  munit_assert_int(vertex_array_object->attribute_pointer, ==, 3 * sizeof(float));
   return MUNIT_OK;
 }
 
@@ -26,8 +18,8 @@ static MunitResult test_vertex_and_uv(const MunitParameter params[], void *data)
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface(5);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  munit_assert_int( program->n_attributes, ==, 2);
-  munit_assert_int(program->attribute_pointer, ==, 5 * sizeof(float));
+  munit_assert_int(vertex_array_object->n_attributes, ==, 2);
+  munit_assert_int(vertex_array_object->attribute_pointer, ==, 5 * sizeof(float));
   return MUNIT_OK;
 }
 
@@ -36,8 +28,8 @@ static MunitResult test_vertex_uv_and_normal(const MunitParameter params[], void
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface(8);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  munit_assert_int( program->n_attributes, ==, 3);
-  munit_assert_int(program->attribute_pointer, ==, 8 * sizeof(float));
+  munit_assert_int(vertex_array_object->n_attributes, ==, 3);
+  munit_assert_int(vertex_array_object->attribute_pointer, ==, 8 * sizeof(float));
   return MUNIT_OK;
 }
 
@@ -46,8 +38,8 @@ static MunitResult test_vertex_and_normal(const MunitParameter params[], void *d
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
   surface_t *surface = make_surface(6);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  munit_assert_int( program->n_attributes, ==, 2);
-  munit_assert_int(program->attribute_pointer, ==, 6 * sizeof(float));
+  munit_assert_int(vertex_array_object->n_attributes, ==, 2);
+  munit_assert_int(vertex_array_object->attribute_pointer, ==, 6 * sizeof(float));
   return MUNIT_OK;
 }
 
@@ -99,7 +91,6 @@ static MunitResult test_vao_list_program(const MunitParameter params[], void *da
 }
 
 MunitTest test_vao[] = {
-  {"/no_attribute_pointers", test_no_attribute_pointers, test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_attribute"     , test_vertex_attribute     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_and_uv"        , test_vertex_and_uv        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_and_normal"    , test_vertex_and_normal    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
