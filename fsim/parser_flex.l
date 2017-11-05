@@ -34,7 +34,7 @@ f                                     { BEGIN(idx); return FACET; }
 
 [+-]?[0-9]*(\.[0-9]*)?(e[+-]?[0-9]+)? { yylval.number = atof(yytext); return NUMBER; }
 
-<idx>[0-9]*                           { yylval.index = atoi(yytext); return INDEX; }
+<idx>-?[0-9]*                           { yylval.index = atoi(yytext); return INDEX; }
 <idx>"/"                              return SLASH;
 <idx>" "                              ;
 <idx>\n                               BEGIN(INITIAL);

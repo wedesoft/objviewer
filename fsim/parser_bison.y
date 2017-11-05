@@ -39,6 +39,9 @@ static void copy_vertex_data(int index, int stride, list_t *source)
 
 static int index_vertex(int stride, int vertex_index, int uv_index, int normal_index)
 {
+  if (vertex_index < 0) vertex_index += 1 + parse_vertex->size / 3;
+  if (uv_index     < 0) uv_index     += 1 + parse_uv->size     / 2;
+  if (normal_index < 0) normal_index += 1 + parse_normal->size / 3;
   surface_t *surface = last_surface();
   surface->stride = stride;
   int n_indices = surface->array->size / stride;

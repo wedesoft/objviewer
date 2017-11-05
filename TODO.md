@@ -1,6 +1,6 @@
 # TODO
 
-* use material
+* set ambient reflection of shader
 * ignore comments
 * setup attribute pointers when converting
 * optional object name
@@ -9,7 +9,6 @@
 * parse material file
 * more parse error information, reset lexer and parser
 * render to VAOs with one program (setup of vertex array pointers)
-* negative indices
 * ignore surfaces (use groups instead)
 * material files, read textures
 * read Wavefront data from file

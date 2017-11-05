@@ -173,6 +173,22 @@ static MunitResult test_shuffle_coords(const MunitParameter params[], void *data
   return MUNIT_OK;
 }
 
+static MunitResult test_relative_index(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf -3 -2 -1");
+  surface_t *surface = get_pointer(parse_result->surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[2], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[3], ==, 3.0f);
+  munit_assert_float(get_glfloat(surface->array)[4], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[5], ==, 7.0f);
+  munit_assert_float(get_glfloat(surface->array)[6], ==, 7.0f);
+  munit_assert_float(get_glfloat(surface->array)[7], ==, 5.0f);
+  munit_assert_float(get_glfloat(surface->array)[8], ==, 3.0f);
+  return MUNIT_OK;
+}
+
 static MunitResult test_generate_indices(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
@@ -314,6 +330,17 @@ static MunitResult test_copy_uv(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_relative_uv_indices(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf -3/-3 -2/-2 -1/-1");
+  surface_t *surface = get_pointer(parse_result->surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[4], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[8], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[9], ==, 1.0f);
+  return MUNIT_OK;
+}
+
 static MunitResult test_different_uv_index(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/2 2/3 3/1");
@@ -413,6 +440,19 @@ static MunitResult test_copy_normal(const MunitParameter params[], void *data)
   munit_assert_float(get_glfloat(surface->array)[ 6], ==, 2.0f);
   munit_assert_float(get_glfloat(surface->array)[ 7], ==, 3.0f);
   munit_assert_float(get_glfloat(surface->array)[ 8], ==,-1.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 9], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[10], ==, 1.0f);
+  munit_assert_float(get_glfloat(surface->array)[11], ==, 0.0f);
+  return MUNIT_OK;
+}
+
+static MunitResult test_relative_normal_index(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf -3//-3 -2//-2 -1//-1");
+  surface_t *surface = get_pointer(parse_result->surface)[0];
+  munit_assert_float(get_glfloat(surface->array)[ 3], ==, 1.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 4], ==, 0.0f);
+  munit_assert_float(get_glfloat(surface->array)[ 5], ==, 0.0f);
   munit_assert_float(get_glfloat(surface->array)[ 9], ==, 0.0f);
   munit_assert_float(get_glfloat(surface->array)[10], ==, 1.0f);
   munit_assert_float(get_glfloat(surface->array)[11], ==, 0.0f);
@@ -569,6 +609,7 @@ MunitTest test_parser[] = {
   {"/coord_count"           , test_coord_count           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/copy_coords"           , test_copy_coords           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/shuffle_coords"        , test_shuffle_coords        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/relative_index"        , test_relative_index        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/generate_indices"      , test_generate_indices      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_facets"            , test_two_facets            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/reuse_vertices"        , test_reuse_vertices        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -585,6 +626,7 @@ MunitTest test_parser[] = {
   {"/uv_indices"            , test_uv_indices            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/uv_added"              , test_uv_added              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/copy_uv"               , test_copy_uv               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/relative_uv_indices"   , test_relative_uv_indices   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/different_uv_index"    , test_different_uv_index    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/uv_in_hash_key"        , test_uv_in_hash_key        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_and_uv_key"     , test_vertex_and_uv_key     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -595,6 +637,7 @@ MunitTest test_parser[] = {
   {"/normal_indices"        , test_normal_indices        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/normals_added"         , test_normals_added         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/copy_normal"           , test_copy_normal           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/relative_normal_index" , test_relative_normal_index , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/different_normal_index", test_different_normal_index, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/reuse_normal"          , test_reuse_normal          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/normal_in_hash_key"    , test_normal_in_hash_key    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
