@@ -10,3 +10,5 @@ typedef struct
 } material_t;
 
 material_t* make_material(void);
+
+void set_texture(material_t *material, image_t *texture);

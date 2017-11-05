@@ -95,7 +95,7 @@ property: KA NUMBER NUMBER NUMBER {
             parse_material->ambient[2] = $4;
           }
         | MAPKD NAME {
-            parse_material->texture = read_image($2);
+            set_texture(parse_material, read_image($2));
           }
 
 vectors: vector vectors

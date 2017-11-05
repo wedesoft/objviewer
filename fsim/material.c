@@ -11,3 +11,8 @@ material_t *make_material(void)
   result->texture = NULL;
   return result;
 }
+
+void set_texture(material_t *material, image_t *texture)
+{
+  material->texture = texture;
+}
