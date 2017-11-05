@@ -11,15 +11,15 @@
 
 #.*\n                                 ;
 
-"o "                                  { BEGIN(name); return OBJECT; }
+o[ ]+                                 { BEGIN(name); return OBJECT; }
 
-"mtllib "                             BEGIN(mtllib);
+mtllib[ ]+                            BEGIN(mtllib);
 
-"newmtl "                             { BEGIN(name); return MATERIAL; }
+newmtl[ ]+                            { BEGIN(name); return MATERIAL; }
 
 Ka                                    return KA;
 
-"usemtl "                             { BEGIN(name); return USE; }
+usemtl[ ]+                            { BEGIN(name); return USE; }
 
 v                                     return VERTEX;
 
@@ -27,7 +27,7 @@ vt                                    return UV;
 
 vn                                    return NORMAL;
 
-"s off"                               return SURFACE;
+s.*                                   return SURFACE;
 
 f                                     { BEGIN(idx); return FACET; }
 
@@ -48,7 +48,7 @@ f                                     { BEGIN(idx); return FACET; }
                                         BEGIN(INITIAL);
                                       }
 
-[\n ]                                 ;
+[ \t\n]                               ;
 
 <<EOF>>                               {
                                         if (yy_buffer_stack_top > 0)
