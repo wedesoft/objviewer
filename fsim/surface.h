@@ -23,3 +23,5 @@ int size_of_indices(surface_t *surface);
 void add_triangle(surface_t *surface, int index1, int index2, int index3);
 
 void extend_triangle(surface_t *surface, int index);
+
+void use_material(surface_t *surface, material_t *material);

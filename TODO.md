@@ -1,13 +1,12 @@
 # TODO
 
 * set ambient reflection of shader
+* Ka, Ns, Ks, Kd
 * optional object name
 * surface -> (named) group, top-level default group
-* parse material file
 * more parse error information, reset lexer and parser
 * render to VAOs with one program (setup of vertex array pointers)
 * ignore surfaces (use groups instead)
-* material files, read textures
 * read Wavefront data from file
 * look at NASA 3D models
 * create and load Blender model

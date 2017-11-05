@@ -136,6 +136,15 @@ static MunitResult test_add_pentagon(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_use_material(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(5);
+  material_t *material = make_material();
+  use_material(surface, material);
+  munit_assert_ptr(surface->material, ==, material);
+  return MUNIT_OK;
+}
+
 MunitTest test_surface[] = {
   {"/empty_surface"   , test_empty_surface   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_coordinate"  , test_add_coordinate  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -150,5 +159,6 @@ MunitTest test_surface[] = {
   {"/add_triangle"    , test_add_triangle    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_square"      , test_add_square      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_pentagon"    , test_add_pentagon    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/use_material"    , test_use_material    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL               , NULL                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL}
 };

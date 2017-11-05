@@ -45,3 +45,8 @@ void extend_triangle(surface_t *surface, int index)
   int index2 = get_gluint(surface->vertex_index)[n - 1];
   add_triangle(surface, index1, index2, index);
 }
+
+void use_material(surface_t *surface, material_t *material)
+{
+  surface->material = material;
+}

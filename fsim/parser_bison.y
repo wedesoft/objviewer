@@ -133,7 +133,7 @@ surface: SURFACE {
          } use_material facets
 
 use_material: USE NAME {
-              last_surface()->material = hash_find_material(parse_materials, $2, NULL);
+              use_material(last_surface(), hash_find_material(parse_materials, $2, NULL));
             }
             | /* NULL */
             ;
