@@ -10,6 +10,7 @@ static MunitResult test_default(const MunitParameter params[], void *data)
   munit_assert_float(material->ambient[0], ==, 0.0f);
   munit_assert_float(material->ambient[1], ==, 0.0f);
   munit_assert_float(material->ambient[2], ==, 0.0f);
+  munit_assert_ptr(material->texture, ==, NULL);
   return MUNIT_OK;
 }
 

@@ -26,7 +26,8 @@ static MunitResult test_object(const MunitParameter params[], void *data)
 
 static MunitResult test_object_name(const MunitParameter params[], void *data)
 {
-  munit_assert_string_equal(parse_string("o test")->name, "test");
+  object_t *object = parse_string("o test");
+  munit_assert_string_equal(object->name, "test");
   return MUNIT_OK;
 }
 
@@ -601,6 +602,22 @@ static MunitResult test_use_material(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_read_texture(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nnewmtl test\nmap_Kd colors.png");
+  material_t *material = hash_find_material(parse_materials, "test", NULL);
+  munit_assert_ptr(material->texture, !=, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_texture_not_found(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nnewmtl test\nmap_Kd nosuchfile.png");
+  material_t *material = hash_find_material(parse_materials, "test", NULL);
+  munit_assert_ptr(material->texture, ==, NULL);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -666,5 +683,7 @@ MunitTest test_parser[] = {
   {"/continue_after_include", test_continue_after_include, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient"               , test_ambient               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/use_material"          , test_use_material          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/read_texture"          , test_read_texture          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/texture_not_found"     , test_texture_not_found     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

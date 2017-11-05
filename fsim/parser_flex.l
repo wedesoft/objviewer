@@ -4,6 +4,7 @@
 %}
 
 %option noyywrap
+%option yylineno
 
 %x name idx mtllib
 
@@ -18,6 +19,8 @@ mtllib                                BEGIN(mtllib);
 newmtl                                { BEGIN(name); return MATERIAL; }
 
 Ka                                    return KA;
+
+map_Kd                                { BEGIN(name); return MAPKD; }
 
 usemtl                                { BEGIN(name); return USE; }
 
@@ -48,7 +51,7 @@ f                                     { BEGIN(idx); return FACET; }
 <INITIAL,name,idx,mtllib>[ \t]        ;
 <INITIAL,name,idx,mtllib>\n           BEGIN(INITIAL);
 
-<<EOF>>                               {
+<INITIAL,name,idx,mtllib><<EOF>>      {
                                         if (yy_buffer_stack_top > 0)
                                           fclose(yyin);
                                         yypop_buffer_state();
@@ -56,6 +59,9 @@ f                                     { BEGIN(idx); return FACET; }
                                           yyterminate();
                                       }
 
-.                                     return *yytext;
+<INITIAL,name,idx,mtllib>.            {
+                                        fprintf(stderr, "Unexpected character '%c' in line %d.\n", *yytext, yylineno);
+                                        return *yytext;
+                                      }
 
 %%

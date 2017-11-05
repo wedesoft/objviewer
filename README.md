@@ -25,6 +25,8 @@ make check -j
 # External links
 
 * [Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]
+* [WaveFront Object Files (.obj)][28]
+* [MTL Material Format (Lightwave, OBJ)][29]
 * [Spherical cube map rendering library][18]
 * [OpenGL GLSL vertex buffer objects example][1]
 * [OpenGL tutorial][2]
@@ -76,3 +78,5 @@ make check -j
 [25]: https://github.com/dseagrav/NASSP/
 [26]: https://nasa3d.arc.nasa.gov/models
 [27]: http://sector7.xray.aps.anl.gov/~dohnarms/programming/flex/html/Multiple-Input-Buffers.html
+[28]: http://paulbourke.net/dataformats/obj/
+[29]: http://paulbourke.net/dataformats/mtl/

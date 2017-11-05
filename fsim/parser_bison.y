@@ -63,7 +63,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT MATERIAL KA USE VERTEX UV NORMAL SURFACE FACET SLASH
+%token OBJECT MATERIAL KA MAPKD USE VERTEX UV NORMAL SURFACE FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
@@ -85,13 +85,18 @@ material: MATERIAL NAME {
             hash_find_material(parse_materials, $2, parse_material);
           } properties
 
-properties: KA NUMBER NUMBER NUMBER {
-              parse_material->ambient[0] = $2;
-              parse_material->ambient[1] = $3;
-              parse_material->ambient[2] = $4;
-            }
+properties: property properties
           | /* NULL */
+          ;
 
+property: KA NUMBER NUMBER NUMBER {
+            parse_material->ambient[0] = $2;
+            parse_material->ambient[1] = $3;
+            parse_material->ambient[2] = $4;
+          }
+        | MAPKD NAME {
+            parse_material->texture = read_image($2);
+          }
 
 vectors: vector vectors
        | /* NULL */
