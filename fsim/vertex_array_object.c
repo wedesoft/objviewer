@@ -47,6 +47,8 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index->element, GL_STATIC_DRAW);
   setup_vertex_attribute_pointers(retval, surface->stride);
+  if (surface->material && surface->material->texture)
+    add_texture(retval, make_texture("tex"), surface->material->texture);
   return retval;
 }
 

@@ -54,12 +54,12 @@ static MunitResult test_no_textures(const MunitParameter params[], void *data)
 static MunitResult test_add_texture(const MunitParameter params[], void *data)
 {
   surface_t *surface = make_surface(5);
+  material_t *material = make_material();
+  set_texture(material, read_image("colors.png"));
+  use_material(surface, material);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, surface);
-  texture_t *texture = make_texture("tex");
-  add_texture(vertex_array_object, texture, read_image("colors.png"));
   munit_assert_int(vertex_array_object->texture->size, ==, 1);
-  munit_assert_ptr(get_pointer(vertex_array_object->texture)[0], ==, texture);
   return MUNIT_OK;
 }
 

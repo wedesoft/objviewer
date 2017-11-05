@@ -107,6 +107,8 @@ int main(int argc, char **argv)
 
   object =
     parse_string("o tetraeder\n"
+                 "newmtl colors\n"
+                 "map_Kd colors.png\n"
                  "v  0.5  0.5  0.5\n"
                  "v -0.5  0.5 -0.5\n"
                  "v -0.5 -0.5  0.5\n"
@@ -120,14 +122,13 @@ int main(int argc, char **argv)
                  "vn  0.577350269 -0.577350269  0.577350269\n"
                  "vn  0.577350269  0.577350269 -0.577350269\n"
                  "s off\n"
+                 "usemtl colors\n"
                  "f 2/2/2 3/3/3 1/1/1\n"
                  "f 4/4/4 3/3/3 2/2/2\n"
                  "f 4/4/4 1/1/1 3/3/3\n"
                  "f 2/2/2 1/1/1 4/4/4");
   program = make_program("vertex.glsl", "fragment.glsl");
   list = make_vertex_array_object_list(program, object);
-  vertex_array_object_t *vertex_array_object = get_pointer(list)[0];
-  add_texture(vertex_array_object, make_texture("tex"), read_image("colors.png"));
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);

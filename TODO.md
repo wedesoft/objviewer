@@ -26,7 +26,6 @@
 * point sprites for stars, atmospheric flicker using sprite arrays
 * point light sources
 * cloud erosion
-* texture loading
 * project on sphere
 * view matrix, model matrix stack, light position
 * good tessellation for planet spheres
