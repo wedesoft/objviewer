@@ -1,5 +1,6 @@
 # TODO
 
+* every object getting same texture
 * materials before object statement
 * make object name optional
 * more than one material
