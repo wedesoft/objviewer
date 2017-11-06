@@ -1,6 +1,5 @@
 # TODO
 
-* load from file
 * read Ka, Ns, Ks, Kd from file
 * set material constants in shader
 * optional object name

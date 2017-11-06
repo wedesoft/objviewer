@@ -43,6 +43,12 @@ static MunitResult test_error(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_read_file(const MunitParameter params[], void *data)
+{
+  munit_assert_string_equal(parse_file("name.obj")->name, "inafile");
+  return MUNIT_OK;
+}
+
 static MunitResult test_ignore_comments(const MunitParameter params[], void *data)
 {
   munit_assert_ptr(parse_string("# Test comment\no test\n "), !=, NULL);
@@ -624,6 +630,7 @@ MunitTest test_parser[] = {
   {"/object_name"           , test_object_name           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ignore_whitespace"     , test_ignore_whitespace     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/error"                 , test_error                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/read_file"             , test_read_file             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ignore_comments"       , test_ignore_comments       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_newline_in_name"    , test_no_newline_in_name    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_vertices"           , test_no_vertices           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
