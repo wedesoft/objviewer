@@ -1,8 +1,9 @@
 # TODO
 
+* more than one material
 * ignore surfaces (use groups instead)
+* make object name optional
 * set material constants in shader
-* optional object name
 * surface -> (named) group, top-level default group
 * more parse error information, reset lexer and parser
 * use relative path when loading material and texture files

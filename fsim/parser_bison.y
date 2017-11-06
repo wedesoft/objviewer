@@ -15,12 +15,13 @@ extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
 extern hash_t *parse_hash;
+extern int yylineno;
 
 extern int yylex(void);
 
 void yyerror(const char *message)
 {
-  fprintf(stderr, "%s\n", message);
+  fprintf(stderr, "Line %d: %s\n", message);
 }
 
 static surface_t *last_surface(void)

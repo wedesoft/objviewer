@@ -40,21 +40,21 @@ s.*                                   return SURFACE;
 
 f                                     { BEGIN(idx); return FACET; }
 
-<name>[^ \t\n]*                       { yylval.text = yytext; return NAME; }
+<name>[^ \t\r\n]*                     { yylval.text = yytext; return NAME; }
 
 [+-]?[0-9]*(\.[0-9]*)?(e[+-]?[0-9]+)? { yylval.number = atof(yytext); return NUMBER; }
 
 <idx>-?[0-9]*                         { yylval.index = atoi(yytext); return INDEX; }
 <idx>"/"                              return SLASH;
 
-<mtllib>[^ \t\n]*                     {
+<mtllib>[^ \t\r\n]*                   {
                                         yyin = fopen(yytext, "r");
                                         if (yyin)
                                           yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
                                         BEGIN(INITIAL);
                                       }
 
-<INITIAL,name,idx,mtllib>[ \t]        ;
+<INITIAL,name,idx,mtllib>[ \r\t]      ;
 <INITIAL,name,idx,mtllib>\n           BEGIN(INITIAL);
 
 <INITIAL,name,idx,mtllib><<EOF>>      {
@@ -65,8 +65,8 @@ f                                     { BEGIN(idx); return FACET; }
                                           yyterminate();
                                       }
 
-<INITIAL,name,idx,mtllib>.            {
-                                        fprintf(stderr, "Unexpected character '%c' in line %d.\n", *yytext, yylineno);
+<INITIAL,name,idx,mtllib>[^ \r\t\n]   {
+                                        fprintf(stderr, "Line %d: unexpected character '%c'.\n", yylineno, *yytext);
                                         return *yytext;
                                       }
 
