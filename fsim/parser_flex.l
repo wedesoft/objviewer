@@ -24,6 +24,8 @@ Kd                                    return KD;
 
 Ks                                    return KS;
 
+Ns                                    return NS;
+
 map_Kd                                { BEGIN(name); return MAPKD; }
 
 usemtl                                { BEGIN(name); return USE; }

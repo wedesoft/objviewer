@@ -644,6 +644,14 @@ static MunitResult test_specular(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_specular_exponent(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nnewmtl test\nNs 6.5");
+  material_t *material = hash_find_material(parse_materials, "test", NULL);
+  munit_assert_float(material->specular_exponent, ==, 6.5f);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -714,5 +722,6 @@ MunitTest test_parser[] = {
   {"/texture_not_found"     , test_texture_not_found     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/diffuse"               , test_diffuse               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/specular"              , test_specular              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/specular_exponent"     , test_specular_exponent     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

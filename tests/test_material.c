@@ -15,6 +15,7 @@ static MunitResult test_default(const MunitParameter params[], void *data)
   munit_assert_float(material->specular[0], ==, 0.0f);
   munit_assert_float(material->specular[1], ==, 0.0f);
   munit_assert_float(material->specular[2], ==, 0.0f);
+  munit_assert_float(material->specular_exponent, ==, 1.0f);
   munit_assert_ptr(material->texture, ==, NULL);
   return MUNIT_OK;
 }
@@ -58,11 +59,20 @@ static MunitResult test_set_specular(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_set_specular_exponent(const MunitParameter params[], void *data)
+{
+  material_t *material = make_material();
+  set_specular_exponent(material, 6.5f);
+  munit_assert_float(material->specular_exponent, ==, 6.5f);
+  return MUNIT_OK;
+}
+
 MunitTest test_material[] = {
-  {"/default"          , test_default          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_texture"      , test_set_texture      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_ambient"      , test_set_ambient      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_diffuse"      , test_set_diffuse      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_specular"     , test_set_specular     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {NULL                , NULL                  , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
+  {"/default"              , test_default               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_texture"          , test_set_texture           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_ambient"          , test_set_ambient           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_diffuse"          , test_set_diffuse           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_specular"         , test_set_specular          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_specular_exponent", test_set_specular_exponent , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {NULL                    , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

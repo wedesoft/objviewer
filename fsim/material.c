@@ -11,13 +11,12 @@ material_t *make_material(void)
   result->diffuse[0] = 0.0f;
   result->diffuse[1] = 0.0f;
   result->diffuse[2] = 0.0f;
+  result->specular[0] = 0.0f;
+  result->specular[1] = 0.0f;
+  result->specular[2] = 0.0f;
+  result->specular_exponent = 1.0f;
   result->texture = NULL;
   return result;
-}
-
-void set_texture(material_t *material, image_t *texture)
-{
-  material->texture = texture;
 }
 
 void set_ambient(material_t *material, GLfloat red, GLfloat green, GLfloat blue)
@@ -39,4 +38,14 @@ void set_specular(material_t *material, GLfloat red, GLfloat green, GLfloat blue
   material->specular[0] = red;
   material->specular[1] = green;
   material->specular[2] = blue;
+}
+
+void set_specular_exponent(material_t *material, GLfloat specular_exponent)
+{
+  material->specular_exponent = specular_exponent;
+}
+
+void set_texture(material_t *material, image_t *texture)
+{
+  material->texture = texture;
 }
