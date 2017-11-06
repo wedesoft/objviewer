@@ -596,6 +596,24 @@ static MunitResult test_continue_after_include(const MunitParameter params[], vo
   return MUNIT_OK;
 }
 
+static MunitResult test_material(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nnewmtl stone");
+  material_t *stone = hash_find_material(parse_materials, "stone", NULL);
+  munit_assert_ptr(stone, !=, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_two_materials(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nnewmtl stone\nnewmtl water");
+  material_t *stone = hash_find_material(parse_materials, "stone", NULL);
+  material_t *water = hash_find_material(parse_materials, "water", NULL);
+  munit_assert_ptr(stone, !=, NULL);
+  munit_assert_ptr(water, !=, NULL);
+  return MUNIT_OK;
+}
+
 static MunitResult test_ambient(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\nnewmtl test\nKa 0.25 0.5 0.75");
@@ -723,6 +741,8 @@ MunitTest test_parser[] = {
   {"/material_name"         , test_material_name         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/file_not_found"        , test_file_not_found        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/continue_after_include", test_continue_after_include, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/material"              , test_material              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_materials"         , test_two_materials         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient"               , test_ambient               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/use_material"          , test_use_material          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/read_texture"          , test_read_texture          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

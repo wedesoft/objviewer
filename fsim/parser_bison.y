@@ -21,7 +21,7 @@ extern int yylex(void);
 
 void yyerror(const char *message)
 {
-  fprintf(stderr, "Line %d: %s\n", message);
+  fprintf(stderr, "Line %d: %s\n", yylineno, message);
 }
 
 static surface_t *last_surface(void)
@@ -77,7 +77,7 @@ start: object materials vectors surfaces
 
 object: OBJECT NAME { parse_result = make_object($2); }
 
-materials: material
+materials: material materials
          | /* NULL */
          ;
 
