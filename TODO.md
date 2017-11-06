@@ -1,6 +1,6 @@
 # TODO
 
-* read Ka, Ns, Ks, Kd from file
+* read Ns, Ks from file
 * set material constants in shader
 * optional object name
 * surface -> (named) group, top-level default group
