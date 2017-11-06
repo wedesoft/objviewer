@@ -71,7 +71,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 
 %%
 
-start: object materials vectors surfaces
+start: materials object vectors surfaces
      | /* NULL */
      ;
 

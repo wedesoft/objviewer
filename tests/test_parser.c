@@ -572,33 +572,33 @@ static MunitResult test_different_indices(const MunitParameter params[], void *d
 
 static MunitResult test_material_filename(const MunitParameter params[], void *data)
 {
-  munit_assert_ptr(parse_string("o test\nmtllib empty.mtl"), !=, NULL);
+  munit_assert_ptr(parse_string("mtllib empty.mtl\no test"), !=, NULL);
   return MUNIT_OK;
 }
 
 static MunitResult test_material_name(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nmtllib test.mtl");
+  parse_string_core("mtllib test.mtl\no test");
   munit_assert_ptr(hash_find_material(parse_materials, "testmaterial", NULL), !=, NULL);
   return MUNIT_OK;
 }
 
 static MunitResult test_file_not_found(const MunitParameter params[], void *data)
 {
-  munit_assert_ptr(parse_string("o test\nmtllib nosuchfile.mtl"), !=, NULL);
+  munit_assert_ptr(parse_string("mtllib nosuchfile.mtl\no test"), !=, NULL);
   return MUNIT_OK;
 }
 
 static MunitResult test_continue_after_include(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nmtllib test.mtl\nv 1 2 3");
+  parse_string_core("mtllib test.mtl\no test\nv 1 2 3");
   munit_assert_int(parse_vertex->size, ==, 3);
   return MUNIT_OK;
 }
 
 static MunitResult test_material(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl stone");
+  parse_string_core("newmtl stone\no test");
   material_t *stone = hash_find_material(parse_materials, "stone", NULL);
   munit_assert_ptr(stone, !=, NULL);
   return MUNIT_OK;
@@ -606,7 +606,7 @@ static MunitResult test_material(const MunitParameter params[], void *data)
 
 static MunitResult test_two_materials(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl stone\nnewmtl water");
+  parse_string_core("newmtl stone\nnewmtl water\no test");
   material_t *stone = hash_find_material(parse_materials, "stone", NULL);
   material_t *water = hash_find_material(parse_materials, "water", NULL);
   munit_assert_ptr(stone, !=, NULL);
@@ -616,7 +616,7 @@ static MunitResult test_two_materials(const MunitParameter params[], void *data)
 
 static MunitResult test_ambient(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl test\nKa 0.25 0.5 0.75");
+  parse_string_core("newmtl test\nKa 0.25 0.5 0.75\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
   munit_assert_float(material->ambient[0], ==, 0.25f);
   munit_assert_float(material->ambient[1], ==, 0.5f);
@@ -626,7 +626,7 @@ static MunitResult test_ambient(const MunitParameter params[], void *data)
 
 static MunitResult test_use_material(const MunitParameter params[], void *data)
 {
-  object_t *object = parse_string("o test\nnewmtl mat\ns off\nusemtl mat");
+  object_t *object = parse_string("newmtl mat\no test\ns off\nusemtl mat");
   surface_t *surface = get_pointer(object->surface)[0];
   munit_assert_ptr(surface->material, !=, NULL);
   return MUNIT_OK;
@@ -634,7 +634,7 @@ static MunitResult test_use_material(const MunitParameter params[], void *data)
 
 static MunitResult test_read_texture(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl test\nmap_Kd colors.png");
+  parse_string_core("newmtl test\nmap_Kd colors.png\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
   munit_assert_ptr(material->texture, !=, NULL);
   return MUNIT_OK;
@@ -642,7 +642,7 @@ static MunitResult test_read_texture(const MunitParameter params[], void *data)
 
 static MunitResult test_texture_not_found(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl test\nmap_Kd nosuchfile.png");
+  parse_string_core("newmtl test\nmap_Kd nosuchfile.png\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
   munit_assert_ptr(material->texture, ==, NULL);
   return MUNIT_OK;
@@ -650,7 +650,7 @@ static MunitResult test_texture_not_found(const MunitParameter params[], void *d
 
 static MunitResult test_diffuse(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl test\nKd 0.25 0.5 0.75");
+  parse_string_core("newmtl test\nKd 0.25 0.5 0.75\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
   munit_assert_float(material->diffuse[0], ==, 0.25f);
   munit_assert_float(material->diffuse[1], ==, 0.5f);
@@ -660,7 +660,7 @@ static MunitResult test_diffuse(const MunitParameter params[], void *data)
 
 static MunitResult test_specular(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl test\nKs 0.25 0.5 0.75");
+  parse_string_core("newmtl test\nKs 0.25 0.5 0.75\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
   munit_assert_float(material->specular[0], ==, 0.25f);
   munit_assert_float(material->specular[1], ==, 0.5f);
@@ -670,7 +670,7 @@ static MunitResult test_specular(const MunitParameter params[], void *data)
 
 static MunitResult test_specular_exponent(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nnewmtl test\nNs 6.5");
+  parse_string_core("newmtl test\nNs 6.5\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
   munit_assert_float(material->specular_exponent, ==, 6.5f);
   return MUNIT_OK;

@@ -1,8 +1,9 @@
 # TODO
 
+* materials before object statement
+* make object name optional
 * more than one material
 * ignore surfaces (use groups instead)
-* make object name optional
 * set material constants in shader
 * surface -> (named) group, top-level default group
 * more parse error information, reset lexer and parser

@@ -106,9 +106,9 @@ int main(int argc, char **argv)
   glEnable(GL_DEPTH_TEST);
 
   object =
-    parse_string("o tetraeder\n"
-                 "newmtl colors\n"
+    parse_string("newmtl colors\n"
                  "map_Kd colors.png\n"
+                 "o tetraeder\n"
                  "v  0.5  0.5  0.5\n"
                  "v -0.5  0.5 -0.5\n"
                  "v -0.5 -0.5  0.5\n"
