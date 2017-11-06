@@ -44,7 +44,7 @@ s.*                                   return SURFACE;
 
 f                                     { BEGIN(idx); return FACET; }
 
-<name>[^ \t\r\n]*                     { yylval.text = yytext; return NAME; }
+<name>[^ \t\r\n][^\t\r\n]*            { yylval.text = yytext; return NAME; }
 
 [+-]?[0-9]*(\.[0-9]*)?(e[+-]?[0-9]+)? { yylval.number = atof(yytext); return NUMBER; }
 

@@ -33,6 +33,12 @@ static MunitResult test_object_name(const MunitParameter params[], void *data)
 
 static MunitResult test_ignore_whitespace(const MunitParameter params[], void *data)
 {
+  munit_assert_string_equal(parse_string("o two words")->name, "two words");
+  return MUNIT_OK;
+}
+
+static MunitResult test_whitespace_in_name(const MunitParameter params[], void *data)
+{
   munit_assert_string_equal(parse_string("o  test")->name, "test");
   return MUNIT_OK;
 }
@@ -697,6 +703,7 @@ MunitTest test_parser[] = {
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object_name"           , test_object_name           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ignore_whitespace"     , test_ignore_whitespace     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/whitespace_in_name"    , test_whitespace_in_name    , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/handle_ctrl_lf"        , test_handle_ctrl_lf        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/error"                 , test_error                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/read_file"             , test_read_file             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
