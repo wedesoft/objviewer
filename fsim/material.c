@@ -33,3 +33,10 @@ void set_diffuse(material_t *material, GLfloat red, GLfloat green, GLfloat blue)
   material->diffuse[1] = green;
   material->diffuse[2] = blue;
 }
+
+void set_specular(material_t *material, GLfloat red, GLfloat green, GLfloat blue)
+{
+  material->specular[0] = red;
+  material->specular[1] = green;
+  material->specular[2] = blue;
+}
