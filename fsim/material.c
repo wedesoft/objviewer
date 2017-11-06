@@ -15,6 +15,8 @@ material_t *make_material(void)
   result->specular[1] = 0.0f;
   result->specular[2] = 0.0f;
   result->specular_exponent = 1.0f;
+  result->optical_density = 1.0f;
+  result->disolve = 1.0f;
   result->texture = NULL;
   return result;
 }
@@ -43,6 +45,16 @@ void set_specular(material_t *material, GLfloat red, GLfloat green, GLfloat blue
 void set_specular_exponent(material_t *material, GLfloat specular_exponent)
 {
   material->specular_exponent = specular_exponent;
+}
+
+void set_optical_density(material_t *material, GLfloat optical_density)
+{
+  material->optical_density = optical_density;
+}
+
+void set_disolve(material_t *material, GLfloat disolve)
+{
+  material->disolve = disolve;
 }
 
 void set_texture(material_t *material, image_t *texture)

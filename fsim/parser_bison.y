@@ -64,7 +64,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT MATERIAL KA KD KS NS MAPKD USE VERTEX UV NORMAL SURFACE FACET SLASH
+%token OBJECT MATERIAL KA KD KS NS NI D MAPKD USE VERTEX UV NORMAL SURFACE FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
@@ -101,6 +101,12 @@ property: KA NUMBER NUMBER NUMBER {
           }
         | NS NUMBER {
             set_specular_exponent(parse_material, $2);
+          }
+        | NI NUMBER {
+            set_optical_density(parse_material, $2);
+          }
+        | D NUMBER {
+            set_disolve(parse_material, $2);
           }
         | MAPKD NAME {
             set_texture(parse_material, read_image($2));

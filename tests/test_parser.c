@@ -676,6 +676,22 @@ static MunitResult test_specular_exponent(const MunitParameter params[], void *d
   return MUNIT_OK;
 }
 
+static MunitResult test_optical_density(const MunitParameter params[], void *data)
+{
+  parse_string_core("newmtl test\nNi 1.5\no test");
+  material_t *material = hash_find_material(parse_materials, "test", NULL);
+  munit_assert_float(material->optical_density, ==, 1.5f);
+  return MUNIT_OK;
+}
+
+static MunitResult test_disolve(const MunitParameter params[], void *data)
+{
+  parse_string_core("newmtl test\nd 0.5\no test");
+  material_t *material = hash_find_material(parse_materials, "test", NULL);
+  munit_assert_float(material->disolve, ==, 0.5f);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -750,5 +766,7 @@ MunitTest test_parser[] = {
   {"/diffuse"               , test_diffuse               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/specular"              , test_specular              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/specular_exponent"     , test_specular_exponent     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/optical_density"       , test_optical_density       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/disolve"               , test_disolve               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

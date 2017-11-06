@@ -64,9 +64,9 @@ static MunitResult test_use_normal(const MunitParameter params[], void *data)
 static MunitResult test_draw_texturized_square(const MunitParameter params[], void *data)
 {
   object_t *object =
-    parse_string("o texturized\n"
-                 "newmtl colors\n"
+    parse_string("newmtl colors\n"
                  "map_Kd colors.png\n"
+                 "o texturized\n"
                  "v -0.5 -0.5 0\n"
                  "v  0.5 -0.5 0\n"
                  "v -0.5  0.5 0\n"
