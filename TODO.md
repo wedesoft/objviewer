@@ -1,15 +1,16 @@
 # TODO
 
+* ignore surfaces (use groups instead)
 * set material constants in shader
 * optional object name
 * surface -> (named) group, top-level default group
 * more parse error information, reset lexer and parser
+* use relative path when loading material and texture files
 * render to VAOs with one program (setup of vertex array pointers)
-* ignore surfaces (use groups instead)
 * read Wavefront data from file
+* surface smoothing groups
 * look at NASA 3D models
 * create and load Blender model
-* materials
 * rename project and library
 * bind more than one texture
 * objects with kinematic chain
