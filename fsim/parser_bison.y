@@ -21,7 +21,7 @@ extern int yylex(void);
 
 void yyerror(const char *message)
 {
-  fprintf(stderr, "Line %d: %s\n", yylineno, message);
+  fprintf(stderr, "Parsing line %d: %s\n", yylineno, message);
 }
 
 static surface_t *last_surface(void)
@@ -71,13 +71,17 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 
 %%
 
-start: materials object vectors surfaces
+start: materials object primitives
      | /* NULL */
      ;
 
 object: OBJECT NAME { parse_result = make_object($2); }
 
-materials: material materials
+primitives: primitives primitive
+          | /* NULL */
+          ;
+
+materials: materials material
          | /* NULL */
          ;
 
@@ -86,7 +90,7 @@ material: MATERIAL NAME {
             hash_find_material(parse_materials, $2, parse_material);
           } properties
 
-properties: property properties
+properties: properties property
           | /* NULL */
           ;
 
@@ -112,9 +116,9 @@ property: KA NUMBER NUMBER NUMBER {
             set_texture(parse_material, read_image($2));
           }
 
-vectors: vector vectors
-       | /* NULL */
-       ;
+primitive: vector
+         | surface
+         ;
 
 vector: vertex
       | texture_coordinate
@@ -137,10 +141,6 @@ normal: NORMAL NUMBER NUMBER NUMBER {
           append_glfloat(parse_normal, $4);
         }
 
-surfaces: surface surfaces
-        | /* NULL */
-        ;
-
 surface: SURFACE {
            add_surface(parse_result, make_surface(0));
            parse_hash = make_hash();
@@ -152,7 +152,7 @@ use_material: USE NAME {
             | /* NULL */
             ;
 
-facets: facet facets
+facets: facets facet
       | /* NULL */
       ;
 

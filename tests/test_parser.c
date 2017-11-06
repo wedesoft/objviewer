@@ -698,6 +698,13 @@ static MunitResult test_disolve(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_mix_statements(const MunitParameter params[], void *data)
+{
+  object_t *object = parse_string("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3\nv 1 2 3");
+  munit_assert_ptr(object, !=, NULL);
+  return MUNIT_OK;
+}
+
 MunitTest test_parser[] = {
   {"/empty"                 , test_empty                 , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object"                , test_object                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -775,5 +782,6 @@ MunitTest test_parser[] = {
   {"/specular_exponent"     , test_specular_exponent     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/optical_density"       , test_optical_density       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/disolve"               , test_disolve               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/mix_statements"        , test_mix_statements        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
