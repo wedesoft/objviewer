@@ -1,16 +1,12 @@
 # TODO
 
-* maintain list of hash keys to prevent garbage collection
-* maintain list of pointer values to prevent garbage collection
-* every object getting same texture
-* materials before object statement
+* use relative path when loading material and texture files
 * make object name optional
 * more than one material
 * ignore surfaces (use groups instead)
 * set material constants in shader
 * surface -> (named) group, top-level default group
 * more parse error information, reset lexer and parser
-* use relative path when loading material and texture files
 * render to VAOs with one program (setup of vertex array pointers)
 * read Wavefront data from file
 * surface smoothing groups

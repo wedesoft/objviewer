@@ -10,7 +10,7 @@ libtool
 Makefile
 raw
 readobj
-tetraeder
+objviewer
 *.la
 *.lo
 *.in
