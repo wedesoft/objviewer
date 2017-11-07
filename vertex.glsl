@@ -8,10 +8,10 @@ uniform mat4 translation;
 uniform mat4 projection;
 uniform vec3 ray;
 out mediump vec2 UV;
-flat out mediump vec3 normal;
+out mediump vec3 normal;
 flat out mediump vec3 light;
 out mediump vec3 direction;
-flat out mediump float diffuse;
+out mediump float diffuse;
 void main()
 {
   mat4 model = translation * yaw * pitch;

@@ -1,9 +1,9 @@
 #version 130
 in mediump vec2 UV;
-flat in mediump vec3 normal;
+in mediump vec3 normal;
 flat in mediump vec3 light;
 in mediump vec3 direction;
-flat in mediump float diffuse;
+in mediump float diffuse;
 out mediump vec3 fragColor;
 uniform sampler2D tex;
 void main()

@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <errno.h>
+#include <string.h>
 #include "parser.h"
 #include "hash.h"
 
@@ -51,10 +53,15 @@ object_t *parse_file_core(const char *file_name)
 {
   parser_init();
   FILE *f = fopen(file_name, "r");
-  yyrestart(f);
-  if (yyparse())
+  if (!f) {
+    fprintf(stderr, "Error opening file %s: %s\n", file_name, strerror(errno));
     parse_result = NULL;
-  fclose(f);
+  } else {
+    yyrestart(f);
+    if (yyparse())
+      parse_result = NULL;
+    fclose(f);
+  };
   return parse_result;
 }
 

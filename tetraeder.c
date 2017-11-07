@@ -1,6 +1,7 @@
 // Small example drawing a tetraeder using this library
-#include <gc.h>
+#include <stdio.h>
 #include <math.h>
+#include <gc.h>
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "fsim/object.h"
@@ -19,7 +20,8 @@ int height = 240;
 
 float yaw = 0;
 float pitch = 0;
-float distance = 2;
+float distance = 200;
+float level = 0;
 
 object_t *object;
 program_t *program;
@@ -35,7 +37,7 @@ void transform(void)
   float cos_pitch = cos(pitch * M_PI / 180);
   float pitch_columns[4][4] = {{1, 0, 0, 0}, {0, cos_pitch, -sin_pitch, 0}, {0, sin_pitch, cos_pitch, 0}, {0, 0, 0, 1}};
   glUniformMatrix4fv(glGetUniformLocation(program->program, "pitch"), 1, GL_FALSE, &pitch_columns[0][0]);
-  float translation_columns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, -distance, 1}};
+  float translation_columns[4][4] = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, level, -distance, 1}};
   glUniformMatrix4fv(glGetUniformLocation(program->program, "translation"), 1, GL_FALSE, &translation_columns[0][0]);
 }
 
@@ -52,7 +54,7 @@ void onResize(int w, int h)
 
 void onDisplay(void)
 {
-  uniform_matrix(program, "projection", projection(width, height, 0.1, 100, 90.0));
+  uniform_matrix(program, "projection", projection(width, height, 0.1, 10000, 90.0));
   glUseProgram(program->program);
   transform();
   light();
@@ -78,15 +80,16 @@ void onKey(int key, int x, int y)
     pitch += 2;
     break;
   case GLUT_KEY_PAGE_UP:
-    distance += 0.05;
+    distance += 3;
     break;
   case GLUT_KEY_PAGE_DOWN:
-    distance -= 0.05;
+    distance -= 3;
     break;
   case GLUT_KEY_HOME:
-    yaw = 0;
-    pitch = 0;
-    distance = 2;
+    level -= 3;
+    break;
+  case GLUT_KEY_END:
+    level += 3;
     break;
   default:
     return;
@@ -96,6 +99,18 @@ void onKey(int key, int x, int y)
 
 int main(int argc, char **argv)
 {
+  if (argc == 1) {
+    fprintf(stderr, "Syntax: tetraeder <object file>\n");
+    return 1;
+  };
+
+  object = parse_file(argv[1]);
+
+  if (!object) {
+    fprintf(stderr, "Error reading object file %s\n", argv[1]);
+    return 1;
+  };
+
   GC_INIT();
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -105,28 +120,6 @@ int main(int argc, char **argv)
   glewInit();
   glEnable(GL_DEPTH_TEST);
 
-  object =
-    parse_string("newmtl colors\n"
-                 "map_Kd colors.png\n"
-                 "o tetraeder\n"
-                 "v  0.5  0.5  0.5\n"
-                 "v -0.5  0.5 -0.5\n"
-                 "v -0.5 -0.5  0.5\n"
-                 "v  0.5 -0.5 -0.5\n"
-                 "vt 16 16\n"
-                 "vt  0 16\n"
-                 "vt  0  0\n"
-                 "vt 16  0\n"
-                 "vn -0.577350269  0.577350269  0.577350269\n"
-                 "vn -0.577350269 -0.577350269 -0.577350269\n"
-                 "vn  0.577350269 -0.577350269  0.577350269\n"
-                 "vn  0.577350269  0.577350269 -0.577350269\n"
-                 "s off\n"
-                 "usemtl colors\n"
-                 "f 2/2/2 3/3/3 1/1/1\n"
-                 "f 4/4/4 3/3/3 2/2/2\n"
-                 "f 4/4/4 1/1/1 3/3/3\n"
-                 "f 2/2/2 1/1/1 4/4/4");
   program = make_program("vertex.glsl", "fragment.glsl");
   list = make_vertex_array_object_list(program, object);
 
@@ -134,5 +127,6 @@ int main(int argc, char **argv)
   glutReshapeFunc(onResize);
   glutSpecialFunc(onKey);
   glutMainLoop();
+
   return 0;
 }
