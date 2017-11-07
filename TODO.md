@@ -1,6 +1,5 @@
 # TODO
 
-* test two textures
 * more than one material
 * set material constants in shader
 * surface -> (named) group, top-level default group
