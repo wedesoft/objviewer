@@ -1,5 +1,7 @@
 # TODO
 
+* maintain list of hash keys to prevent garbage collection
+* maintain list of pointer values to prevent garbage collection
 * every object getting same texture
 * materials before object statement
 * make object name optional

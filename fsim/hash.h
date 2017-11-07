@@ -2,11 +2,13 @@
 #define _GNU_SOURCE
 #define __USE_GNU
 #include <search.h>
+#include "list.h"
 #include "material.h"
 
 
 typedef struct {
   struct hsearch_data table;
+  list_t *keys;
 } hash_t;
 
 hash_t *make_hash(void);
