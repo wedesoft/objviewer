@@ -87,6 +87,10 @@ void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture,
 void draw_elements(vertex_array_object_t *vertex_array_object)
 {
   glUseProgram(vertex_array_object->program->program);
+  if (vertex_array_object->texture->size) {
+    texture_t *texture = get_pointer(vertex_array_object->texture)[0];
+    glBindTexture(GL_TEXTURE_2D, texture->texture);
+  };
   glBindVertexArray(vertex_array_object->vertex_array_object);
   glDrawElements(GL_TRIANGLES, vertex_array_object->n_indices, GL_UNSIGNED_INT, (void *)0);
 }
