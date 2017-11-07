@@ -8,7 +8,7 @@
 
 typedef struct {
   struct hsearch_data table;
-  list_t *keys;
+  list_t *items;
 } hash_t;
 
 hash_t *make_hash(void);
