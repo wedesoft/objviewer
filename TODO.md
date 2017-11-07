@@ -1,11 +1,11 @@
 # TODO
 
-* use relative path when loading material and texture files
-* make object name optional
+* test two textures
 * more than one material
-* ignore surfaces (use groups instead)
 * set material constants in shader
 * surface -> (named) group, top-level default group
+* use relative path when loading material and texture files
+* make object name optional
 * more parse error information, reset lexer and parser
 * render to VAOs with one program (setup of vertex array pointers)
 * read Wavefront data from file
