@@ -1,4 +1,4 @@
-// Small example drawing a tetraeder using this library
+// Small example loading and drawing a WaveFront Object File using this library
 #include <stdio.h>
 #include <math.h>
 #include <gc.h>
@@ -100,7 +100,7 @@ void onKey(int key, int x, int y)
 int main(int argc, char **argv)
 {
   if (argc == 1) {
-    fprintf(stderr, "Syntax: tetraeder <object file>\n");
+    fprintf(stderr, "Syntax: objviewer <object file>\n");
     return 1;
   };
 
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(width, height);
-  glutCreateWindow("tetraeder");
+  glutCreateWindow("objviewer");
   glewExperimental = GL_TRUE;
   glewInit();
   glEnable(GL_DEPTH_TEST);
