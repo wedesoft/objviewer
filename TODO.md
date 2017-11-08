@@ -1,7 +1,6 @@
 # TODO
 
 * vertex\_array\_object->texture getting corrupted when there is no texture
-* set material constants in shader
 * only keep reference to material constants (not the texture image)
 * surface -> (named) group, top-level default group
 * use relative path when loading material and texture files
