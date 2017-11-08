@@ -54,7 +54,6 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
   };
   return result;
 }
-
 %}
 
 %union {
@@ -94,27 +93,13 @@ properties: properties property
           | /* NULL */
           ;
 
-property: KA NUMBER NUMBER NUMBER {
-            set_ambient(parse_material, $2, $3, $4);
-          }
-        | KD NUMBER NUMBER NUMBER {
-            set_diffuse(parse_material, $2, $3, $4);
-          }
-        | KS NUMBER NUMBER NUMBER {
-            set_specular(parse_material, $2, $3, $4);
-          }
-        | NS NUMBER {
-            set_specular_exponent(parse_material, $2);
-          }
-        | NI NUMBER {
-            set_optical_density(parse_material, $2);
-          }
-        | D NUMBER {
-            set_disolve(parse_material, $2);
-          }
-        | MAPKD NAME {
-            set_texture(parse_material, read_image($2));
-          }
+property: KA NUMBER NUMBER NUMBER { set_ambient(parse_material, $2, $3, $4); }
+        | KD NUMBER NUMBER NUMBER { set_diffuse(parse_material, $2, $3, $4); }
+        | KS NUMBER NUMBER NUMBER { set_specular(parse_material, $2, $3, $4); }
+        | NS NUMBER               { set_specular_exponent(parse_material, $2); }
+        | NI NUMBER               { set_optical_density(parse_material, $2); }
+        | D NUMBER                { set_disolve(parse_material, $2); }
+        | MAPKD NAME              { set_texture(parse_material, read_image($2)); }
 
 primitive: vector
          | surface
@@ -158,25 +143,13 @@ facets: facets facet
 
 facet: FACET indices more_indices
 
-indices: index index index {
-           add_triangle(last_surface(), $1, $2, $3);
-         }
+indices: index index index { add_triangle(last_surface(), $1, $2, $3); }
 
-more_indices: index {
-                extend_triangle(last_surface(), $1);
-              } more_indices
+more_indices: index { extend_triangle(last_surface(), $1); } more_indices
             | /* NULL */
             ;
 
-index: INDEX {
-         $$ = index_vertex(3, $1, 0, 0);
-       }
-       | INDEX SLASH INDEX {
-         $$ = index_vertex(5, $1, $3, 0);
-       }
-       | INDEX SLASH SLASH INDEX {
-         $$ = index_vertex(6, $1, 0, $4);
-       }
-       | INDEX SLASH INDEX SLASH INDEX {
-         $$ = index_vertex(8, $1, $3, $5);
-       }
+index: INDEX                           { $$ = index_vertex(3, $1,  0,  0); }
+       | INDEX SLASH INDEX             { $$ = index_vertex(5, $1, $3,  0); }
+       | INDEX SLASH SLASH INDEX       { $$ = index_vertex(6, $1,  0, $4); }
+       | INDEX SLASH INDEX SLASH INDEX { $$ = index_vertex(8, $1, $3, $5); }
