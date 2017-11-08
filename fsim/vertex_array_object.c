@@ -93,8 +93,9 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
   glUseProgram(program->program);
   if (vertex_array_object->material) {
     material_t *material = vertex_array_object->material;
-    glUniform3fv(glGetUniformLocation(program->program, "ambient"), 1, &material->ambient[0]);
-    glUniform3fv(glGetUniformLocation(program->program, "diffuse"), 1, &material->diffuse[0]);
+    glUniform3fv(glGetUniformLocation(program->program, "ambient" ), 1, &material->ambient[0]);
+    glUniform3fv(glGetUniformLocation(program->program, "diffuse" ), 1, &material->diffuse[0]);
+    glUniform3fv(glGetUniformLocation(program->program, "specular"), 1, &material->specular[0]);
   };
   if (vertex_array_object->texture->size) {
     texture_t *texture = get_pointer(vertex_array_object->texture)[0];

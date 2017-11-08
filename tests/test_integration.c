@@ -217,6 +217,34 @@ static MunitResult test_diffuse_color(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_specular_color(const MunitParameter params[], void *data)
+{
+  object_t *object =
+    parse_string("newmtl red\n"
+                 "Ks 1 0 0\n"
+                 "o specular color\n"
+                 "v -0.5 -0.5 0\n"
+                 "v  0.5 -0.5 0\n"
+                 "v -0.5  0.5 0\n"
+                 "v  0.5  0.5 0\n"
+                 "s off\n"
+                 "usemtl red\n"
+                 "f 1 2 3");
+  program_t *program = make_program("vertex-specular.glsl", "fragment-specular.glsl");
+  list_t *list = make_vertex_array_object_list(program, object);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glClearColor(0, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT);
+  render(list);
+  glFinish();
+  unsigned char *pixels = read_pixels();
+  write_ppm("specular_color.ppm", width, height, pixels);
+  munit_assert_int(pixels[(8 * 32 + 14) * 4 + 0], ==, 255);
+  munit_assert_int(pixels[(8 * 32 + 14) * 4 + 1], ==,   0);
+  munit_assert_int(pixels[(8 * 32 + 14) * 4 + 2], ==,   0);
+  return MUNIT_OK;
+}
+
 MunitTest test_integration[] = {
   {"/draw_triangle"          , test_draw_triangle          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/use_normal"             , test_use_normal             , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
@@ -225,5 +253,6 @@ MunitTest test_integration[] = {
   {"/draw_two_textures"      , test_draw_two_textures      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient_color"          , test_ambient_color          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/diffuse_color"          , test_diffuse_color          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/specular_color"         , test_specular_color         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                      , NULL                        , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };
