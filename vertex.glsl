@@ -10,6 +10,7 @@ uniform vec3 ray;
 uniform vec3 ambient;
 uniform vec3 diffuse;
 uniform vec3 specular;
+uniform mediump float specular_exponent;
 out mediump vec2 UV;
 out mediump vec3 normal;
 flat out mediump vec3 light;
@@ -17,6 +18,7 @@ flat out mediump vec3 Ka;
 out mediump vec3 direction;
 out mediump vec3 Kd;
 flat out mediump vec3 Ks;
+flat out mediump float Ns;
 void main()
 {
   mat4 model = translation * yaw * pitch;
@@ -28,4 +30,5 @@ void main()
   Ka = ambient;
   Kd = max(0.0, dot(normal, light)) * diffuse;
   Ks = specular;
+  Ns = specular_exponent;
 }

@@ -221,7 +221,8 @@ static MunitResult test_specular_color(const MunitParameter params[], void *data
 {
   object_t *object =
     parse_string("newmtl red\n"
-                 "Ks 1 0 0\n"
+                 "Ks 0.5 0 0\n"
+                 "Ns 2.0\n"
                  "o specular color\n"
                  "v -0.5 -0.5 0\n"
                  "v  0.5 -0.5 0\n"
@@ -239,7 +240,7 @@ static MunitResult test_specular_color(const MunitParameter params[], void *data
   glFinish();
   unsigned char *pixels = read_pixels();
   write_ppm("specular_color.ppm", width, height, pixels);
-  munit_assert_int(pixels[(8 * 32 + 14) * 4 + 0], ==, 255);
+  munit_assert_int(pixels[(8 * 32 + 14) * 4 + 0], ==,  64);
   munit_assert_int(pixels[(8 * 32 + 14) * 4 + 1], ==,   0);
   munit_assert_int(pixels[(8 * 32 + 14) * 4 + 2], ==,   0);
   return MUNIT_OK;
