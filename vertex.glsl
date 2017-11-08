@@ -7,9 +7,11 @@ uniform mat4 pitch;
 uniform mat4 translation;
 uniform mat4 projection;
 uniform vec3 ray;
+uniform vec3 ambient;
 out mediump vec2 UV;
 out mediump vec3 normal;
 flat out mediump vec3 light;
+flat out mediump vec3 Ka;
 out mediump vec3 direction;
 out mediump float diffuse;
 void main()
@@ -21,4 +23,5 @@ void main()
   normal = (model * vec4(vector, 0)).xyz;
   light = ray;
   diffuse = max(0.0, dot(normal, light));
+  Ka = ambient;
 }
