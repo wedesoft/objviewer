@@ -98,7 +98,7 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
     glUniform3fv(glGetUniformLocation(program->program, "specular"), 1, &material->specular[0]);
     glUniform1f(glGetUniformLocation(program->program, "specular_exponent"), material->specular_exponent);
   };
-  if (vertex_array_object->texture->size) {
+  if (vertex_array_object->material->texture) {
     texture_t *texture = get_pointer(vertex_array_object->texture)[0];
     glBindTexture(GL_TEXTURE_2D, texture->texture);
   };

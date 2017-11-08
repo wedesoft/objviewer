@@ -1,4 +1,5 @@
 %{
+#include <assert.h>
 #include <stdio.h>
 #include "object.h"
 #include "surface.h"
@@ -34,6 +35,8 @@ static void copy_vertex_data(int index, int stride, list_t *source)
 {
   surface_t *surface = last_surface();
   int i;
+  assert(index >= 0);
+  assert(index * stride < source->size);
   for (i=index * stride; i<index * stride + stride; i++)
     append_glfloat(surface->array, get_glfloat(source)[i]);
 }
