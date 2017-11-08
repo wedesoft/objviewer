@@ -1,7 +1,7 @@
 # TODO
 
-* more than one material
 * set material constants in shader
+* only keep reference to material constants (not the texture image)
 * surface -> (named) group, top-level default group
 * use relative path when loading material and texture files
 * make object name optional

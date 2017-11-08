@@ -4,6 +4,7 @@
 #include "surface.h"
 #include "object.h"
 #include "texture.h"
+#include "material.h"
 #include "image.h"
 #include "list.h"
 
@@ -16,6 +17,7 @@ typedef struct {
   GLuint vertex_buffer_object;
   GLuint element_buffer_object;
   int n_indices;
+  material_t *material;
   list_t *texture;
 } vertex_array_object_t;
 

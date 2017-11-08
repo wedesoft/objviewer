@@ -90,6 +90,19 @@ static MunitResult test_vao_list_program(const MunitParameter params[], void *da
   return MUNIT_OK;
 }
 
+static MunitResult test_material(const MunitParameter params[], void *data)
+{
+  surface_t *surface = make_surface(5);
+  object_t *object = make_object("test");
+  material_t *material = make_material();
+  use_material(surface, material);
+  add_surface(object, surface);
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
+  list_t *list = make_vertex_array_object_list(program, object);
+  munit_assert_ptr(((vertex_array_object_t *)get_pointer(list)[0])->material, ==, material);
+  return MUNIT_OK;
+}
+
 MunitTest test_vao[] = {
   {"/vertex_attribute"     , test_vertex_attribute     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_and_uv"        , test_vertex_and_uv        , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
@@ -100,5 +113,6 @@ MunitTest test_vao[] = {
   {"/make_empty_vao_list"  , test_make_empty_vao_list  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vao_list_entry"       , test_vao_list_entry       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vao_list_program"     , test_vao_list_program     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/material"             , test_material             , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL                    , NULL                      , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

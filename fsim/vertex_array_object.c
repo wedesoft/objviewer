@@ -47,8 +47,11 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *s
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index->element, GL_STATIC_DRAW);
   setup_vertex_attribute_pointers(retval, surface->stride);
-  if (surface->material && surface->material->texture)
-    add_texture(retval, make_texture("tex"), surface->material->texture);
+  retval->material = surface->material;
+  if (surface->material) {
+    if (surface->material->texture)
+      add_texture(retval, make_texture("tex"), surface->material->texture);
+  };
   return retval;
 }
 
@@ -86,7 +89,12 @@ void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture,
 
 void draw_elements(vertex_array_object_t *vertex_array_object)
 {
-  glUseProgram(vertex_array_object->program->program);
+  program_t *program = vertex_array_object->program;
+  glUseProgram(program->program);
+  if (vertex_array_object->material) {
+    material_t *material = vertex_array_object->material;
+    glUniform3fv(glGetUniformLocation(program->program, "ambient"), 1, &material->ambient[0]);
+  };
   if (vertex_array_object->texture->size) {
     texture_t *texture = get_pointer(vertex_array_object->texture)[0];
     glBindTexture(GL_TEXTURE_2D, texture->texture);
