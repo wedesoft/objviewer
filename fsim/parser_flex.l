@@ -10,7 +10,7 @@
 
 %%
 
-#.*\n                                 ;
+#.*          ;
 
 o                                     { BEGIN(name); return OBJECT; }
 
@@ -69,7 +69,7 @@ f                                     { BEGIN(idx); return FACET; }
                                           yyterminate();
                                       }
 
-<INITIAL,name,idx,mtllib>[^ \r\t\n]   {
+<INITIAL,name,idx,mtllib>[^ \r\t\n#]  {
                                         fprintf(stderr, "Tokenizing line %d: unexpected character '%c'.\n", yylineno, *yytext);
                                         return *yytext;
                                       }
