@@ -1,7 +1,7 @@
 #include <gc.h>
 #include "munit.h"
 #include "test_helper.h"
-#include "test_surface.h"
+#include "test_group.h"
 #include "test_object.h"
 #include "test_shader.h"
 #include "test_program.h"
@@ -17,7 +17,7 @@
 
 
 static MunitSuite test_fsim[] = {
-  {"/surface"    , test_surface    , NULL, 1, MUNIT_SUITE_OPTION_NONE},
+  {"/group"      , test_group      , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/object"     , test_object     , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/shader"     , test_shader     , NULL, 1, MUNIT_SUITE_OPTION_NONE},
   {"/program"    , test_program    , NULL, 1, MUNIT_SUITE_OPTION_NONE},

@@ -1,5 +1,5 @@
-#include "fsim/surface.h"
-#include "test_surface.h"
+#include "fsim/group.h"
+#include "test_group.h"
 #include "test_helper.h"
 
 
@@ -145,7 +145,7 @@ static MunitResult test_use_material(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
-MunitTest test_surface[] = {
+MunitTest test_group[] = {
   {"/empty_surface"   , test_empty_surface   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_coordinate"  , test_add_coordinate  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_pair"        , test_add_pair        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

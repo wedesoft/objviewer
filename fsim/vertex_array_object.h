@@ -1,7 +1,7 @@
 #pragma once
 #include <GL/gl.h>
 #include "program.h"
-#include "surface.h"
+#include "group.h"
 #include "object.h"
 #include "texture.h"
 #include "material.h"

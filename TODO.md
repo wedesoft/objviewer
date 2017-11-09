@@ -1,9 +1,9 @@
 # TODO
 
-* flip textures vertically?
-* vertex\_array\_object->texture getting corrupted when there is no texture
-* only keep reference to material constants (not the texture image)
 * surface -> (named) group, top-level default group
+* flip textures vertically?
+* only keep reference to material constants (not the texture image)
+* vertex\_array\_object->texture getting corrupted when there is no texture
 * use relative path when loading material and texture files
 * make object name optional
 * more parse error information, reset lexer and parser

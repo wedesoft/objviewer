@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "object.h"
-#include "surface.h"
+#include "group.h"
 #include "list.h"
 #include "hash.h"
 

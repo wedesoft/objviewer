@@ -2,4 +2,4 @@
 #include "munit.h"
 
 
-extern MunitTest test_surface[];
+extern MunitTest test_group[];

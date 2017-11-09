@@ -1,5 +1,5 @@
 #include <gc.h>
-#include "surface.h"
+#include "group.h"
 
 
 surface_t *make_surface(int stride)
