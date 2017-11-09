@@ -80,20 +80,23 @@ void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture)
   glUniform1i(glGetAttribLocation(vertex_array_object->program->program, texture->name), 0);
 }
 
+#include <stdio.h>
+
 void draw_elements(vertex_array_object_t *vertex_array_object)
 {
   program_t *program = vertex_array_object->program;
   glUseProgram(program->program);
+  if (vertex_array_object->material && vertex_array_object->material->texture) {
+    texture_t *texture = get_pointer(vertex_array_object->texture)[0];
+    fprintf(stderr, "Drawing texture %d\n", texture->texture);
+    glBindTexture(GL_TEXTURE_2D, texture->texture);
+  };
   if (vertex_array_object->material) {
     material_t *material = vertex_array_object->material;
     glUniform3fv(glGetUniformLocation(program->program, "ambient"), 1, &material->ambient[0]);
     glUniform3fv(glGetUniformLocation(program->program, "diffuse"), 1, &material->diffuse[0]);
     glUniform3fv(glGetUniformLocation(program->program, "specular"), 1, &material->specular[0]);
     glUniform1f(glGetUniformLocation(program->program, "specular_exponent"), material->specular_exponent);
-  };
-  if (vertex_array_object->material && vertex_array_object->material->texture) {
-    texture_t *texture = get_pointer(vertex_array_object->texture)[0];
-    glBindTexture(GL_TEXTURE_2D, texture->texture);
   };
   glBindVertexArray(vertex_array_object->vertex_array_object);
   glDrawElements(GL_TRIANGLES, vertex_array_object->n_indices, GL_UNSIGNED_INT, (void *)0);

@@ -20,7 +20,7 @@ MMSEV.obj: MMSEV.zip
 	sed -i /illum/d MMSEV.mtl
 	sed -i /map_Ks/d MMSEV.mtl
 	sed -i /map_Bump/d MMSEV.mtl
-	convert MMSEV_Color_v2s.png -scale 64 -flip MMSEV_Color_v2s.png
+	convert MMSEV_Color_v2s.png -flip MMSEV_Color_v2s.png
 	touch $@
 
 # https://nasa3d.arc.nasa.gov/detail/nmss-sev

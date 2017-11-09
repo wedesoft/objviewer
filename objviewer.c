@@ -105,13 +105,6 @@ int main(int argc, char **argv)
     return 1;
   };
 
-  object = parse_file(argv[1]);
-
-  if (!object) {
-    fprintf(stderr, "Error reading object file %s\n", argv[1]);
-    return 1;
-  };
-
   GC_INIT();
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -120,6 +113,13 @@ int main(int argc, char **argv)
   glewExperimental = GL_TRUE;
   glewInit();
   glEnable(GL_DEPTH_TEST);
+
+  object = parse_file(argv[1]);
+
+  if (!object) {
+    fprintf(stderr, "Error reading object file %s\n", argv[1]);
+    return 1;
+  };
 
   program = make_program("vertex.glsl", "fragment.glsl");
   list = make_vertex_array_object_list(program, object);
