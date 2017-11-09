@@ -50,7 +50,7 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *gro
   retval->material = group->material;
   if (group->material) {
     if (group->material->texture)
-      add_texture(retval, make_texture("tex"), group->material->texture);
+      add_texture(retval, group->material->texture);
   };
   return retval;
 }
@@ -75,16 +75,11 @@ void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, 
   vertex_array_object->attribute_pointer += sizeof(float) * size;
 }
 
-void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture, image_t *image)
+void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture)
 {
   append_pointer(vertex_array_object->texture, texture);
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture->texture);
   glUniform1i(glGetAttribLocation(vertex_array_object->program->program, texture->name), 0);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 void draw_elements(vertex_array_object_t *vertex_array_object)
@@ -100,6 +95,7 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
   };
   if (vertex_array_object->material && vertex_array_object->material->texture) {
     texture_t *texture = get_pointer(vertex_array_object->texture)[0];
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->texture);
   };
   glBindVertexArray(vertex_array_object->vertex_array_object);

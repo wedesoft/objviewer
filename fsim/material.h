@@ -1,5 +1,6 @@
 #pragma once
 #include <GL/gl.h>
+#include "texture.h"
 #include "image.h"
 
 
@@ -11,7 +12,7 @@ typedef struct
   GLfloat specular_exponent;
   GLfloat optical_density;
   GLfloat disolve;
-  image_t *texture;
+  texture_t *texture;
 } material_t;
 
 material_t* make_material(void);

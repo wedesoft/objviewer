@@ -57,7 +57,14 @@ void set_disolve(material_t *material, GLfloat disolve)
   material->disolve = disolve;
 }
 
-void set_texture(material_t *material, image_t *texture)
+void set_texture(material_t *material, image_t *image)
 {
-  material->texture = texture;
+  if (!image) return;
+  material->texture = make_texture("tex");
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, material->texture->texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }

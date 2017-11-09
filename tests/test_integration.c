@@ -161,6 +161,45 @@ static MunitResult test_draw_two_textures(const MunitParameter params[], void *d
   return MUNIT_OK;
 }
 
+static MunitResult test_reuse_texture(const MunitParameter params[], void *data)
+{
+  object_t *object =
+    parse_string("newmtl colors\n"
+                 "map_Kd colors.png\n"
+                 "newmtl gray\n"
+                 "map_Kd gray.png\n"
+                 "o two textures\n"
+                 "v -0.5 -0.5 0\n"
+                 "v  0.5 -0.5 0\n"
+                 "v -0.5  0.5 0\n"
+                 "v  0.5  0.5 0\n"
+                 "vt 0 0\n"
+                 "vt 1 0\n"
+                 "vt 0 1\n"
+                 "vt 1 1\n"
+                 "usemtl gray\n"
+                 "g first texturized triangle\n"
+                 "f 1/1 2/2 3/3\n"
+                 "g second texturized triangle\n"
+                 "f 2/2 4/4 3/3");
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
+  list_t *list = make_vertex_array_object_list(program, object);
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glClearColor(0, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT);
+  render(list);
+  glFinish();
+  unsigned char *pixels = read_pixels();
+  write_ppm("reuse_texture.ppm", width, height, pixels);
+  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 0], ==, 128);
+  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 1], ==, 128);
+  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 2], ==, 128);
+  munit_assert_int(pixels[(12 * 32 + 18 ) * 4 + 0], ==, 128);
+  munit_assert_int(pixels[(12 * 32 + 18 ) * 4 + 1], ==, 128);
+  munit_assert_int(pixels[(12 * 32 + 18 ) * 4 + 2], ==, 128);
+  return MUNIT_OK;
+}
+
 static MunitResult test_ambient_color(const MunitParameter params[], void *data)
 {
   object_t *object =
@@ -252,6 +291,7 @@ MunitTest test_integration[] = {
   {"/draw_texturized_square" , test_draw_texturized_square , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/perspective_triangle"   , test_perspective_triangle   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/draw_two_textures"      , test_draw_two_textures      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/reuse_texture"          , test_reuse_texture          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient_color"          , test_ambient_color          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/diffuse_color"          , test_diffuse_color          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/specular_color"         , test_specular_color         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},

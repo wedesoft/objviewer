@@ -27,7 +27,7 @@ list_t *make_vertex_array_object_list(program_t *program, object_t *object);
 
 void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, const char *attribute, int size, int stride);
 
-void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture, image_t *image);
+void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture);
 
 void draw_elements(vertex_array_object_t *vertex_array_object);
 
