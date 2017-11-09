@@ -13,7 +13,7 @@ object_t *make_object(const char *name)
   return retval;
 }
 
-object_t *add_surface(object_t *object, surface_t *surface)
+object_t *add_surface(object_t *object, group_t *surface)
 {
   append_pointer(object->surface, surface);
   return object;

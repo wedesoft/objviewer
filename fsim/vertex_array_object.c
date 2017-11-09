@@ -29,7 +29,7 @@ void setup_vertex_attribute_pointers(vertex_array_object_t *vertex_array_object,
     setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, stride);
 }
 
-vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface)
+vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *surface)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);

@@ -21,7 +21,7 @@ typedef struct {
   list_t *texture;
 } vertex_array_object_t;
 
-vertex_array_object_t *make_vertex_array_object(program_t *program, surface_t *surface);
+vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *surface);
 
 list_t *make_vertex_array_object_list(program_t *program, object_t *object);
 

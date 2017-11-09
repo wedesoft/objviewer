@@ -32,7 +32,7 @@ static MunitResult test_copy_name(const MunitParameter params[], void *data)
 static MunitResult test_add_surface(const MunitParameter params[], void *data)
 {
   object_t *object = make_object("test");
-  surface_t *surface = make_surface(3);
+  group_t *surface = make_surface(3);
   object_t *retval = add_surface(object, surface);
   munit_assert_int(object->surface->size, ==, 1);
   munit_assert_ptr(get_pointer(object->surface)[0], ==, surface);
