@@ -1,10 +1,13 @@
+#include <string.h>
 #include <gc.h>
 #include "group.h"
 
 
-group_t *make_group(int stride)
+group_t *make_group(const char *name, int stride)
 {
   group_t *retval = GC_MALLOC(sizeof(group_t));
+  retval->name = GC_MALLOC_ATOMIC(strlen(name) + 1);
+  strcpy(retval->name, name);
   retval->array = make_list();
   retval->vertex_index = make_list();
   retval->stride = stride;

@@ -6,7 +6,7 @@
 static MunitResult test_vertex_attribute(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, group);
   munit_assert_int(vertex_array_object->n_attributes, ==, 1);
   munit_assert_int(vertex_array_object->attribute_pointer, ==, 3 * sizeof(float));
@@ -16,7 +16,7 @@ static MunitResult test_vertex_attribute(const MunitParameter params[], void *da
 static MunitResult test_vertex_and_uv(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  group_t *group = make_group(5);
+  group_t *group = make_group("test", 5);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, group);
   munit_assert_int(vertex_array_object->n_attributes, ==, 2);
   munit_assert_int(vertex_array_object->attribute_pointer, ==, 5 * sizeof(float));
@@ -26,7 +26,7 @@ static MunitResult test_vertex_and_uv(const MunitParameter params[], void *data)
 static MunitResult test_vertex_uv_and_normal(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  group_t *group = make_group(8);
+  group_t *group = make_group("test", 8);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, group);
   munit_assert_int(vertex_array_object->n_attributes, ==, 3);
   munit_assert_int(vertex_array_object->attribute_pointer, ==, 8 * sizeof(float));
@@ -36,7 +36,7 @@ static MunitResult test_vertex_uv_and_normal(const MunitParameter params[], void
 static MunitResult test_vertex_and_normal(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  group_t *group = make_group(6);
+  group_t *group = make_group("test", 6);
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, group);
   munit_assert_int(vertex_array_object->n_attributes, ==, 2);
   munit_assert_int(vertex_array_object->attribute_pointer, ==, 6 * sizeof(float));
@@ -46,14 +46,14 @@ static MunitResult test_vertex_and_normal(const MunitParameter params[], void *d
 static MunitResult test_no_textures(const MunitParameter params[], void *data)
 {
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-blue.glsl");
-  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_group(5));
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, make_group("test", 5));
   munit_assert_int(vertex_array_object->texture->size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_add_texture(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(5);
+  group_t *group = make_group("test", 5);
   material_t *material = make_material();
   set_texture(material, read_image("colors.png"));
   use_material(group, material);
@@ -71,7 +71,7 @@ static MunitResult test_make_empty_vao_list(const MunitParameter params[], void 
 
 static MunitResult test_vao_list_entry(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(5);
+  group_t *group = make_group("test", 5);
   object_t *object = make_object("test");
   add_group(object, group);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
@@ -81,7 +81,7 @@ static MunitResult test_vao_list_entry(const MunitParameter params[], void *data
 
 static MunitResult test_vao_list_program(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(5);
+  group_t *group = make_group("test", 5);
   object_t *object = make_object("test");
   add_group(object, group);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
@@ -92,7 +92,7 @@ static MunitResult test_vao_list_program(const MunitParameter params[], void *da
 
 static MunitResult test_material(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(5);
+  group_t *group = make_group("test", 5);
   object_t *object = make_object("test");
   material_t *material = make_material();
   use_material(group, material);

@@ -40,7 +40,7 @@ vt                                    return UV;
 
 vn                                    return NORMAL;
 
-g.*                                   return GROUP;
+g                                     { BEGIN(name); return GROUP; }
 
 f                                     { BEGIN(idx); return FACET; }
 

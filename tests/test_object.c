@@ -32,7 +32,7 @@ static MunitResult test_copy_name(const MunitParameter params[], void *data)
 static MunitResult test_add_group(const MunitParameter params[], void *data)
 {
   object_t *object = make_object("test");
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   object_t *retval = add_group(object, group);
   munit_assert_int(object->group->size, ==, 1);
   munit_assert_ptr(get_pointer(object->group)[0], ==, group);

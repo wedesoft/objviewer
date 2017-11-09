@@ -15,6 +15,7 @@ extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
 object_t *parse_result = NULL;
 hash_t *parse_materials = NULL;
 material_t *parse_material = NULL;
+material_t *parse_use_material = NULL;
 list_t *parse_vertex = NULL;
 list_t *parse_uv = NULL;
 list_t *parse_normal = NULL;
@@ -24,16 +25,20 @@ hash_t *parse_hash =  NULL;
 static void parser_init(void)
 {
   parse_result = NULL;
+  parse_material = NULL;
   parse_materials = make_hash();
+  parse_use_material = NULL;// TODO: test
   parse_vertex = make_list();
   parse_uv = make_list();
   parse_normal = make_list();
+  parse_hash = NULL;
 }
 
 static void parser_cleanup(void)
 {
   parse_result = NULL;
   parse_material = NULL;// TODO: test
+  parse_use_material = NULL;// TODO: test
   parse_vertex = NULL;
   parse_uv = NULL;
   parse_normal = NULL;

@@ -131,15 +131,20 @@ static MunitResult test_cleanup_vertices(const MunitParameter params[], void *da
 
 static MunitResult test_no_groups(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\n");
-  munit_assert_int(parse_result->group->size, ==, 0);
+  munit_assert_int(parse_string("o test\n")->group->size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_start_group(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\ng group");
-  munit_assert_int(parse_result->group->size, ==, 1);
+  munit_assert_int(parse_string("o test\ng group")->group->size, ==, 1);
+  return MUNIT_OK;
+}
+
+static MunitResult test_group_name(const MunitParameter params[], void *data)
+{
+  group_t *group = get_pointer(parse_string("o test\ng test group")->group)[0];
+  munit_assert_string_equal(group->name, "test group");
   return MUNIT_OK;
 }
 
@@ -630,6 +635,14 @@ static MunitResult test_material(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_late_material(const MunitParameter params[], void *data)
+{
+  parse_string_core("o test\nnewmtl stone");
+  material_t *stone = hash_find_material(parse_materials, "stone", NULL);
+  munit_assert_ptr(stone, !=, NULL);
+  return MUNIT_OK;
+}
+
 static MunitResult test_two_materials(const MunitParameter params[], void *data)
 {
   parse_string_core("newmtl stone\nnewmtl water\no test");
@@ -654,6 +667,14 @@ static MunitResult test_use_material(const MunitParameter params[], void *data)
 {
   object_t *object = parse_string("newmtl mat\no test\nusemtl mat\ng group");
   group_t *group = get_pointer(object->group)[0];
+  munit_assert_ptr(group->material, !=, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_reuse_material(const MunitParameter params[], void *data)
+{
+  object_t *object = parse_string("newmtl mat\no test\nusemtl mat\ng group\ng group2");
+  group_t *group = get_pointer(object->group)[1];
   munit_assert_ptr(group->material, !=, NULL);
   return MUNIT_OK;
 }
@@ -745,6 +766,7 @@ MunitTest test_parser[] = {
   {"/cleanup_vertices"       , test_cleanup_vertices       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_groups"              , test_no_groups              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/start_group"            , test_start_group            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/group_name"             , test_group_name             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_groups"             , test_two_groups             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/facet"                  , test_facet                  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_stride"          , test_vertex_stride          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -795,9 +817,11 @@ MunitTest test_parser[] = {
   {"/file_not_found"         , test_file_not_found         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/continue_after_include" , test_continue_after_include , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/material"               , test_material               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/late_material"          , test_late_material          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_materials"          , test_two_materials          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient"                , test_ambient                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/use_material"           , test_use_material           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/reuse_material"         , test_reuse_material         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/read_texture"           , test_read_texture           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/texture_not_found"      , test_texture_not_found      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/diffuse"                , test_diffuse                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

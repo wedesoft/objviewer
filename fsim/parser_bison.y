@@ -12,6 +12,7 @@
 extern object_t *parse_result;
 extern hash_t *parse_materials;
 extern material_t *parse_material;
+extern material_t *parse_use_material;
 extern list_t *parse_vertex;
 extern list_t *parse_uv;
 extern list_t *parse_normal;
@@ -63,11 +64,9 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
   char *text;
   float number;
   int index;
-  material_t *material;
 }
 
 %type<index> index
-%type<material> use_material
 %token OBJECT MATERIAL KA KD KS NS NI D MAPKD USE VERTEX UV NORMAL GROUP FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
@@ -83,6 +82,7 @@ primitives: primitives primitive
 
 primitive: object
          | material
+         | use_material
          | group
          | vertex
          | texture_coordinate
@@ -126,17 +126,13 @@ normal: NORMAL NUMBER NUMBER NUMBER {
           append_glfloat(parse_normal, $4);
         }
 
-group: use_material GROUP {
-         add_group(parse_result, make_group(0));
-         use_material(last_group(), $1);
-         parse_hash = make_hash();
-       }
-     | GROUP {
-         add_group(parse_result, make_group(0));
+group: GROUP NAME {
+         add_group(parse_result, make_group($2, 0));
+         use_material(last_group(), parse_use_material);
          parse_hash = make_hash();
        }
 
-use_material: USE NAME { $$ = hash_find_material(parse_materials, $2, NULL); }
+use_material: USE NAME { parse_use_material = hash_find_material(parse_materials, $2, NULL); }
 
 facet: FACET indices more_indices
 

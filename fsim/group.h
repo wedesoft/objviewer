@@ -6,13 +6,14 @@
 
 
 typedef struct {
+  char *name;
   list_t *array;
   list_t *vertex_index;
   int stride;
   material_t *material;
 } group_t;
 
-group_t *make_group(int stride);
+group_t *make_group(const char *name, int stride);
 
 void add_vertex_data(group_t *group, int n, ...);
 

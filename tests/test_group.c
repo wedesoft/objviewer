@@ -5,16 +5,26 @@
 
 static MunitResult test_empty_group(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(8);
+  group_t *group = make_group("test", 8);
   munit_assert_int(group->array->size, ==, 0);
   munit_assert_int(group->stride, ==, 8);
   munit_assert_ptr(group->material, ==, NULL);
+  munit_assert_string_equal(group->name, "test");
+  return MUNIT_OK;
+}
+
+static MunitResult test_copy_name(const MunitParameter params[], void *data)
+{
+  char test[2] = "x";
+  group_t *group = make_group(test, 8);
+  test[0] = 'y';
+  munit_assert_string_equal(group->name, "x");
   return MUNIT_OK;
 }
 
 static MunitResult test_add_coordinate(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   add_vertex_data(group, 1, 2.5f);
   munit_assert_int(group->array->size, ==, 1);
   munit_assert_float(get_glfloat(group->array)[0], ==, 2.5f);
@@ -23,7 +33,7 @@ static MunitResult test_add_coordinate(const MunitParameter params[], void *data
 
 static MunitResult test_add_pair(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   add_vertex_data(group, 2, 2.5f, 3.5f);
   munit_assert_int(group->array->size, ==, 2);
   munit_assert_float(get_glfloat(group->array)[0], ==, 2.5f);
@@ -33,7 +43,7 @@ static MunitResult test_add_pair(const MunitParameter params[], void *data)
 
 static MunitResult test_add_three(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   add_vertex_data(group, 2, 0.36f, 0.48f);
   add_vertex_data(group, 1, 0.8f);
   munit_assert_int(group->array->size, ==, 3);
@@ -45,14 +55,14 @@ static MunitResult test_add_three(const MunitParameter params[], void *data)
 
 static MunitResult test_empty_array(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   munit_assert_int(size_of_array(group), ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_size_of_array(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   add_vertex_data(group, 3, 2.5f, 3.5f, 5.5f);
   munit_assert_int(size_of_array(group), ==, sizeof(GLfloat) * 3);
   return MUNIT_OK;
@@ -60,21 +70,21 @@ static MunitResult test_size_of_array(const MunitParameter params[], void *data)
 
 static MunitResult test_no_indices(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   munit_assert_int(group->vertex_index->size, ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_empty_indices(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   munit_assert_int(size_of_indices(group), ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_size_of_indices(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   int i;
   for (i=0; i<3; i++)
     add_vertex_data(group, 3, 0, 0, 0);
@@ -85,7 +95,7 @@ static MunitResult test_size_of_indices(const MunitParameter params[], void *dat
 
 static MunitResult test_add_texcoord(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(5);
+  group_t *group = make_group("test", 5);
   add_vertex_data(group, 5, 2.5f, 3.5f, 5.5f, 0.25f, 0.75f);
   munit_assert_int(group->array->size, ==, 5);
   munit_assert_float(get_glfloat(group->array)[3], ==, 0.25f);
@@ -95,7 +105,7 @@ static MunitResult test_add_texcoord(const MunitParameter params[], void *data)
 
 static MunitResult test_add_triangle(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   int i;
   for (i=0; i<3; i++)
     add_vertex_data(group, 3, i % 2, 0, i / 2);
@@ -109,7 +119,7 @@ static MunitResult test_add_triangle(const MunitParameter params[], void *data)
 
 static MunitResult test_add_square(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   int i;
   for (i=0; i<4; i++)
     add_vertex_data(group, 3, i % 2, 0, i / 2);
@@ -123,7 +133,7 @@ static MunitResult test_add_square(const MunitParameter params[], void *data)
 
 static MunitResult test_add_pentagon(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(3);
+  group_t *group = make_group("test", 3);
   int i;
   for (i=0; i<4; i++)
     add_vertex_data(group, 3, i % 2, 0, i / 2);
@@ -138,7 +148,7 @@ static MunitResult test_add_pentagon(const MunitParameter params[], void *data)
 
 static MunitResult test_use_material(const MunitParameter params[], void *data)
 {
-  group_t *group = make_group(5);
+  group_t *group = make_group("test", 5);
   material_t *material = make_material();
   use_material(group, material);
   munit_assert_ptr(group->material, ==, material);
@@ -147,6 +157,7 @@ static MunitResult test_use_material(const MunitParameter params[], void *data)
 
 MunitTest test_group[] = {
   {"/empty_group"     , test_empty_group     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/copy_name"       , test_copy_name       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_coordinate"  , test_add_coordinate  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_pair"        , test_add_pair        , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/add_three"       , test_add_three       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

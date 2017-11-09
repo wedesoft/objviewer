@@ -9,11 +9,12 @@ config.status
 libtool
 Makefile
 raw
-readobj
 objviewer
+MMSEV*
 *.la
 *.lo
 *.in
 *.log
 *.o
 *.ppm
+*.tar*
