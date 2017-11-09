@@ -15,7 +15,7 @@ hash_t *make_hash(void)
   hash_t *result = GC_MALLOC(sizeof(hash_t));
   GC_register_finalizer(result, finalize_hash, 0, 0, 0);
   memset(result, 0, sizeof(hash_t));
-  hcreate_r(500000, &result->table);
+  hcreate_r(65536, &result->table);
   result->items = make_list();
   return result;
 }

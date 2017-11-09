@@ -88,7 +88,6 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
   glUseProgram(program->program);
   if (vertex_array_object->material && vertex_array_object->material->texture) {
     texture_t *texture = get_pointer(vertex_array_object->texture)[0];
-    fprintf(stderr, "Drawing texture %d\n", texture->texture);
     glBindTexture(GL_TEXTURE_2D, texture->texture);
   };
   if (vertex_array_object->material) {
