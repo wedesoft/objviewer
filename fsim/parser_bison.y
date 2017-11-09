@@ -25,20 +25,20 @@ void yyerror(const char *message)
   fprintf(stderr, "Parsing line %d: %s\n", yylineno, message);
 }
 
-static group_t *last_surface(void)
+static group_t *last_group(void)
 {
-  list_t *surface = parse_result->surface;
-  return get_pointer(surface)[surface->size - 1];
+  list_t *group = parse_result->group;
+  return get_pointer(group)[group->size - 1];
 }
 
 static void copy_vertex_data(int index, int stride, list_t *source)
 {
-  group_t *surface = last_surface();
+  group_t *group = last_group();
   int i;
   assert(index >= 0);
   assert(index * stride < source->size);
   for (i=index * stride; i<index * stride + stride; i++)
-    append_glfloat(surface->array, get_glfloat(source)[i]);
+    append_glfloat(group->array, get_glfloat(source)[i]);
 }
 
 static int index_vertex(int stride, int vertex_index, int uv_index, int normal_index)
@@ -46,9 +46,9 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
   if (vertex_index < 0) vertex_index += 1 + parse_vertex->size / 3;
   if (uv_index     < 0) uv_index     += 1 + parse_uv->size     / 2;
   if (normal_index < 0) normal_index += 1 + parse_normal->size / 3;
-  group_t *surface = last_surface();
-  surface->stride = stride;
-  int n_indices = surface->array->size / stride;
+  group_t *group = last_group();
+  group->stride = stride;
+  int n_indices = group->array->size / stride;
   int result = hash_find_index(parse_hash, vertex_index, uv_index, normal_index, n_indices);
   if (result == n_indices) {
     copy_vertex_data(vertex_index - 1, 3, parse_vertex);
@@ -66,7 +66,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT MATERIAL KA KD KS NS NI D MAPKD USE VERTEX UV NORMAL SURFACE FACET SLASH
+%token OBJECT MATERIAL KA KD KS NS NI D MAPKD USE VERTEX UV NORMAL GROUP FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
@@ -105,7 +105,7 @@ property: KA NUMBER NUMBER NUMBER { set_ambient(parse_material, $2, $3, $4); }
         | MAPKD NAME              { set_texture(parse_material, read_image($2)); }
 
 primitive: vector
-         | surface
+         | group
          ;
 
 vector: vertex
@@ -129,13 +129,13 @@ normal: NORMAL NUMBER NUMBER NUMBER {
           append_glfloat(parse_normal, $4);
         }
 
-surface: SURFACE {
-           add_surface(parse_result, make_surface(0));
-           parse_hash = make_hash();
-         } use_material facets
+group: GROUP {
+         add_group(parse_result, make_group(0));
+         parse_hash = make_hash();
+       } use_material facets
 
 use_material: USE NAME {
-              use_material(last_surface(), hash_find_material(parse_materials, $2, NULL));
+              use_material(last_group(), hash_find_material(parse_materials, $2, NULL));
             }
             | /* NULL */
             ;
@@ -146,9 +146,9 @@ facets: facets facet
 
 facet: FACET indices more_indices
 
-indices: index index index { add_triangle(last_surface(), $1, $2, $3); }
+indices: index index index { add_triangle(last_group(), $1, $2, $3); }
 
-more_indices: index { extend_triangle(last_surface(), $1); } more_indices
+more_indices: index { extend_triangle(last_group(), $1); } more_indices
             | /* NULL */
             ;
 

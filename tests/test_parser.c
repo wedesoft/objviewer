@@ -129,172 +129,172 @@ static MunitResult test_cleanup_vertices(const MunitParameter params[], void *da
   return MUNIT_OK;
 }
 
-static MunitResult test_no_surfaces(const MunitParameter params[], void *data)
+static MunitResult test_no_groups(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\n");
-  munit_assert_int(parse_result->surface->size, ==, 0);
+  munit_assert_int(parse_result->group->size, ==, 0);
   return MUNIT_OK;
 }
 
-static MunitResult test_start_surface(const MunitParameter params[], void *data)
+static MunitResult test_start_group(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\ns off");
-  munit_assert_int(parse_result->surface->size, ==, 1);
+  parse_string_core("o test\ng group");
+  munit_assert_int(parse_result->group->size, ==, 1);
   return MUNIT_OK;
 }
 
-static MunitResult test_two_surfaces(const MunitParameter params[], void *data)
+static MunitResult test_two_groups(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\ns off\ns off");
-  munit_assert_int(parse_result->surface->size, ==, 2);
+  parse_string_core("o test\ng group\ng group");
+  munit_assert_int(parse_result->group->size, ==, 2);
   return MUNIT_OK;
 }
 
 static MunitResult test_facet(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->vertex_index->size, ==, 3);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->vertex_index->size, ==, 3);
   return MUNIT_OK;
 }
 
 static MunitResult test_vertex_stride(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->stride, ==, 3);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->stride, ==, 3);
   return MUNIT_OK;
 }
 
 static MunitResult test_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
-  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(get_gluint(group->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(group->vertex_index)[2], ==, 2);
   return MUNIT_OK;
 }
 
 static MunitResult test_coord_count(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 9);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 9);
   return MUNIT_OK;
 }
 
 static MunitResult test_copy_coords(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[2], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[5], ==, 7.0f);
-  munit_assert_float(get_glfloat(surface->array)[6], ==, 7.0f);
-  munit_assert_float(get_glfloat(surface->array)[7], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[8], ==, 3.0f);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[1], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[2], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[3], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[5], ==, 7.0f);
+  munit_assert_float(get_glfloat(group->array)[6], ==, 7.0f);
+  munit_assert_float(get_glfloat(group->array)[7], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[8], ==, 3.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_shuffle_coords(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[2], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 7.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[5], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[6], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[7], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[8], ==, 7.0f);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 3 2");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[1], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[2], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[3], ==, 7.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[5], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[6], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[7], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[8], ==, 7.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_relative_index(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf -3 -2 -1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[1], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[2], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[5], ==, 7.0f);
-  munit_assert_float(get_glfloat(surface->array)[6], ==, 7.0f);
-  munit_assert_float(get_glfloat(surface->array)[7], ==, 5.0f);
-  munit_assert_float(get_glfloat(surface->array)[8], ==, 3.0f);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf -3 -2 -1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[1], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[2], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[3], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[5], ==, 7.0f);
+  munit_assert_float(get_glfloat(group->array)[6], ==, 7.0f);
+  munit_assert_float(get_glfloat(group->array)[7], ==, 5.0f);
+  munit_assert_float(get_glfloat(group->array)[8], ==, 3.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_generate_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
-  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 3 2");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(get_gluint(group->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(group->vertex_index)[2], ==, 2);
   return MUNIT_OK;
 }
 
 static MunitResult test_reset_vertex_cache(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 3 2\ns off\nf 3 2 1");
-  group_t *surface = get_pointer(parse_result->surface)[1];
-  munit_assert_int(surface->array->size, ==, 9);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 3 2\ng group\nf 3 2 1");
+  group_t *group = get_pointer(parse_result->group)[1];
+  munit_assert_int(group->array->size, ==, 9);
   return MUNIT_OK;
 }
 
 static MunitResult test_two_facets(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 1 4 3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->vertex_index->size, ==, 6);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ng group\nf 1 2 3\nf 1 4 3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->vertex_index->size, ==, 6);
   return MUNIT_OK;
 }
 
 static MunitResult test_reuse_vertices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3\nf 4 3 1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
-  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
-  munit_assert_int(get_gluint(surface->vertex_index)[3], ==, 3);
-  munit_assert_int(get_gluint(surface->vertex_index)[4], ==, 2);
-  munit_assert_int(get_gluint(surface->vertex_index)[5], ==, 0);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ng group\nf 1 2 3\nf 4 3 1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(get_gluint(group->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(group->vertex_index)[2], ==, 2);
+  munit_assert_int(get_gluint(group->vertex_index)[3], ==, 3);
+  munit_assert_int(get_gluint(group->vertex_index)[4], ==, 2);
+  munit_assert_int(get_gluint(group->vertex_index)[5], ==, 0);
   return MUNIT_OK;
 }
 
 static MunitResult test_square_facet(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ns off\nf 1 2 3 4");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
-  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
-  munit_assert_int(get_gluint(surface->vertex_index)[3], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[4], ==, 2);
-  munit_assert_int(get_gluint(surface->vertex_index)[5], ==, 3);
+  parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\nv 9 7 5\ng group\nf 1 2 3 4");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(get_gluint(group->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(group->vertex_index)[2], ==, 2);
+  munit_assert_int(get_gluint(group->vertex_index)[3], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[4], ==, 2);
+  munit_assert_int(get_gluint(group->vertex_index)[5], ==, 3);
   return MUNIT_OK;
 }
 
-static MunitResult test_no_surface(const MunitParameter params[], void *data)
+static MunitResult test_no_group(const MunitParameter params[], void *data)
 {
   object_t *object = parse_string("o test");
-  munit_assert_int(object->surface->size, ==, 0);
+  munit_assert_int(object->group->size, ==, 0);
   return MUNIT_OK;
 }
 
-static MunitResult test_add_surface(const MunitParameter params[], void *data)
+static MunitResult test_add_group(const MunitParameter params[], void *data)
 {
-  object_t *object = parse_string("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3");
-  munit_assert_int(object->surface->size, ==, 1);
+  object_t *object = parse_string("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3");
+  munit_assert_int(object->group->size, ==, 1);
   return MUNIT_OK;
 }
 
@@ -332,99 +332,99 @@ static MunitResult test_two_texcoords(const MunitParameter params[], void *data)
 
 static MunitResult test_uv_facet(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->vertex_index->size, ==, 3);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 2/2 3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->vertex_index->size, ==, 3);
   return MUNIT_OK;
 }
 
 static MunitResult test_vertex_and_uv_stride(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->stride, ==, 5);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 2/2 3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->stride, ==, 5);
   return MUNIT_OK;
 }
 
 static MunitResult test_uv_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
-  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 2/2 3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(get_gluint(group->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(group->vertex_index)[2], ==, 2);
   return MUNIT_OK;
 }
 
 static MunitResult test_uv_added(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 15);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 2/2 3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 15);
   return MUNIT_OK;
 }
 
 static MunitResult test_copy_uv(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/2 3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[1], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[2], ==,-1.0f);
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[5], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[6], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[7], ==,-1.0f);
-  munit_assert_float(get_glfloat(surface->array)[8], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[9], ==, 1.0f);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 2/2 3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[1], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[2], ==,-1.0f);
+  munit_assert_float(get_glfloat(group->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[5], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[6], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[7], ==,-1.0f);
+  munit_assert_float(get_glfloat(group->array)[8], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[9], ==, 1.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_relative_uv_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf -3/-3 -2/-2 -1/-1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[8], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[9], ==, 1.0f);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf -3/-3 -2/-2 -1/-1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[8], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[9], ==, 1.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_different_uv_index(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/2 2/3 3/1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[1], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[2], ==,-1.0f);
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 1.0f);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/2 2/3 3/1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[1], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[2], ==,-1.0f);
+  munit_assert_float(get_glfloat(group->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 1.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_reuse_uv(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 1/1 2/2");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 10);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 1/1 2/2");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 10);
   return MUNIT_OK;
 }
 
 static MunitResult test_uv_in_hash_key(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 1/2 1/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 15);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 1/2 1/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 15);
   return MUNIT_OK;
 }
 
 static MunitResult test_vertex_and_uv_key(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ns off\nf 1/1 2/1 3/1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 15);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvt 0 0\nvt 0 1\nvt 1 0\ng group\nf 1/1 2/1 3/1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 15);
   return MUNIT_OK;
 }
 
@@ -454,96 +454,96 @@ static MunitResult test_read_normal(const MunitParameter params[], void *data)
 
 static MunitResult test_normal_facet(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->vertex_index->size, ==, 3);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//1 2//2 3//3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->vertex_index->size, ==, 3);
   return MUNIT_OK;
 }
 
 static MunitResult test_normal_indices(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
-  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//1 2//2 3//3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(get_gluint(group->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(group->vertex_index)[2], ==, 2);
   return MUNIT_OK;
 }
 
 static MunitResult test_normals_added(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 18);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//1 2//2 3//3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 18);
   return MUNIT_OK;
 }
 
 static MunitResult test_copy_normal(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//2 3//3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[ 0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 1], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 2], ==,-1.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 3], ==, 1.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 4], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 5], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 6], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 7], ==, 3.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 8], ==,-1.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 9], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[10], ==, 1.0f);
-  munit_assert_float(get_glfloat(surface->array)[11], ==, 0.0f);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//1 2//2 3//3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[ 0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[ 1], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[ 2], ==,-1.0f);
+  munit_assert_float(get_glfloat(group->array)[ 3], ==, 1.0f);
+  munit_assert_float(get_glfloat(group->array)[ 4], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[ 5], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[ 6], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[ 7], ==, 3.0f);
+  munit_assert_float(get_glfloat(group->array)[ 8], ==,-1.0f);
+  munit_assert_float(get_glfloat(group->array)[ 9], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[10], ==, 1.0f);
+  munit_assert_float(get_glfloat(group->array)[11], ==, 0.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_relative_normal_index(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf -3//-3 -2//-2 -1//-1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[ 3], ==, 1.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 4], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 5], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[ 9], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[10], ==, 1.0f);
-  munit_assert_float(get_glfloat(surface->array)[11], ==, 0.0f);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf -3//-3 -2//-2 -1//-1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[ 3], ==, 1.0f);
+  munit_assert_float(get_glfloat(group->array)[ 4], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[ 5], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[ 9], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[10], ==, 1.0f);
+  munit_assert_float(get_glfloat(group->array)[11], ==, 0.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_different_normal_index(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//2 2//3 3//1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[1], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[2], ==,-1.0f);
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 1.0f);
-  munit_assert_float(get_glfloat(surface->array)[5], ==, 0.0f);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//2 2//3 3//1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[1], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[2], ==,-1.0f);
+  munit_assert_float(get_glfloat(group->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 1.0f);
+  munit_assert_float(get_glfloat(group->array)[5], ==, 0.0f);
   return MUNIT_OK;
 }
 
 static MunitResult test_reuse_normal(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 1//1 2//2");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 12);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//1 1//1 2//2");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 12);
   return MUNIT_OK;
 }
 
 static MunitResult test_normal_in_hash_key(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 1//2 1//3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 18);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//1 1//2 1//3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 18);
   return MUNIT_OK;
 }
 
 static MunitResult test_vertex_and_normal_key(const MunitParameter params[], void *data)
 {
-  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ns off\nf 1//1 2//1 3//1");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 18);
+  parse_string_core("o test\nv 2 2 -1\nv 2 3 -1\nv 3 2 -1\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\ng group\nf 1//1 2//1 3//1");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 18);
   return MUNIT_OK;
 }
 
@@ -551,9 +551,9 @@ static MunitResult test_full_facet(const MunitParameter params[], void *data)
 {
   parse_string_core(
       "o test\nv 2 2 0\nv 2 3 0\nv 3 2 0\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\nvt 0 0\nvt 0 1\nvt 1 0\n"
-      "s off\nf 1/1/1 2/2/2 3/3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->vertex_index->size, ==, 3);
+      "g group\nf 1/1/1 2/2/2 3/3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->vertex_index->size, ==, 3);
   return MUNIT_OK;
 }
 
@@ -561,11 +561,11 @@ static MunitResult test_full_indices(const MunitParameter params[], void *data)
 {
   parse_string_core(
       "o test\nv 2 2 0\nv 2 3 0\nv 3 2 0\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\nvt 0 0\nvt 0 1\nvt 1 0\n"
-      "s off\nf 1/1/1 2/2/2 3/3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(get_gluint(surface->vertex_index)[0], ==, 0);
-  munit_assert_int(get_gluint(surface->vertex_index)[1], ==, 1);
-  munit_assert_int(get_gluint(surface->vertex_index)[2], ==, 2);
+      "g group\nf 1/1/1 2/2/2 3/3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(get_gluint(group->vertex_index)[0], ==, 0);
+  munit_assert_int(get_gluint(group->vertex_index)[1], ==, 1);
+  munit_assert_int(get_gluint(group->vertex_index)[2], ==, 2);
   return MUNIT_OK;
 }
 
@@ -573,9 +573,9 @@ static MunitResult test_all_added(const MunitParameter params[], void *data)
 {
   parse_string_core(
       "o test\nv 2 2 0\nv 2 3 0\nv 3 2 0\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\nvt 0 0\nvt 0 1\nvt 1 0\n"
-      "s off\nf 1/1/1 2/2/2 3/3/3");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_int(surface->array->size, ==, 24);
+      "g group\nf 1/1/1 2/2/2 3/3/3");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_int(group->array->size, ==, 24);
   return MUNIT_OK;
 }
 
@@ -583,16 +583,16 @@ static MunitResult test_different_indices(const MunitParameter params[], void *d
 {
   parse_string_core(
       "o test\nv 2 2 0\nv 2 3 0\nv 3 2 0\nvn 1 0 0\nvn 0 1 0\nvn 0 0 1\nvt 0 0\nvt 0 1\nvt 1 0\n"
-      "s off\nf 1/2/3 2/3/1 3/1/2");
-  group_t *surface = get_pointer(parse_result->surface)[0];
-  munit_assert_float(get_glfloat(surface->array)[0], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[1], ==, 2.0f);
-  munit_assert_float(get_glfloat(surface->array)[2], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[3], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[4], ==, 1.0f);
-  munit_assert_float(get_glfloat(surface->array)[5], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[6], ==, 0.0f);
-  munit_assert_float(get_glfloat(surface->array)[7], ==, 1.0f);
+      "g group\nf 1/2/3 2/3/1 3/1/2");
+  group_t *group = get_pointer(parse_result->group)[0];
+  munit_assert_float(get_glfloat(group->array)[0], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[1], ==, 2.0f);
+  munit_assert_float(get_glfloat(group->array)[2], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[3], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[4], ==, 1.0f);
+  munit_assert_float(get_glfloat(group->array)[5], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[6], ==, 0.0f);
+  munit_assert_float(get_glfloat(group->array)[7], ==, 1.0f);
   return MUNIT_OK;
 }
 
@@ -652,9 +652,9 @@ static MunitResult test_ambient(const MunitParameter params[], void *data)
 
 static MunitResult test_use_material(const MunitParameter params[], void *data)
 {
-  object_t *object = parse_string("newmtl mat\no test\ns off\nusemtl mat");
-  group_t *surface = get_pointer(object->surface)[0];
-  munit_assert_ptr(surface->material, !=, NULL);
+  object_t *object = parse_string("newmtl mat\no test\ng group\nusemtl mat");
+  group_t *group = get_pointer(object->group)[0];
+  munit_assert_ptr(group->material, !=, NULL);
   return MUNIT_OK;
 }
 
@@ -720,7 +720,7 @@ static MunitResult test_disolve(const MunitParameter params[], void *data)
 
 static MunitResult test_mix_statements(const MunitParameter params[], void *data)
 {
-  object_t *object = parse_string("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ns off\nf 1 2 3\nv 1 2 3");
+  object_t *object = parse_string("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3\nv 1 2 3");
   munit_assert_ptr(object, !=, NULL);
   return MUNIT_OK;
 }
@@ -743,9 +743,9 @@ MunitTest test_parser[] = {
   {"/two_vertices"           , test_two_vertices           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/exponent"               , test_exponent               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/cleanup_vertices"       , test_cleanup_vertices       , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_surfaces"            , test_no_surfaces            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/start_surface"          , test_start_surface          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/two_surfaces"           , test_two_surfaces           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_groups"              , test_no_groups              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/start_group"            , test_start_group            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_groups"             , test_two_groups             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/facet"                  , test_facet                  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_stride"          , test_vertex_stride          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/indices"                , test_indices                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
@@ -758,8 +758,8 @@ MunitTest test_parser[] = {
   {"/two_facets"             , test_two_facets             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/reuse_vertices"         , test_reuse_vertices         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/square_facet"           , test_square_facet           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/no_surface"             , test_no_surface             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_surface"            , test_add_surface            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/no_group"               , test_no_group               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_group"              , test_add_group              , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_texcoord"            , test_no_texcoord            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/cleanup_texcoords"      , test_cleanup_texcoords      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/read_texcoord"          , test_read_texcoord          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

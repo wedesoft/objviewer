@@ -29,11 +29,11 @@ void setup_vertex_attribute_pointers(vertex_array_object_t *vertex_array_object,
     setup_vertex_attribute_pointer(vertex_array_object, "vector", 3, stride);
 }
 
-vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *surface)
+vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *group)
 {
   vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
-  retval->n_indices = surface->vertex_index->size;
+  retval->n_indices = group->vertex_index->size;
   retval->program = program;
   retval->n_attributes = 0;
   retval->attribute_pointer = 0;
@@ -42,15 +42,15 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *sur
   glBindVertexArray(retval->vertex_array_object);
   glGenBuffers(1, &retval->vertex_buffer_object);
   glBindBuffer(GL_ARRAY_BUFFER, retval->vertex_buffer_object);
-  glBufferData(GL_ARRAY_BUFFER, size_of_array(surface), surface->array->element, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, size_of_array(group), group->array->element, GL_STATIC_DRAW);
   glGenBuffers(1, &retval->element_buffer_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval->element_buffer_object);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(surface), surface->vertex_index->element, GL_STATIC_DRAW);
-  setup_vertex_attribute_pointers(retval, surface->stride);
-  retval->material = surface->material;
-  if (surface->material) {
-    if (surface->material->texture)
-      add_texture(retval, make_texture("tex"), surface->material->texture);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of_indices(group), group->vertex_index->element, GL_STATIC_DRAW);
+  setup_vertex_attribute_pointers(retval, group->stride);
+  retval->material = group->material;
+  if (group->material) {
+    if (group->material->texture)
+      add_texture(retval, make_texture("tex"), group->material->texture);
   };
   return retval;
 }
@@ -59,8 +59,8 @@ list_t *make_vertex_array_object_list(program_t *program, object_t *object)
 {
   list_t *result = make_list();
   int i;
-  for (i=0; i<object->surface->size; i++)
-    append_pointer(result, make_vertex_array_object(program, get_pointer(object->surface)[i]));
+  for (i=0; i<object->group->size; i++)
+    append_pointer(result, make_vertex_array_object(program, get_pointer(object->group)[i]));
   return result;
 }
 

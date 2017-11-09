@@ -9,7 +9,7 @@
 static MunitResult test_empty_object(const MunitParameter params[], void *data)
 {
   object_t *object = make_object("test");
-  munit_assert_int(object->surface->size, ==, 0);
+  munit_assert_int(object->group->size, ==, 0);
   return MUNIT_OK;
 }
 
@@ -29,13 +29,13 @@ static MunitResult test_copy_name(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
-static MunitResult test_add_surface(const MunitParameter params[], void *data)
+static MunitResult test_add_group(const MunitParameter params[], void *data)
 {
   object_t *object = make_object("test");
-  group_t *surface = make_surface(3);
-  object_t *retval = add_surface(object, surface);
-  munit_assert_int(object->surface->size, ==, 1);
-  munit_assert_ptr(get_pointer(object->surface)[0], ==, surface);
+  group_t *group = make_group(3);
+  object_t *retval = add_group(object, group);
+  munit_assert_int(object->group->size, ==, 1);
+  munit_assert_ptr(get_pointer(object->group)[0], ==, group);
   munit_assert_ptr(retval, ==, object);
   return MUNIT_OK;
 }
@@ -44,6 +44,6 @@ MunitTest test_object[] = {
   {"/empty_object", test_empty_object, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/object_name" , test_object_name , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/copy_name"   , test_copy_name   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_surface" , test_add_surface , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/add_group"   , test_add_group   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {NULL           , NULL             , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

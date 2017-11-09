@@ -5,9 +5,9 @@
 
 typedef struct {
   char *name;
-  list_t *surface;
+  list_t *group;
 } object_t;
 
 object_t *make_object(const char *name);
 
-object_t *add_surface(object_t *object, group_t *surface);
+object_t *add_group(object_t *object, group_t *group);

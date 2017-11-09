@@ -40,7 +40,7 @@ vt                                    return UV;
 
 vn                                    return NORMAL;
 
-s.*                                   return SURFACE;
+g.*                                   return GROUP;
 
 f                                     { BEGIN(idx); return FACET; }
 
