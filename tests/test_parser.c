@@ -652,14 +652,6 @@ static MunitResult test_ambient(const MunitParameter params[], void *data)
 
 static MunitResult test_use_material(const MunitParameter params[], void *data)
 {
-  object_t *object = parse_string("newmtl mat\no test\ng group\nusemtl mat");
-  group_t *group = get_pointer(object->group)[0];
-  munit_assert_ptr(group->material, !=, NULL);
-  return MUNIT_OK;
-}
-
-static MunitResult test_early_declaration(const MunitParameter params[], void *data)
-{
   object_t *object = parse_string("newmtl mat\no test\nusemtl mat\ng group");
   group_t *group = get_pointer(object->group)[0];
   munit_assert_ptr(group->material, !=, NULL);
@@ -806,7 +798,6 @@ MunitTest test_parser[] = {
   {"/two_materials"          , test_two_materials          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient"                , test_ambient                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/use_material"           , test_use_material           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/early_declaration"      , test_early_declaration      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/read_texture"           , test_read_texture           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/texture_not_found"      , test_texture_not_found      , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/diffuse"                , test_diffuse                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

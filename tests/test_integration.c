@@ -75,8 +75,8 @@ static MunitResult test_draw_texturized_square(const MunitParameter params[], vo
                  "vt 1 0\n"
                  "vt 0 1\n"
                  "vt 1 1\n"
-                 "g texturized square\n"
                  "usemtl colors\n"
+                 "g texturized square\n"
                  "f 1/1 2/2 4/4 3/3");
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
@@ -137,11 +137,11 @@ static MunitResult test_draw_two_textures(const MunitParameter params[], void *d
                  "vt 1 0\n"
                  "vt 0 1\n"
                  "vt 1 1\n"
-                 "g first texturized triangle\n"
                  "usemtl colors\n"
+                 "g first texturized triangle\n"
                  "f 1/1 2/2 3/3\n"
-                 "g second texturized triangle\n"
                  "usemtl gray\n"
+                 "g second texturized triangle\n"
                  "f 2/2 4/4 3/3");
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
@@ -171,8 +171,8 @@ static MunitResult test_ambient_color(const MunitParameter params[], void *data)
                  "v  0.5 -0.5 0\n"
                  "v -0.5  0.5 0\n"
                  "v  0.5  0.5 0\n"
-                 "g red triangle\n"
                  "usemtl red\n"
+                 "g red triangle\n"
                  "f 1 2 3");
   program_t *program = make_program("vertex-ambient.glsl", "fragment-ambient.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
@@ -199,8 +199,8 @@ static MunitResult test_diffuse_color(const MunitParameter params[], void *data)
                  "v  0.5 -0.5 0\n"
                  "v -0.5  0.5 0\n"
                  "v  0.5  0.5 0\n"
-                 "g red triangle\n"
                  "usemtl red\n"
+                 "g red triangle\n"
                  "f 1 2 3");
   program_t *program = make_program("vertex-diffuse.glsl", "fragment-diffuse.glsl");
   list_t *list = make_vertex_array_object_list(program, object);
@@ -228,8 +228,8 @@ static MunitResult test_specular_color(const MunitParameter params[], void *data
                  "v  0.5 -0.5 0\n"
                  "v -0.5  0.5 0\n"
                  "v  0.5  0.5 0\n"
-                 "g red triangle\n"
                  "usemtl red\n"
+                 "g red triangle\n"
                  "f 1 2 3");
   program_t *program = make_program("vertex-specular.glsl", "fragment-specular.glsl");
   list_t *list = make_vertex_array_object_list(program, object);

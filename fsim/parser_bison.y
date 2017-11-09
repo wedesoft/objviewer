@@ -75,19 +75,22 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 
 %%
 
-start: materials object primitives
-     | /* NULL */
-     ;
-
-object: OBJECT NAME { parse_result = make_object($2); }
+start: primitives
 
 primitives: primitives primitive
           | /* NULL */
           ;
 
-materials: materials material
-         | /* NULL */
+primitive: object
+         | material
+         | group
+         | vertex
+         | texture_coordinate
+         | normal
+         | facet
          ;
+
+object: OBJECT NAME { parse_result = make_object($2); }
 
 material: MATERIAL NAME {
             parse_material = make_material();
@@ -106,13 +109,6 @@ property: KA NUMBER NUMBER NUMBER { set_ambient(parse_material, $2, $3, $4); }
         | D NUMBER                { set_disolve(parse_material, $2); }
         | MAPKD NAME              { set_texture(parse_material, read_image($2)); }
 
-primitive: group
-         | vertex
-         | texture_coordinate
-         | normal
-         | facet
-         ;
-
 vertex: VERTEX NUMBER NUMBER NUMBER {
           append_glfloat(parse_vertex, $2);
           append_glfloat(parse_vertex, $3);
@@ -130,12 +126,7 @@ normal: NORMAL NUMBER NUMBER NUMBER {
           append_glfloat(parse_normal, $4);
         }
 
-group: GROUP use_material {
-         add_group(parse_result, make_group(0));
-         use_material(last_group(), $2);
-         parse_hash = make_hash();
-       }
-     | use_material GROUP {
+group: use_material GROUP {
          add_group(parse_result, make_group(0));
          use_material(last_group(), $1);
          parse_hash = make_hash();
@@ -155,7 +146,7 @@ more_indices: index { extend_triangle(last_group(), $1); } more_indices
             | /* NULL */
             ;
 
-index: INDEX                           { $$ = index_vertex(3, $1,  0,  0); }
-       | INDEX SLASH INDEX             { $$ = index_vertex(5, $1, $3,  0); }
-       | INDEX SLASH SLASH INDEX       { $$ = index_vertex(6, $1,  0, $4); }
-       | INDEX SLASH INDEX SLASH INDEX { $$ = index_vertex(8, $1, $3, $5); }
+index: INDEX                         { $$ = index_vertex(3, $1,  0,  0); }
+     | INDEX SLASH INDEX             { $$ = index_vertex(5, $1, $3,  0); }
+     | INDEX SLASH SLASH INDEX       { $$ = index_vertex(6, $1,  0, $4); }
+     | INDEX SLASH INDEX SLASH INDEX { $$ = index_vertex(8, $1, $3, $5); }
