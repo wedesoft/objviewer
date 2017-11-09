@@ -63,9 +63,11 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
   char *text;
   float number;
   int index;
+  material_t *material;
 }
 
 %type<index> index
+%type<material> use_material
 %token OBJECT MATERIAL KA KD KS NS NI D MAPKD USE VERTEX UV NORMAL GROUP FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
@@ -104,13 +106,12 @@ property: KA NUMBER NUMBER NUMBER { set_ambient(parse_material, $2, $3, $4); }
         | D NUMBER                { set_disolve(parse_material, $2); }
         | MAPKD NAME              { set_texture(parse_material, read_image($2)); }
 
-primitive: vector
-         | group
+primitive: group
+         | vertex
+         | texture_coordinate
+         | normal
+         | facet
          ;
-
-vector: vertex
-      | texture_coordinate
-      | normal
 
 vertex: VERTEX NUMBER NUMBER NUMBER {
           append_glfloat(parse_vertex, $2);
@@ -129,20 +130,22 @@ normal: NORMAL NUMBER NUMBER NUMBER {
           append_glfloat(parse_normal, $4);
         }
 
-group: GROUP {
+group: GROUP use_material {
+         add_group(parse_result, make_group(0));
+         use_material(last_group(), $2);
+         parse_hash = make_hash();
+       }
+     | use_material GROUP {
+         add_group(parse_result, make_group(0));
+         use_material(last_group(), $1);
+         parse_hash = make_hash();
+       }
+     | GROUP {
          add_group(parse_result, make_group(0));
          parse_hash = make_hash();
-       } use_material facets
+       }
 
-use_material: USE NAME {
-              use_material(last_group(), hash_find_material(parse_materials, $2, NULL));
-            }
-            | /* NULL */
-            ;
-
-facets: facets facet
-      | /* NULL */
-      ;
+use_material: USE NAME { $$ = hash_find_material(parse_materials, $2, NULL); }
 
 facet: FACET indices more_indices
 
