@@ -1,5 +1,6 @@
 # TODO
 
+* flip textures vertically?
 * vertex\_array\_object->texture getting corrupted when there is no texture
 * only keep reference to material constants (not the texture image)
 * surface -> (named) group, top-level default group
