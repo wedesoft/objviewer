@@ -8,7 +8,6 @@ static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   vertex_array_object_t *target = (vertex_array_object_t *)obj;
   glBindVertexArray(target->vertex_array_object);
   if (target->texture->size) {
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
   };
   glBindVertexArray(target->vertex_array_object);
@@ -78,7 +77,6 @@ void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, 
 void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture)
 {
   append_pointer(vertex_array_object->texture, texture);
-  glActiveTexture(GL_TEXTURE0);
   glUniform1i(glGetAttribLocation(vertex_array_object->program->program, texture->name), 0);
 }
 
@@ -95,7 +93,6 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
   };
   if (vertex_array_object->material && vertex_array_object->material->texture) {
     texture_t *texture = get_pointer(vertex_array_object->texture)[0];
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->texture);
   };
   glBindVertexArray(vertex_array_object->vertex_array_object);

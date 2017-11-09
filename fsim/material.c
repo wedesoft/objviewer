@@ -61,7 +61,6 @@ void set_texture(material_t *material, image_t *image)
 {
   if (!image) return;
   material->texture = make_texture("tex");
-  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, material->texture->texture);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
