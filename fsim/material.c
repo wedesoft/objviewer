@@ -1,4 +1,5 @@
 #include <gc.h>
+#include <GL/glew.h>
 #include "material.h"
 
 
@@ -64,9 +65,17 @@ static texture_t *setup_texture(const char *name, image_t *image)
   texture_t *result = make_texture(name);
   glBindTexture(GL_TEXTURE_2D, result->texture);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  // http://www.opengl-tutorial.org/beginners-tutorials/tutorial-5-a-textured-cube/
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
+    GLfloat max_anisotropy;
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
+  };
+  glGenerateMipmap(GL_TEXTURE_2D);
   return result;
 }
 
