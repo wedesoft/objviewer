@@ -1,8 +1,8 @@
 #version 130
 in mediump vec2 UV;
 out mediump vec3 fragColor;
-uniform sampler2D tex;
+uniform sampler2D map_Kd;
 void main()
 {
-  fragColor = texture(tex, UV).rgb;
+  fragColor = texture(map_Kd, UV).rgb;
 }

@@ -19,6 +19,7 @@ static MunitResult test_default(const MunitParameter params[], void *data)
   munit_assert_float(material->optical_density, ==, 1.0f);
   munit_assert_float(material->disolve, ==, 1.0f);
   munit_assert_ptr(material->diffuse_texture, ==, NULL);
+  munit_assert_ptr(material->specular_texture, ==, NULL);
   return MUNIT_OK;
 }
 
@@ -37,6 +38,33 @@ static MunitResult test_texture_not_found(const MunitParameter params[], void *d
   image_t *image = read_image("nosuchfile.png");
   set_diffuse_texture(material, image);
   munit_assert_ptr(material->diffuse_texture, ==, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_diffuse_texture_name(const MunitParameter params[], void *data)
+{
+  material_t *material = make_material();
+  image_t *image = read_image("colors.png");
+  set_diffuse_texture(material, image);
+  munit_assert_string_equal(material->diffuse_texture->name, "map_Kd");
+  return MUNIT_OK;
+}
+
+static MunitResult test_set_specular_texture(const MunitParameter params[], void *data)
+{
+  material_t *material = make_material();
+  image_t *image = read_image("colors.png");
+  set_specular_texture(material, image);
+  munit_assert_ptr(material->specular_texture, !=, NULL);
+  return MUNIT_OK;
+}
+
+static MunitResult test_specular_texture_name(const MunitParameter params[], void *data)
+{
+  material_t *material = make_material();
+  image_t *image = read_image("colors.png");
+  set_specular_texture(material, image);
+  munit_assert_string_equal(material->specular_texture->name, "map_Ks");
   return MUNIT_OK;
 }
 
@@ -98,6 +126,9 @@ MunitTest test_material[] = {
   {"/default"              , test_default               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_diffuse_texture"  , test_set_diffuse_texture   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/texture_not_found"    , test_texture_not_found     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/diffuse_texture_name" , test_diffuse_texture_name  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_specular_texture" , test_set_specular_texture  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/specular_texture_name", test_specular_texture_name , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_ambient"          , test_set_ambient           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_diffuse"          , test_set_diffuse           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_specular"         , test_set_specular          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

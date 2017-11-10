@@ -1,6 +1,6 @@
 #version 130
 in mediump vec2 UV;
-uniform sampler2D tex;
+uniform sampler2D map_Kd;
 in mediump vec3 normal;
 flat in mediump vec3 Ka;
 in mediump vec3 Kd;
@@ -14,5 +14,5 @@ void main()
   mediump float specular = max(0.0, dot(normalize(direction), reflect(light, normal)));
   if (specular != 0.0)
     specular = pow(specular, Ns);
-  fragColor = texture(tex, UV).rgb * (Ka + Kd) + Ks * specular;
+  fragColor = texture(map_Kd, UV).rgb * (Ka + Kd) + Ks * specular;
 }

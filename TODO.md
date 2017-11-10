@@ -1,6 +1,7 @@
 # TODO
 
 * specular maps
+* mipmapping
 * delayed conversion to texture (parse before opengl initialisation)
 * resize hash dynamically
 * vertex\_array\_object->texture getting corrupted when there is no texture

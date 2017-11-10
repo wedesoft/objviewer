@@ -13,6 +13,7 @@ typedef struct
   GLfloat optical_density;
   GLfloat disolve;
   texture_t *diffuse_texture;
+  texture_t *specular_texture;
 } material_t;
 
 material_t* make_material(void);
@@ -30,3 +31,5 @@ void set_optical_density(material_t *material, GLfloat optical_density);
 void set_disolve(material_t *material, GLfloat disolve);
 
 void set_diffuse_texture(material_t *material, image_t *texture);
+
+void set_specular_texture(material_t *material, image_t *texture);
