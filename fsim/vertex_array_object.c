@@ -48,8 +48,7 @@ vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *gro
   setup_vertex_attribute_pointers(retval, group->stride);
   retval->material = group->material;
   if (group->material) {
-    if (group->material->texture)
-      add_texture(retval, group->material->texture);
+    if (group->material->diffuse_texture) add_texture(retval, group->material->diffuse_texture);
   };
   return retval;
 }
@@ -86,7 +85,7 @@ void draw_elements(vertex_array_object_t *vertex_array_object)
 {
   program_t *program = vertex_array_object->program;
   glUseProgram(program->program);
-  if (vertex_array_object->material && vertex_array_object->material->texture) {
+  if (vertex_array_object->material && vertex_array_object->material->diffuse_texture) {
     texture_t *texture = get_pointer(vertex_array_object->texture)[0];
     glBindTexture(GL_TEXTURE_2D, texture->texture);
   };

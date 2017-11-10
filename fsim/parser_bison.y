@@ -107,7 +107,7 @@ property: KA NUMBER NUMBER NUMBER { set_ambient(parse_material, $2, $3, $4); }
         | NS NUMBER               { set_specular_exponent(parse_material, $2); }
         | NI NUMBER               { set_optical_density(parse_material, $2); }
         | D NUMBER                { set_disolve(parse_material, $2); }
-        | MAPKD NAME              { set_texture(parse_material, read_image($2)); }
+        | MAPKD NAME              { set_diffuse_texture(parse_material, read_image($2)); }
 
 vertex: VERTEX NUMBER NUMBER NUMBER {
           append_glfloat(parse_vertex, $2);

@@ -12,7 +12,7 @@ typedef struct
   GLfloat specular_exponent;
   GLfloat optical_density;
   GLfloat disolve;
-  texture_t *texture;
+  texture_t *diffuse_texture;
 } material_t;
 
 material_t* make_material(void);
@@ -29,4 +29,4 @@ void set_optical_density(material_t *material, GLfloat optical_density);
 
 void set_disolve(material_t *material, GLfloat disolve);
 
-void set_texture(material_t *material, image_t *texture);
+void set_diffuse_texture(material_t *material, image_t *texture);

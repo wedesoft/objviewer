@@ -1,6 +1,5 @@
 # TODO
 
-* update README
 * specular maps
 * delayed conversion to texture (parse before opengl initialisation)
 * resize hash dynamically

@@ -17,7 +17,7 @@ material_t *make_material(void)
   result->specular_exponent = 1.0f;
   result->optical_density = 1.0f;
   result->disolve = 1.0f;
-  result->texture = NULL;
+  result->diffuse_texture = NULL;
   return result;
 }
 
@@ -57,11 +57,11 @@ void set_disolve(material_t *material, GLfloat disolve)
   material->disolve = disolve;
 }
 
-void set_texture(material_t *material, image_t *image)
+void set_diffuse_texture(material_t *material, image_t *image)
 {
   if (!image) return;
-  material->texture = make_texture("tex");
-  glBindTexture(GL_TEXTURE_2D, material->texture->texture);
+  material->diffuse_texture = make_texture("tex");
+  glBindTexture(GL_TEXTURE_2D, material->diffuse_texture->texture);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

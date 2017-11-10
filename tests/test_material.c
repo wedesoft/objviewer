@@ -18,16 +18,16 @@ static MunitResult test_default(const MunitParameter params[], void *data)
   munit_assert_float(material->specular_exponent, ==, 1.0f);
   munit_assert_float(material->optical_density, ==, 1.0f);
   munit_assert_float(material->disolve, ==, 1.0f);
-  munit_assert_ptr(material->texture, ==, NULL);
+  munit_assert_ptr(material->diffuse_texture, ==, NULL);
   return MUNIT_OK;
 }
 
-static MunitResult test_set_texture(const MunitParameter params[], void *data)
+static MunitResult test_set_diffuse_texture(const MunitParameter params[], void *data)
 {
   material_t *material = make_material();
   image_t *image = read_image("colors.png");
-  set_texture(material, image);
-  munit_assert_ptr(material->texture, !=, NULL);
+  set_diffuse_texture(material, image);
+  munit_assert_ptr(material->diffuse_texture, !=, NULL);
   return MUNIT_OK;
 }
 
@@ -35,8 +35,8 @@ static MunitResult test_texture_not_found(const MunitParameter params[], void *d
 {
   material_t *material = make_material();
   image_t *image = read_image("nosuchfile.png");
-  set_texture(material, image);
-  munit_assert_ptr(material->texture, ==, NULL);
+  set_diffuse_texture(material, image);
+  munit_assert_ptr(material->diffuse_texture, ==, NULL);
   return MUNIT_OK;
 }
 
@@ -96,7 +96,7 @@ static MunitResult test_set_disolve(const MunitParameter params[], void *data)
 
 MunitTest test_material[] = {
   {"/default"              , test_default               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_texture"          , test_set_texture           , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_diffuse_texture"  , test_set_diffuse_texture   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/texture_not_found"    , test_texture_not_found     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_ambient"          , test_set_ambient           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/set_diffuse"          , test_set_diffuse           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

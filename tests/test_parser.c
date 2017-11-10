@@ -683,7 +683,7 @@ static MunitResult test_read_texture(const MunitParameter params[], void *data)
 {
   parse_string_core("newmtl test\nmap_Kd colors.png\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
-  munit_assert_ptr(material->texture, !=, NULL);
+  munit_assert_ptr(material->diffuse_texture, !=, NULL);
   return MUNIT_OK;
 }
 
@@ -691,7 +691,7 @@ static MunitResult test_texture_not_found(const MunitParameter params[], void *d
 {
   parse_string_core("newmtl test\nmap_Kd nosuchfile.png\no test");
   material_t *material = hash_find_material(parse_materials, "test", NULL);
-  munit_assert_ptr(material->texture, ==, NULL);
+  munit_assert_ptr(material->diffuse_texture, ==, NULL);
   return MUNIT_OK;
 }
 

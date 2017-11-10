@@ -55,7 +55,7 @@ static MunitResult test_add_texture(const MunitParameter params[], void *data)
 {
   group_t *group = make_group("test", 5);
   material_t *material = make_material();
-  set_texture(material, read_image("colors.png"));
+  set_diffuse_texture(material, read_image("colors.png"));
   use_material(group, material);
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, group);
