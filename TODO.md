@@ -1,5 +1,7 @@
 # TODO
 
+* add license
+* load two objects
 * flip textures when loading
 * load compressed textures
 * resize hash dynamically

@@ -155,6 +155,12 @@ static MunitResult test_two_groups(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_default_object(const MunitParameter params[], void *data)
+{
+  munit_assert_string_equal(parse_string("g group")->name, "");
+  return MUNIT_OK;
+}
+
 static MunitResult test_facet(const MunitParameter params[], void *data)
 {
   parse_string_core("o test\nv 2 3 5\nv 3 5 7\nv 7 5 3\ng group\nf 1 2 3");
@@ -776,6 +782,7 @@ MunitTest test_parser[] = {
   {"/start_group"            , test_start_group            , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/group_name"             , test_group_name             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_groups"             , test_two_groups             , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/default_object"         , test_default_object         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/facet"                  , test_facet                  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_stride"          , test_vertex_stride          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/indices"                , test_indices                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

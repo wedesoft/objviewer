@@ -128,6 +128,7 @@ normal: NORMAL NUMBER NUMBER NUMBER {
         }
 
 group: GROUP NAME {
+         if (!parse_result) parse_result = make_object("");
          add_group(parse_result, make_group($2, 0));
          use_material(last_group(), parse_use_material);
          parse_hash = make_hash();

@@ -24,3 +24,16 @@ MMSEV.obj: MMSEV.zip
 # https://nasa3d.arc.nasa.gov/detail/nmss-sev
 MMSEV.zip:
 	curl -O https://nasa3d.arc.nasa.gov/shared_assets/models/nmss-sev/MMSEV.zip
+
+HDU_lowRez_part1.obj: HDU.zip
+	unzip -oj $<
+	sed -i /illum/d HDU_lowRez_part1.mtl
+	sed -i /illum/d HDU_lowRez_part2.mtl
+	sed -i /Tf/d HDU_lowRez_part1.mtl
+	sed -i /Tf/d HDU_lowRez_part2.mtl
+	sed -i "s/s /g /" HDU_lowRez_part1.obj
+	sed -i "s/s /g /" HDU_lowRez_part2.obj
+
+# https://nasa3d.arc.nasa.gov/detail/nmss-hdu
+HDU.zip:
+	curl -O https://nasa3d.arc.nasa.gov/shared_assets/models/nmss-hdu/HDU.zip
