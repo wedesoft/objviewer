@@ -33,7 +33,7 @@ void setup_vertex_attribute_pointers(vertex_array_object_t *vertex_array_object,
 
 vertex_array_object_t *make_vertex_array_object(program_t *program, group_t *group)
 {
-  vertex_array_object_t *retval = GC_MALLOC_ATOMIC(sizeof(vertex_array_object_t));
+  vertex_array_object_t *retval = GC_MALLOC(sizeof(vertex_array_object_t));
   GC_register_finalizer(retval, finalize_vertex_array_object, 0, 0, 0);
   retval->n_indices = group->vertex_index->size;
   retval->program = program;
