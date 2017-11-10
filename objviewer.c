@@ -21,7 +21,7 @@ int height = 240;
 float yaw = 0;
 float pitch = 0;
 float distance = 200;
-float scale = 0.01;
+float scale = 1.0;
 float level = 0;
 
 object_t *object;
@@ -100,10 +100,12 @@ void onKey(int key, int x, int y)
 
 int main(int argc, char **argv)
 {
-  if (argc == 1) {
-    fprintf(stderr, "Syntax: objviewer <object file>\n");
+  if (argc != 3) {
+    fprintf(stderr, "Syntax: objviewer <object file> <scale>\n");
     return 1;
   };
+
+  scale = atof(argv[2]);
 
   GC_INIT();
   glutInit(&argc, argv);
