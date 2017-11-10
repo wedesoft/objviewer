@@ -101,7 +101,7 @@ void onKey(int key, int x, int y)
 
 int main(int argc, char **argv)
 {
-  if (argc < 2) {
+  if (argc < 3) {
     fprintf(stderr, "Syntax: objviewer <object file> ... <scale>\n");
     return 1;
   };

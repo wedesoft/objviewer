@@ -23,7 +23,7 @@ make check -j
 
 ```
 make MMSEV.obj
-./objviewer MMSEV.obj 0.01
+./objviewer MMSEV.obj 0.05
 ```
 
 ### Z2
