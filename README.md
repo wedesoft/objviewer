@@ -32,7 +32,16 @@ make MMSEV.obj
 
 ```
 make Z2.obj
-./objviewer Z2.obj 0.01
+./objviewer Z2.obj 0.02
+```
+
+### HDU
+
+![OpenGL rendering of HDU](view-hdu.png)
+
+```
+make HDU_lowRez_part1.obj
+./objviewer HDU_lowRez_part1.obj HDU_lowRez_part2.obj 5
 ```
 
 # External links
