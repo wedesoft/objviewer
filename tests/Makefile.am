@@ -6,10 +6,11 @@ check_HEADERS = munit.h \
 								test_texture.h test_vertex_array_object.h
 
 EXTRA_DIST = fragment-blue.glsl fragment-normal.glsl fragment-red.glsl fragment-texture.glsl \
-							invalid.glsl vertex-identity.glsl vertex-normal-identity.glsl vertex-projection.glsl \
-							vertex-texcoord.glsl vertex-uv.glsl fragment-uv.glsl vertex-ambient.glsl fragment-ambient.glsl \
-							vertex-diffuse.glsl fragment-diffuse.glsl vertex-specular.glsl fragment-specular.glsl \
-							empty.mtl test.mtl colors.png gray.png name.obj
+						 fragment-two-textures.glsl invalid.glsl vertex-identity.glsl vertex-normal-identity.glsl \
+						 vertex-projection.glsl vertex-texcoord.glsl vertex-uv.glsl fragment-uv.glsl vertex-ambient.glsl \
+						 fragment-ambient.glsl vertex-diffuse.glsl fragment-diffuse.glsl vertex-specular.glsl \
+						 fragment-specular.glsl \
+						 empty.mtl test.mtl colors.png gray.png name.obj
 
 suite_SOURCES = suite.c munit.c \
 								test_group.c test_hash.c test_helper.c test_image.c test_integration.c test_list.c \

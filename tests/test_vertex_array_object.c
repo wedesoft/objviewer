@@ -51,7 +51,7 @@ static MunitResult test_no_textures(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
-static MunitResult test_add_texture(const MunitParameter params[], void *data)
+static MunitResult test_diffuse_texture(const MunitParameter params[], void *data)
 {
   group_t *group = make_group("test", 5);
   material_t *material = make_material();
@@ -60,6 +60,19 @@ static MunitResult test_add_texture(const MunitParameter params[], void *data)
   program_t *program = make_program("vertex-texcoord.glsl", "fragment-texture.glsl");
   vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, group);
   munit_assert_int(vertex_array_object->texture->size, ==, 1);
+  return MUNIT_OK;
+}
+
+static MunitResult test_two_textures(const MunitParameter params[], void *data)
+{
+  group_t *group = make_group("test", 5);
+  material_t *material = make_material();
+  set_diffuse_texture(material, read_image("colors.png"));
+  set_specular_texture(material, read_image("gray.png"));
+  use_material(group, material);
+  program_t *program = make_program("vertex-texcoord.glsl", "fragment-two-textures.glsl");
+  vertex_array_object_t *vertex_array_object = make_vertex_array_object(program, group);
+  munit_assert_int(vertex_array_object->texture->size, ==, 2);
   return MUNIT_OK;
 }
 
@@ -109,7 +122,8 @@ MunitTest test_vao[] = {
   {"/vertex_and_normal"    , test_vertex_and_normal    , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vertex_uv_and_normal" , test_vertex_uv_and_normal , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/no_textures"          , test_no_textures          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/add_texture"          , test_add_texture          , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/diffuse_texture"      , test_diffuse_texture      , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/two_textures"         , test_two_textures         , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/make_empty_vao_list"  , test_make_empty_vao_list  , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vao_list_entry"       , test_vao_list_entry       , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
   {"/vao_list_program"     , test_vao_list_program     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},

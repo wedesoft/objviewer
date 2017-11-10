@@ -32,6 +32,8 @@ d                                     return D;
 
 map_Kd                                { BEGIN(name); return MAPKD; }
 
+map_Ks                                { BEGIN(name); return MAPKS; }
+
 usemtl                                { BEGIN(name); return USE; }
 
 v                                     return VERTEX;

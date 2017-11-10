@@ -55,7 +55,7 @@ void onResize(int w, int h)
 
 void onDisplay(void)
 {
-  uniform_matrix(program, "projection", projection(width, height, 0.1, 10000, 90.0));
+  uniform_matrix(program, "projection", projection(width, height, 0.1, 10000, 60.0));
   glUseProgram(program->program);
   transform();
   light();
