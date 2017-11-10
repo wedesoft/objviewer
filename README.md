@@ -55,6 +55,7 @@ make MMSEV.obj
 * [Project Apollo NASSP add-on for Orbiter][25]
 * [NASA 3D models][26]
 * [Handling multiple input buffers with Flex][27]
+* [Normal mapping][30]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -84,3 +85,4 @@ make MMSEV.obj
 [27]: http://sector7.xray.aps.anl.gov/~dohnarms/programming/flex/html/Multiple-Input-Buffers.html
 [28]: http://paulbourke.net/dataformats/obj/
 [29]: http://paulbourke.net/dataformats/mtl/
+[30]: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
