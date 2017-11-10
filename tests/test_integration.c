@@ -312,9 +312,9 @@ static MunitResult test_overlay_textures(const MunitParameter params[], void *da
   glFinish();
   unsigned char *pixels = read_pixels();
   write_ppm("overlay_textures.ppm", width, height, pixels);
-  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 0], ==, 255);
-  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 1], ==, 128);
-  munit_assert_int(pixels[( 8 * 32 + 14 ) * 4 + 2], ==, 128);
+  munit_assert_int(pixels[( 8 * 32 + 8 ) * 4 + 0], ==, 191);
+  munit_assert_int(pixels[( 8 * 32 + 8 ) * 4 + 1], ==,  64);
+  munit_assert_int(pixels[( 8 * 32 + 8 ) * 4 + 2], ==,  64);
   return MUNIT_OK;
 }
 

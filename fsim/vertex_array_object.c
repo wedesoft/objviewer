@@ -11,6 +11,7 @@ static void finalize_vertex_array_object(GC_PTR obj, GC_PTR env)
   for (i=0; i<target->texture->size; i++) {
     glActiveTexture(GL_TEXTURE0 + i);
     glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
   };
   glBindVertexArray(target->vertex_array_object);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -79,7 +80,8 @@ void setup_vertex_attribute_pointer(vertex_array_object_t *vertex_array_object, 
 void add_texture(vertex_array_object_t *vertex_array_object, texture_t *texture)
 {
   int index = vertex_array_object->texture->size;
-  glUniform1i(glGetAttribLocation(vertex_array_object->program->program, texture->name), index);
+  glUseProgram(vertex_array_object->program->program);
+  glUniform1i(glGetUniformLocation(vertex_array_object->program->program, texture->name), index);
   append_pointer(vertex_array_object->texture, texture);
 }
 
