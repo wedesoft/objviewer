@@ -24,9 +24,8 @@ float distance = 200;
 float scale = 1.0;
 float level = 0;
 
-object_t *object;
 program_t *program;
-list_t *list;
+list_t *lists;
 
 void transform(void)
 {
@@ -61,7 +60,9 @@ void onDisplay(void)
   light();
   glClearColor(0.2f, 0.2f, 0.5f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  render(list);
+  int i;
+  for (i=0; i<lists->size; i++)
+    render(get_pointer(lists)[i]);
   glutSwapBuffers();
 }
 
@@ -100,12 +101,12 @@ void onKey(int key, int x, int y)
 
 int main(int argc, char **argv)
 {
-  if (argc != 3) {
-    fprintf(stderr, "Syntax: objviewer <object file> <scale>\n");
+  if (argc < 2) {
+    fprintf(stderr, "Syntax: objviewer <object file> ... <scale>\n");
     return 1;
   };
 
-  scale = atof(argv[2]);
+  scale = atof(argv[argc - 1]);
 
   GC_INIT();
   glutInit(&argc, argv);
@@ -116,15 +117,19 @@ int main(int argc, char **argv)
   glewInit();
   glEnable(GL_DEPTH_TEST);
 
-  object = parse_file(argv[1]);
-
-  if (!object) {
-    fprintf(stderr, "Error reading object file %s\n", argv[1]);
-    return 1;
-  };
-
   program = make_program("vertex.glsl", "fragment.glsl");
-  list = make_vertex_array_object_list(program, object);
+  lists = make_list();
+
+  int i;
+  for (i=1; i<argc-1; i++) {
+    object_t *object = parse_file(argv[i]);
+    if (!object)
+      fprintf(stderr, "Error reading object file %s\n", argv[1]);
+    else {
+      list_t *list = make_vertex_array_object_list(program, object);
+      append_pointer(lists, list);
+    };
+  };
 
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onResize);
