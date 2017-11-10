@@ -1,8 +1,9 @@
 # TODO
 
-* surface -> (named) group, top-level default group
-* flip textures vertically?
-* only keep reference to material constants (not the texture image)
+* update README
+* specular maps
+* delayed conversion to texture (parse before opengl initialisation)
+* resize hash dynamically
 * vertex\_array\_object->texture getting corrupted when there is no texture
 * use relative path when loading material and texture files
 * make object name optional
@@ -43,7 +44,7 @@
 * draw points, lines, triangle strips, mfd for reentry and orbital mechanics
 * detailed onboard systems (e.g. airlock, life support, auxiliary power units)
 * threads for rendering, simulation, and loading of data
-* event-based radio
+* event-based radio (triggers as in Operation Flashpoint)
 * missions and high scores
 * inspiration from Orbiter 2016, Rigs of Rods
 * atmospheric rendering, clouds, water, elevation maps, fractal micro textures and maps

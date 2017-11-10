@@ -2,11 +2,10 @@
 
 Small library to define and render OpenGL objects.
 
-![OpenGL rendering of tetraeder](tetraeder.png)
-
 ## Install dependencies
 ```
 sudo apt-get install colorgcc freeglut3-dev libglew-dev libmagickcore-dev libgc-dev
+sudo apt-get install unzip imagemagick
 ```
 
 ## Build
@@ -18,8 +17,13 @@ make check -j
 ```
 
 ## Run
+### MMSEV
+
+![OpenGL rendering of MMSEV](view-mmsev.png)
+
 ```
-./tetraeder
+make MMSEV.obj
+./objviewer MMSEV.obj
 ```
 
 # External links
