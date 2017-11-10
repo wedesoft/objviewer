@@ -1,5 +1,6 @@
 # TODO
 
+* flip textures when loading
 * load compressed textures
 * resize hash dynamically
 * use relative path when loading material and texture files

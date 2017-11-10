@@ -13,14 +13,17 @@ image_t *read_image(const char *file_name)
   if (exception_info->severity < ErrorException) {
     CatchException(exception_info);
     Image *image = RemoveFirstImageFromList(&images);
+    Image *flipped = FlipImage(image, exception_info);
+    CatchException(exception_info);
+    DestroyImage(image);
     retval = GC_MALLOC(sizeof(image_t));
-    retval->width = image->columns;
-    retval->height = image->rows;
-    retval->data = GC_MALLOC_ATOMIC(image->rows * image->columns * 3);
-    ExportImagePixels(image, 0, 0, image->columns, image->rows, "BGR", CharPixel, retval->data, exception_info);
+    retval->width = flipped->columns;
+    retval->height = flipped->rows;
+    retval->data = GC_MALLOC_ATOMIC(flipped->rows * flipped->columns * 3);
+    ExportImagePixels(flipped, 0, 0, flipped->columns, flipped->rows, "BGR", CharPixel, retval->data, exception_info);
     if (exception_info->severity < ErrorException)
       CatchException(exception_info);
-    DestroyImage(image);
+    DestroyImage(flipped);
   };
   if (exception_info->severity >= ErrorException) {
     retval = NULL;
