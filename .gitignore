@@ -12,6 +12,8 @@ raw
 objviewer
 MMSEV*
 HDU*
+z2*
+Z2*
 *.la
 *.lo
 *.in

@@ -1,5 +1,8 @@
 # TODO
 
+* model with multiple moving parts (e.g. gear)
+* illum
+* bump maps
 * add license
 * load two objects
 * flip textures when loading
@@ -37,7 +40,6 @@
 * test shaders (colors, normals, displacement, elevation map)
 * free floating object
 * thrusters
-* model with multiple moving parts (e.g. gear)
 * spring damper for ground forces
 * proper lift/drag ratio for high Reynolds numbers
 * 3d cockpit with good projections

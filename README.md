@@ -26,6 +26,15 @@ make MMSEV.obj
 ./objviewer MMSEV.obj
 ```
 
+### Z2
+
+![OpenGL rendering of Z2](view-z2.png)
+
+```
+make Z2.obj
+./objviewer Z2.obj
+```
+
 # External links
 
 * [Wavefront OBJ library in C with an OpenGL Core Profile renderer][17]
