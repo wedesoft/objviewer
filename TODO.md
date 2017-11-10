@@ -1,10 +1,7 @@
 # TODO
 
-* specular maps
-* mipmapping
-* delayed conversion to texture (parse before opengl initialisation)
+* load compressed textures
 * resize hash dynamically
-* vertex\_array\_object->texture getting corrupted when there is no texture
 * use relative path when loading material and texture files
 * make object name optional
 * more parse error information, reset lexer and parser
