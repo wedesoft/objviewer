@@ -18,6 +18,8 @@ mtllib                                BEGIN(mtllib);
 
 newmtl                                { BEGIN(name); return MATERIAL; }
 
+illum                                 { BEGIN(idx); return ILLUM; }
+
 Ka                                    return KA;
 
 Kd                                    return KD;

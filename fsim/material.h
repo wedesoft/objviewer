@@ -6,6 +6,7 @@
 
 typedef struct
 {
+  int illumination;
   GLfloat ambient[3];
   GLfloat diffuse[3];
   GLfloat specular[3];
@@ -17,6 +18,8 @@ typedef struct
 } material_t;
 
 material_t* make_material(void);
+
+void set_illumination(material_t *material, int illumination);
 
 void set_ambient(material_t *material, GLfloat red, GLfloat green, GLfloat blue);
 

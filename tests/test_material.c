@@ -6,6 +6,7 @@
 static MunitResult test_default(const MunitParameter params[], void *data)
 {
   material_t *material = make_material();
+  munit_assert_int(material->illumination, ==, 0);
   munit_assert_float(material->ambient[0], ==, 0.0f);
   munit_assert_float(material->ambient[1], ==, 0.0f);
   munit_assert_float(material->ambient[2], ==, 0.0f);
@@ -78,6 +79,14 @@ static MunitResult test_set_ambient(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_set_illumination_model(const MunitParameter params[], void *data)
+{
+  material_t *material = make_material();
+  set_illumination(material, 6);
+  munit_assert_int(material->illumination, ==, 6);
+  return MUNIT_OK;
+}
+
 static MunitResult test_set_diffuse(const MunitParameter params[], void *data)
 {
   material_t *material = make_material();
@@ -123,17 +132,18 @@ static MunitResult test_set_disolve(const MunitParameter params[], void *data)
 }
 
 MunitTest test_material[] = {
-  {"/default"              , test_default               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_diffuse_texture"  , test_set_diffuse_texture   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/texture_not_found"    , test_texture_not_found     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/diffuse_texture_name" , test_diffuse_texture_name  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_specular_texture" , test_set_specular_texture  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/specular_texture_name", test_specular_texture_name , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_ambient"          , test_set_ambient           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_diffuse"          , test_set_diffuse           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_specular"         , test_set_specular          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_specular_exponent", test_set_specular_exponent , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_optical_density"  , test_set_optical_density   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {"/set_disolve"          , test_set_disolve           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
-  {NULL                    , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
+  {"/default"               , test_default               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_diffuse_texture"   , test_set_diffuse_texture   , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/texture_not_found"     , test_texture_not_found     , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/diffuse_texture_name"  , test_diffuse_texture_name  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_specular_texture"  , test_set_specular_texture  , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/specular_texture_name" , test_specular_texture_name , test_setup_gl, test_teardown_gl, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_illumination_model", test_set_illumination_model, test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_ambient"           , test_set_ambient           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_diffuse"           , test_set_diffuse           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_specular"          , test_set_specular          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_specular_exponent" , test_set_specular_exponent , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_optical_density"   , test_set_optical_density   , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/set_disolve"           , test_set_disolve           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {NULL                     , NULL                       , NULL         , NULL            , MUNIT_TEST_OPTION_NONE, NULL}
 };

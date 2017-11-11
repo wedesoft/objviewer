@@ -67,7 +67,7 @@ static int index_vertex(int stride, int vertex_index, int uv_index, int normal_i
 }
 
 %type<index> index
-%token OBJECT MATERIAL KA KD KS NS NI D MAPKD MAPKS USE VERTEX UV NORMAL GROUP FACET SLASH
+%token OBJECT MATERIAL ILLUM KA KD KS NS NI D MAPKD MAPKS USE VERTEX UV NORMAL GROUP FACET SLASH
 %token <text> NAME
 %token <number> NUMBER
 %token <index> INDEX
@@ -101,7 +101,8 @@ properties: properties property
           | /* NULL */
           ;
 
-property: KA NUMBER NUMBER NUMBER { set_ambient(parse_material, $2, $3, $4); }
+property: ILLUM INDEX             { set_illumination(parse_material, $2); }
+        | KA NUMBER NUMBER NUMBER { set_ambient(parse_material, $2, $3, $4); }
         | KD NUMBER NUMBER NUMBER { set_diffuse(parse_material, $2, $3, $4); }
         | KS NUMBER NUMBER NUMBER { set_specular(parse_material, $2, $3, $4); }
         | NS NUMBER               { set_specular_exponent(parse_material, $2); }

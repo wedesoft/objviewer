@@ -1,7 +1,6 @@
 # TODO
 
 * model with multiple moving parts (e.g. gear)
-* illum
 * bump maps
 * add license
 * load two objects

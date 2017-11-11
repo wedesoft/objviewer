@@ -659,6 +659,14 @@ static MunitResult test_two_materials(const MunitParameter params[], void *data)
   return MUNIT_OK;
 }
 
+static MunitResult test_illumination_model(const MunitParameter params[], void *data)
+{
+  parse_string_core("newmtl test\nillum 6\no test");
+  material_t *material = hash_find_material(parse_materials, "test", NULL);
+  munit_assert_int(material->illumination, ==, 6);
+  return MUNIT_OK;
+}
+
 static MunitResult test_ambient(const MunitParameter params[], void *data)
 {
   parse_string_core("newmtl test\nKa 0.25 0.5 0.75\no test");
@@ -834,6 +842,7 @@ MunitTest test_parser[] = {
   {"/material"               , test_material               , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/late_material"          , test_late_material          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/two_materials"          , test_two_materials          , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
+  {"/illumination_model"     , test_illumination_model     , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/ambient"                , test_ambient                , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/use_material"           , test_use_material           , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},
   {"/reuse_material"         , test_reuse_material         , test_setup_gc, test_teardown_gc, MUNIT_TEST_OPTION_NONE, NULL},

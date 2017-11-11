@@ -6,6 +6,7 @@
 material_t *make_material(void)
 {
   material_t *result = GC_MALLOC(sizeof(material_t));
+  result->illumination = 0;
   result->ambient[0] = 0.0f;
   result->ambient[1] = 0.0f;
   result->ambient[2] = 0.0f;
@@ -21,6 +22,11 @@ material_t *make_material(void)
   result->diffuse_texture = NULL;
   result->specular_texture = NULL;
   return result;
+}
+
+void set_illumination(material_t *material, int illumination)
+{
+  material->illumination = illumination;
 }
 
 void set_ambient(material_t *material, GLfloat red, GLfloat green, GLfloat blue)
