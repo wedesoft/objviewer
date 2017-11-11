@@ -110,12 +110,13 @@ int main(int argc, char **argv)
 
   GC_INIT();
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
   glutInitWindowSize(width, height);
   glutCreateWindow("objviewer");
   glewExperimental = GL_TRUE;
   glewInit();
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_MULTISAMPLE_ARB);
 
   program = make_program("vertex.glsl", "fragment.glsl");
   lists = make_list();
