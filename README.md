@@ -1,6 +1,6 @@
 # FSim
 
-Small library to define and render OpenGL objects.
+Space exploration simulator.
 
 ## Install dependencies
 ```
