@@ -10,7 +10,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 extern void yyrestart (FILE *input_file);
 extern int yyparse(void);
 extern YY_BUFFER_STATE yy_scan_string(const char * str);
-extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
+extern int yylex_destroy(void);
 
 object_t *parse_result = NULL;
 hash_t *parse_materials = NULL;
@@ -36,6 +36,7 @@ static void parser_init(void)
 
 static void parser_cleanup(void)
 {
+  yylex_destroy();
   parse_result = NULL;
   parse_material = NULL;// TODO: test
   parse_use_material = NULL;// TODO: test
