@@ -56,6 +56,7 @@ make HDU_lowRez_part1.obj
 * [µnit - unit testing framework for C][23]
 * [ThreeJs][4]
 * [GLFW][5]
+* [NASSP][32]
 * [Godot Engine][6]
 * [OpenGL shadow mapping][7]
 * [The Book of Shaders][8]
@@ -74,6 +75,7 @@ make HDU_lowRez_part1.obj
 * [NASA 3D models][26]
 * [Handling multiple input buffers with Flex][27]
 * [Normal mapping][30]
+* [Star Citizen][31]
 
 [1]: http://www.songho.ca/opengl/gl_vbo.html
 [2]: https://github.com/opengl-tutorials/ogl
@@ -104,3 +106,5 @@ make HDU_lowRez_part1.obj
 [28]: http://paulbourke.net/dataformats/obj/
 [29]: http://paulbourke.net/dataformats/mtl/
 [30]: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
+[31]: https://robertsspaceindustries.com/
+[32]: https://github.com/dseagrav/NASSP
