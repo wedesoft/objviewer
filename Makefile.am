@@ -4,7 +4,7 @@ SUBDIRS = fsim tests
 
 noinst_PROGRAMS = raw objviewer
 
-EXTRA_DIST = vertex.glsl fragment.glsl
+EXTRA_DIST = README.md COPYING vertex.glsl fragment.glsl
 
 raw_SOURCES = raw.c
 raw_CFLAGS = $(GLEW_CFLAGS) $(GL_CFLAGS)
